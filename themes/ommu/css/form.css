@@ -1,0 +1,994 @@
+/* form.css *
+* Copyright (c) 2012, Nirwasita Studio. All rights reserved.
+* version: 0.1.0
+*
+*	CSS Reset
+*	Input
+*	Content
+*
+*/ 
+
+/* =CSS Reset : reset default browser style
+-------------------------------------------------------------*/
+input.span-1, textarea.span-1 {width: 6%;}
+input.span-2, textarea.span-2 {width: 10%;}
+input.span-3, textarea.span-3 {width: 20%;}
+input.span-4, textarea.span-4, select.small {width: 30%;}
+input.span-5, textarea.span-5 {width: 40%;}
+input.span-6, textarea.span-6 {width: 50%;}
+input.span-7, textarea.span-7, select.large {width: 60%;}
+input.span-8, textarea.span-8 {width: 70%;}
+input.span-9, textarea.span-9 {width: 80%;}
+input.span-10, textarea.span-10 {width: 90%;}
+input.span-11, textarea.span-11, select.large {width: 100%;}
+
+/*simple class*/
+input.full, select.full, textarea.full {width:99%;}
+textarea.smaller {height: 70px;}
+textarea.small {height: 100px;}
+textarea.medium {height: 150px;}
+textarea.large {height: 200px;}
+
+
+/* =Input
+-------------------------------------------------------------*/
+input, button, select, textarea {
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	margin: 0;
+	vertical-align: middle;
+	resize: none;
+}
+textarea {
+	display: block;
+}
+button, input {
+	*overflow: visible;
+	line-height: normal;
+}
+button::-moz-focus-inner,
+input::-moz-focus-inner {
+	padding: 0;
+	border: 0;
+}
+textarea {
+	overflow: auto;
+	vertical-align: top;
+}
+input:-moz-placeholder,
+input:-ms-input-placeholder,
+input::-webkit-input-placeholder,
+textarea:-moz-placeholder,
+textarea:-ms-input-placeholder,
+textarea::-webkit-input-placeholder {
+	color: #999999;
+}
+
+input[disabled],
+select[disabled],
+textarea[disabled],
+input[readonly],
+select[readonly],
+textarea[readonly] {
+	cursor: not-allowed;
+	background-color: #eeeeee;
+}
+input[type="radio"][disabled],
+input[type="checkbox"][disabled],
+input[type="radio"][readonly],
+input[type="checkbox"][readonly] {
+	background-color: transparent;
+}
+
+/* Button and Submit */
+button,
+input[type="button"],
+input[type="reset"],
+input[type="submit"] {
+	cursor: pointer;
+	-webkit-appearance: button;
+}
+
+/* Search */
+input[type="search"] {
+	-webkit-box-sizing: content-box;
+	-moz-box-sizing: content-box;
+	box-sizing: content-box;
+	-webkit-appearance: textfield;
+}
+input[type="search"]::-webkit-search-decoration,
+input[type="search"]::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+}
+
+/* Checkbox and Radio */
+input[type="radio"],
+input[type="checkbox"] {
+	margin: 4px 0 0;
+	margin-top: 1px \9;
+	*margin-top: 0;
+	line-height: normal;
+	cursor: pointer;
+}
+input[type="file"],
+input[type="image"],
+input[type="submit"],
+input[type="reset"],
+input[type="button"],
+input[type="radio"],
+input[type="checkbox"] {
+	width: auto;
+}
+
+/* Select and File */
+/*select,
+input[type="file"] {
+	height: 30px;
+	*margin-top: 4px;
+	line-height: 30px;
+}*/
+/* In IE7, the height of the select element cannot be changed by height, only font-size */
+/* For IE7, add top margin to align select with labels */
+
+select[multiple],
+select[size] {
+  height: auto;
+}
+select:focus,
+input[type="file"]:focus,
+input[type="radio"]:focus,
+input[type="checkbox"]:focus {
+	outline: thin dotted #333;
+	outline: 5px auto -webkit-focus-ring-color;
+	outline-offset: -2px;
+}
+
+/* Custom */
+select,
+textarea,
+input[type="text"],
+input[type="password"],
+input[type="datetime"],
+input[type="datetime-local"],
+input[type="date"],
+input[type="month"],
+input[type="time"],
+input[type="week"],
+input[type="number"],
+input[type="email"],
+input[type="url"],
+input[type="search"],
+input[type="tel"],
+input[type="color"] {
+	border-top: solid 1px #ccc;
+	border-right: solid 1px #ccc;
+	border-bottom: solid 1px #ccc;
+	border-left: solid 1px #ccc;
+	background: #f8f8f8;
+	padding: 7px 8px 7px 8px;
+	color: #666;
+}
+select {
+	padding: 5px 5px 5px 8px;
+}
+textarea:focus,
+input[type="text"]:focus,
+input[type="password"]:focus,
+input[type="datetime"]:focus,
+input[type="datetime-local"]:focus,
+input[type="date"]:focus,
+input[type="month"]:focus,
+input[type="time"]:focus,
+input[type="week"]:focus,
+input[type="number"]:focus,
+input[type="email"]:focus,
+input[type="url"]:focus,
+input[type="search"]:focus,
+input[type="tel"]:focus,
+input[type="color"]:focus { 
+	border-top: solid 1px #f0d648;
+	border-right: solid 1px #f0d648;
+	border-bottom: solid 1px #f0d648;
+	border-left: solid 1px #f0d648;
+	outline: 0;
+	outline: thin dotted \9;
+}
+textarea.error,
+input[type="text"].error,
+input[type="password"].error,
+input[type="datetime"].error,
+input[type="datetime-local"].error,
+input[type="date"].error,
+input[type="month"].error,
+input[type="time"].error,
+input[type="week"].error,
+input[type="number"].error,
+input[type="email"].error,
+input[type="url"].error,
+input[type="search"].error,
+input[type="tel"].error,
+input[type="color"].error {
+	border-top: solid 1px #dc5c5c;
+	border-right: solid 1px #dc5c5c;
+	border-bottom: solid 1px #dc5c5c;
+	border-left: solid 1px #dc5c5c;
+	background: url('../images/icons/input_error.png') 100% 50% no-repeat;
+}
+
+/* Button and Submit */
+button,
+input[type="button"],
+input[type="reset"],
+input[type="submit"],
+a.button {
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+	-webkit-box-shadow: inset 0 0 1px #fff;
+	-moz-box-shadow: inset 0 0 1px #fff;
+	box-shadow: inset 0 0 1px #fff;
+    background-color: #f0f0f0;
+    background-image: -moz-linear-gradient(center top , #fff 0pt, #e0e0e0 100%);
+	background-image: -webkit-linear-gradient(top,white 0,#e0e0e0 100%);
+	background-image: linear-gradient(to bottom,white 0,#e0e0e0 100%);
+	border: solid 1px #cfcfcf;
+	border-color: #ccc #ccc #aaa;
+	padding: 7px 20px;
+	font-size: 13px;
+	line-height: 18px;
+	text-transform: uppercase;
+    text-shadow: 0 1px 0 #fff;
+	color: #6c6c6c;
+}
+a.button {
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	display: inline-block;
+	text-transform: uppercase;
+}
+a.button:hover {
+	text-decoration: none;
+}
+button:hover,
+input[type="button"]:hover,
+input[type="reset"]:hover,
+input[type="submit"]:hover,
+a.button:hover {
+	-webkit-box-shadow: 0 1px 0 #fff inset, 0 1px 3px rgba(0, 0, 0, 0.08);
+	-moz-box-shadow: 0 1px 0 #fff inset, 0 1px 3px rgba(0, 0, 0, 0.08);
+	box-shadow: 0 1px 0 #fff inset, 0 1px 3px rgba(0, 0, 0, 0.08);	
+}
+button:active,
+input[type="button"]:active,
+input[type="reset"]:active,
+input[type="submit"]:active,
+a.button:active {
+    background-image: -moz-linear-gradient(center bottom , #FFFFFF 0pt, #E0E0E0 100%);
+	background-image: -webkit-linear-gradient(bottom,white 0,#E0E0E0 100%);
+	background-image: linear-gradient(to bottom,white 0,#E0E0E0 100%);
+}
+
+/* Dialog */
+.dialog input[type="text"],
+.dialog input[type="password"],
+.dialog input[type="file"],
+.dialog textarea,
+.notifier input[type="text"],
+.notifier input[type="password"],
+.notifier input[type="file"],
+.notifier textarea {
+	padding: 5px 6px 5px 6px;
+}
+.dialog select,
+.notifier select {
+	padding: 4px 4px 4px 7px;
+}
+.notifier .dialog-submit input[type="submit"] {
+	-webkit-box-shadow: inset 0 1px 0 rgba(152, 155, 160, 0.45);
+	-moz-box-shadow: inset 0 1px 0 rgba(152, 155, 160, 0.45);
+	box-shadow: inset 0 1px 0 rgba(152, 155, 160, 0.45);
+	background-color: #787b83;
+    background-image: -moz-linear-gradient(center top , #787b83 0pt, #44474e 100%);
+	background-image: -webkit-linear-gradient(top,#787b83 0,#44474e 100%);
+	background-image: linear-gradient(to bottom,#787b83 0,#44474e 100%);
+	border-color: #7a828d #7a828d #3d4046;
+	text-shadow: 0 1px 0 rgba(0, 0, 0, 0.45);
+	color: #f0f0f0;
+}
+.notifier .dialog-submit input[type="submit"]:hover {
+	-webkit-box-shadow: 0 1px 0 #a1a5af inset, 0 1px 3px rgba(0, 0, 0, 0.08);
+	-moz-box-shadow: 0 1px 0 #a1a5af inset, 0 1px 3px rgba(0, 0, 0, 0.08);
+	box-shadow: 0 1px 0 #a1a5af inset, 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+.notifier .dialog-submit input[type="submit"]:active {
+	background-image: -moz-linear-gradient(center bottom , #787b83 0pt, #44474e 100%);
+	background-image: -webkit-linear-gradient(bottom,#787b83 0,#44474e 100%);
+	background-image: linear-gradient(to bottom,#787b83 0,#44474e 100%);
+}
+
+
+/* Message
+-------------------------------------------------------------- */
+.body div.errorSummary {
+	display: none;
+	padding: 10px 15px;
+	margin: 0 0 10px 0;
+	background: #c68989;
+	border-bottom: none;
+	color: #785151;
+}
+.body div.errorSummary.success {
+	display: block;
+	background: #adca96;
+	border: solid 1px #98b383;
+	text-shadow: 0px 1px 0px #d3edb3;
+	-webkit-box-shadow: inset 0px 1px 0px 0px #b8e3b6;
+	-moz-box-shadow: inset 0px 1px 0px 0px #b8e3b6;
+	box-shadow: inset 0px 1px 0px 0px #b8e3b6;
+	color:#647458;
+}
+.body div.errorSummary p {
+	font-weight: bold;
+	margin: 0 0 0 0;
+}
+.body div.errorSummary ul {
+	list-style: none;
+	margin: 4px 0 0 0;
+}
+
+/* =Content
+-------------------------------------------------------------- */
+.content div.form,
+.content div.list-view {
+	margin: 0 0 15px 0;
+}
+.content div.form:last-child,
+.content div.form:first-child:last-child {
+	margin: 0 0 0 0;
+}
+
+/* =Form
+-------------------------------------------------------------- */
+/* Title */
+form h3,
+form fieldset {
+	-webkit-box-shadow: 0px 0px 2px 0px #acaeaf;
+	-moz-box-shadow: 0px 0px 2px 0px #acaeaf;
+	box-shadow: 0px 0px 2px 0px #acaeaf;
+}
+form h3 {
+	background: #d7d7d7 url(../images/resource/gridview_title_bg.png) 100% 100% repeat-x;
+	border-top: 1px solid #fff;
+	border-bottom:solid 1px #e0e0e0;
+	padding: 12px 15px 12px 15px;
+	margin: 0 0 0 0;
+	font-weight: 400;
+	font-size: 12px;
+	line-height: 12px;
+	color: #6c6c6c;
+	text-shadow: 0px 1px 0px #fff;
+}
+form h3[name="publish"],
+form h3[name="unpublish"] {
+	cursor: pointer;
+}
+
+/* Fieldset Style */
+fieldset {
+	border-top: 1px solid #fff;
+	background: #fff;
+}
+fieldset.overflow {
+	overflow: hidden;
+	height: 0px;
+}
+fieldset div.intro,
+fieldset div.clearfix {
+	border-bottom: 1px dotted #e6e6e6;
+}
+fieldset div.intro {
+	padding: 15px 20px;
+}
+fieldset div.clearfix {
+	padding: 10px 20px;
+}
+fieldset div.clearfix:last-child,
+fieldset div#ajax-message {
+	border: none;
+}
+fieldset div#ajax-message,
+fieldset div div.desc {
+	padding: 0 0 0 0;
+}
+fieldset div label,
+fieldset div div.desc {
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	float: left;
+}
+fieldset div label {
+	width: 30%;
+	padding: 3px 20px 0 0;
+	font-weight: bold;
+}
+fieldset div label span,
+fieldset div div.desc p,
+fieldset div div.desc span.small-px,
+fieldset div div.desc span.small-px *,
+fieldset div div.desc span.desc {
+	display: block;
+	font-weight: normal;
+	font-size: 11px;
+	line-height: 14px;
+	color: #808080;
+}
+fieldset div div.desc span.small-px * {
+	display: inline;
+}
+fieldset div label span {
+	padding: 5px 0 0 0;
+}
+fieldset div label span.required {
+	display: inline-block;
+	margin: 0 0 0 1px;
+	padding: 0 0 0 0;
+	color: #ff0000;
+}
+fieldset div div.desc {
+	width: 70%;
+}
+fieldset div div.desc img {
+	display: block;
+}
+fieldset div div.desc .suggest {
+	padding: 5px 0 0 0;
+	border: none;
+}
+fieldset div div.desc .suggest div {
+	position: relative;
+	float: left;
+	width: auto;
+	padding: 3px 25px 3px 5px;
+	margin: 3px 5px 0 0;
+	border: 1px solid #ccc;
+	font-size: 11px;
+	line-height: 14px;
+	background: #f9f9f9;
+}
+fieldset div div.desc .suggest div.d {
+	padding: 3px 5px 3px 5px;
+}
+fieldset div div.desc .suggest div a {
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	position: absolute;
+	top: 0;
+	right: 0;
+	overflow: hidden;
+	display: block;
+	width: 20px;
+	height: 100%;
+	background: url('../images/icons/delete.png') 50% 50% no-repeat;
+	color: transparent;
+}
+fieldset div div.desc input[type="checkbox"],
+fieldset div div.desc input[type="radio"],
+fieldset div div.desc input[type="submit"],
+fieldset div div.desc input[type="button"] {
+	width: auto;
+}
+fieldset div div.desc label,
+.dialog fieldset div div.desc label,
+.notifier fieldset div div.desc label {
+	float: none;
+	width: auto;
+	padding: 0;
+	font-weight: normal;
+}
+fieldset div div.desc span {
+	display: block;
+}
+fieldset div div.desc span.desc {
+	margin: 0 0 7px 0;
+}
+fieldset div div.desc p,
+fieldset div div.desc span.small-px {	
+	border-top: 1px dotted #e6e6e6;
+	margin: 12px 0 7px 0;
+	padding: 8px 0 0 0;
+}
+fieldset div div.desc p {
+	font-size: 13px;
+	line-height: 16px;
+	color: #333;
+}
+fieldset div div.desc p:first-child,
+fieldset div div.desc span.small-px:first-child {
+	border-top: none;
+	margin: 0 0 7px 0;
+	padding: 0 0 0 0;
+}
+fieldset div div.desc span.small-px:last-child,
+fieldset div div.desc span.desc:last-child {
+	border-top: none;
+	margin: 7px 0 0 0;
+	padding: 0 0 0 0;
+}
+fieldset div div.desc span input[type="radio"],
+fieldset div div.desc span input[type="checkbox"] {
+	margin: 0 5px 0 0;
+}
+fieldset div div.desc span label {
+	display: inline-block;
+	padding: 2px 0 0 0;
+}
+fieldset div div.desc div.errorMessage,
+.dialog fieldset div div.desc .errorMessage,
+.notifier fieldset div div.desc .errorMessage {
+	padding: 5px 0 0 0;
+	color: #ff0000;
+}
+
+/* UL Style */
+fieldset div div.desc ul.clearfix {
+	display: block;
+	list-style: none;
+	margin: 0 0 0 0;
+	padding: 0 0 0 0;
+}
+fieldset div div.desc ul.clearfix li {
+	float: left;
+	width: 50%;
+}
+fieldset div.submit input {
+	padding: 8px 25px;
+	font-size: 13px;
+	line-height: 13px;
+	text-transform: uppercase;
+}
+ 
+/* CLEditor */
+fieldset div div.desc div.cleditorMain {
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+}
+
+/* Fieldset Sidebar ON */
+fieldset.clearfix {}
+fieldset.clearfix div.clear,
+fieldset.clearfix div.left,
+fieldset.clearfix div.right {
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+}
+fieldset.clearfix div.clear {
+	display: table;
+	width: 100%;
+}
+fieldset.clearfix div.left,
+fieldset.clearfix div.right {
+	float: none;
+	display: table-cell;
+}
+fieldset.clearfix div.right {
+	width: 300px;
+	border-left: 3px solid #ccc;
+}
+fieldset.clearfix div.left h5,
+fieldset.clearfix div.right h5 {
+	margin: 0 0 0 0;
+	padding: 10px 15px;
+	background: #333;
+	color: #fff;
+}
+fieldset.clearfix div.right div.clearfix {
+	padding: 10px 15px;
+}
+fieldset.clearfix div.right div.clearfix label,
+fieldset.clearfix div.right div.clearfix div.desc {
+	float: none;
+	width: 100%;
+}
+fieldset.clearfix div.right div.clearfix label {
+	display: block;
+	padding: 0 0 0 0;
+}
+fieldset.clearfix div.right div.clearfix.publish label {
+	display: none;
+}
+fieldset.clearfix div.right div.clearfix div.desc {
+	margin: 7px 0 0 0;
+}
+fieldset.clearfix div.right div.clearfix div.desc input,
+fieldset.clearfix div.right div.clearfix div.desc select {
+	margin: 0 3px 0 5px;
+}
+fieldset.clearfix div.right div.clearfix div.desc input[type="file"],
+fieldset.clearfix div.right div.clearfix div.desc input:first-child,
+fieldset.clearfix div.right div.clearfix div.desc select:first-child {
+	margin: 0 3px 0 0;
+}
+fieldset.clearfix div.right div.clearfix.publish div.desc input {
+	margin: -1px 5px 0 0;
+}
+fieldset.clearfix div.right div.clearfix div.desc label {
+	display: inline-block;
+	width: auto;
+}
+fieldset.clearfix div.right div.clearfix div.desc img,
+fieldset.clearfix div.right div.clearfix div.desc audio {
+	width: 100%;
+}
+fieldset.clearfix div.submit {
+	border-top: 1px solid #e6e6e6;
+}
+fieldset.clearfix div.submit label {
+	display: none;
+}
+fieldset.clearfix div.submit div.desc {
+	width: 100%;
+	text-align: center;
+}
+
+/* Balance Position */
+fieldset.clearfix.balance div.left,
+fieldset.clearfix.balance div.right {
+	width: 50%;
+}
+fieldset.clearfix.balance div.right div.clearfix label,
+fieldset.clearfix.balance div.right div.clearfix div.desc {
+	float: left;
+}
+fieldset.clearfix.balance div.left div.clearfix label,
+fieldset.clearfix.balance div.right div.clearfix label {
+	width: 30%;
+}
+fieldset.clearfix.balance div.right div.clearfix.publish label {
+	display: block;
+}
+fieldset.clearfix.balance div.left div.clearfix div.desc,
+fieldset.clearfix.balance div.right div.clearfix div.desc {
+	width: 70%;
+	margin: 0 0 0 0;
+}
+fieldset.clearfix.balance div.right div.clearfix.publish div.desc label {
+	display: none;
+}
+
+/* Quick Create On */
+.quick-action div.boxed,
+.quick-action div.form {
+	float: left;
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+}
+.quick-action div.boxed {
+	width: 62%;
+}
+.quick-action div.form {
+	width: 38%;
+	padding: 0 0 0 20px;
+	-webkit-box-shadow: none;
+	-moz-box-shadow: none;
+	box-shadow: none;
+	border-top: none;
+}
+.quick-action div.form h3 {
+	margin: 0 0 15px 0;
+	padding: 5px 0 10px 0;
+	border-bottom: 2px solid #aaa;
+	font-size: 14px;
+	line-height: 14px;
+}
+.quick-action div.form .errorSummary.success {
+	display: none;
+}
+.quick-action div.form fieldset {
+	border-top: none;
+	background: transparent;
+	-webkit-box-shadow: none;
+	-moz-box-shadow: none;
+	box-shadow: none;
+}
+.quick-action div.form fieldset div.intro,
+.quick-action div.form fieldset div.clearfix {
+	padding: 0 0 10px 0;
+	margin: 0 0 10px 0;
+	border-bottom: 1px dotted #ccc;
+}
+.quick-action div.form fieldset div.clearfix:last-child {
+	border-bottom: none;
+	margin: 0 0 0 0;
+}
+
+.quick-action div.form fieldset div div.desc textarea {
+	width: 100%;
+}
+
+/* Submit Button */
+div.submit-button {
+	padding: 15px 20px;
+	border-top: 1px solid #e6e6e6;
+	text-align: center;
+}
+div.submit-button input {
+	padding: 8px 25px;
+	font-size: 13px;
+	line-height: 13px;
+	text-transform: uppercase;
+}
+
+/* =Dialog
+-------------------------------------------------------------- */
+.dialog form fieldset,
+.notifier form fieldset {
+	-webkit-box-shadow: none;
+	-moz-box-shadow: none;
+	box-shadow: none;
+	border: none;
+}
+.dialog fieldset div.intro,
+.notifier fieldset div.intro {
+	padding: 6px 5px 10px 5px;
+}
+.dialog fieldset div.clearfix,
+.notifier fieldset div.clearfix {
+	padding: 6px 5px 6px 5px;
+}
+.dialog fieldset div label,
+.notifier fieldset div label {
+	width: 35%;
+}
+.dialog fieldset div div.desc,
+.notifier fieldset div div.desc {
+	width: 65%;
+}
+.dialog fieldset div.publish div.desc label,
+.notifier fieldset div.publish div.desc label {
+	display: none;
+}
+/*
+.dialog .dialog-submit input,
+.notifier .dialog-submit input {
+	border: none;
+	padding: 10px 15px;
+	margin: 0 0 0 7px;
+	text-transform: uppercase;
+	color: #333;
+	font-size: 12px;
+	line-height: 12px;
+	cursor: pointer;
+}
+.dialog .dialog-submit input[type="submit"].active,
+.notifier .dialog-submit input[type="submit"].active {
+	background: url('../images/icons/ajax_loader.gif') 50% 50% no-repeat;
+	color: transparent;
+}
+*/
+
+/* =Responsive
+-------------------------------------------------------------- */
+/* Resolution 1280 */
+@media only screen and (max-width:1280px) {
+	/* Form */
+	.body fieldset div label,
+	fieldset.clearfix div.right div.clearfix label,
+	fieldset.clearfix.balance div.left div.clearfix label,
+	fieldset.clearfix.balance div.right div.clearfix label {
+		width: 40%;
+	}
+	.body fieldset div div.desc,
+	fieldset.clearfix div.right div.clearfix div.desc,
+	fieldset.clearfix.balance div.left div.clearfix div.desc,
+	fieldset.clearfix.balance div.right div.clearfix div.desc,
+	fieldset.clearfix div.submit div.desc {
+		width: 60%;
+	}
+}
+
+/* Resolution 1024 */
+@media only screen and (max-width:1024px) {
+	/* Form */
+	.body fieldset div label,
+	fieldset.clearfix div.right div.clearfix label,
+	fieldset.clearfix.balance div.left div.clearfix label,
+	fieldset.clearfix.balance div.right div.clearfix label {
+		width: 35%;
+	}
+	.body fieldset div div.desc,
+	fieldset.clearfix div.right div.clearfix div.desc,
+	fieldset.clearfix.balance div.left div.clearfix div.desc,
+	fieldset.clearfix.balance div.right div.clearfix div.desc,
+	fieldset.clearfix div.submit div.desc {
+		width: 65%;
+	}
+	/* CLEditor */
+	fieldset div div.desc div.cleditorMain {
+		width: 100% !important;
+	}
+	/* Fieldset Sidebar ON */
+	fieldset.clearfix div.clear,
+	fieldset.clearfix div.left,
+	fieldset.clearfix div.right,
+	fieldset.clearfix.balance div.left,
+	fieldset.clearfix.balance div.right {
+		display: block;
+		width: auto;
+	}
+	fieldset.clearfix div.right {
+		border-top: 1px dotted #e6e6e6;
+		border-left: none;
+	}
+	fieldset.clearfix div.right div.clearfix {
+		padding: 10px 20px;
+	}
+	fieldset.clearfix div.right div.clearfix label,
+	fieldset.clearfix div.right div.clearfix div.desc {
+		float: left;
+	}
+	fieldset.clearfix div.right div.clearfix label {
+		padding: 3px 20px 0 0;
+	}
+	fieldset.clearfix div.right div.clearfix.publish label {
+		display: block;
+	}
+	fieldset.clearfix div.right div.clearfix div.desc {
+		margin: 0 0 0 0;
+	}
+	fieldset.clearfix div.right div.clearfix div.desc label {
+		float: none;
+		padding: 0 0 0 0;
+	}
+	fieldset.clearfix div.right div.clearfix.publish div.desc label {
+		display: none;
+	}
+	fieldset.clearfix div.submit {
+		border-top: 1px dotted #e6e6e6;
+	}
+	fieldset.clearfix div.submit label {
+		display: block;
+	}
+	fieldset.clearfix div.submit div.desc {
+		text-align: left;
+	}
+}
+
+/* Resolution 900 */
+@media only screen and (max-width:900px) {
+
+}
+
+/* Resolution 800 */
+@media only screen and (max-width:800px) {
+	/* Fieldset Style */
+	fieldset div div.desc textarea {
+		width: 100%;
+	}
+}
+
+/* Resolution 600 */
+@media only screen and (max-width:600px) {
+	/* Fieldset Style */
+	.body fieldset div.intro,
+	.body fieldset div.clearfix,
+	fieldset.clearfix div.right div.clearfix {
+		padding: 10px 15px;
+	}
+	.body fieldset div label,
+	.body fieldset div div.desc,
+	fieldset.clearfix div.right div.clearfix label,
+	fieldset.clearfix div.right div.clearfix div.desc,
+	fieldset.clearfix.balance div.left div.clearfix label,
+	fieldset.clearfix.balance div.right div.clearfix label,
+	fieldset.clearfix.balance div.left div.clearfix div.desc,
+	fieldset.clearfix.balance div.right div.clearfix div.desc {
+		float: none;
+		width: 100%;
+	}
+	.body fieldset div label,
+	fieldset.clearfix div.right div.clearfix label,
+	fieldset.clearfix.balance div.left div.clearfix label,
+	fieldset.clearfix.balance div.right div.clearfix label  {
+		display: block;
+		padding: 0 0 0 0;
+	}
+	.body fieldset div div.desc,
+	fieldset.clearfix div.right div.clearfix div.desc,
+	fieldset.clearfix.balance div.left div.clearfix div.desc,
+	fieldset.clearfix.balance div.right div.clearfix div.desc {
+		margin: 9px 0 0 0;
+	}
+	.body fieldset div.submit label,
+	fieldset.clearfix div.submit label {
+		display: none;
+	}
+	.body fieldset div.submit div.desc,
+	fieldset.clearfix div.submit div.desc {
+		margin: 0 0 0 0;
+		text-align: center;
+	}
+	/* Fieldset Sidebar ON */
+	fieldset.clearfix div.right div.clearfix.publish label,
+	fieldset.clearfix.balance div.right div.clearfix.publish label {
+		display: none;
+	}
+	fieldset.clearfix div.right div.clearfix.publish div.desc,
+	fieldset.clearfix.balance div.right div.clearfix.publish div.desc {
+		margin: 0 0 0 0;
+	}
+	fieldset.clearfix div.right div.clearfix.publish div.desc label,
+	fieldset.clearfix.balance div.right div.clearfix.publish div.desc label {
+		display: inline-block;
+	}
+	fieldset.clearfix div.submit div.desc {
+		width: 100%;
+		text-align: center;
+	}
+}
+
+/* Resolution 480 */
+@media only screen and (max-width:480px) {
+	/* Message */
+	div.errorSummary {
+		display: block;
+	}
+	/* Fieldset Style */
+	fieldset div div.desc select,
+	fieldset div div.desc input[type="text"] {
+		width: 100%;
+	}
+	fieldset div div.desc div.errorMessage {
+		display: none;
+		padding: 7px 0 0 0;
+		font-size: 11px;
+		line-height: 14px;
+	}
+	/* Dialog */
+	.dialog fieldset div label,
+	.dialog fieldset div div.desc,
+	.notifier fieldset div label,
+	.notifier fieldset div div.desc {
+		float: none;
+		width: 100%;
+	}
+	.dialog fieldset div label,
+	.notifier fieldset div label {
+		display: block;
+		padding: 0 0 0 0;
+	}
+	.dialog fieldset div div.desc,
+	.notifier fieldset div div.desc {
+		margin: 9px 0 0 0;
+	}
+	.dialog fieldset div.publish label,
+	.notifier fieldset div.publish label {
+		display: none;
+	}
+	.dialog fieldset div.publish div.desc,
+	.notifier fieldset div.publish div.desc {
+		margin: 0 0 0 0;
+	}
+	.dialog fieldset div.publish div.desc input[type="checkbox"],
+	.notifier fieldset div.publish div.desc input[type="checkbox"] {
+		margin: 0 6px 0 0;
+	}
+	.dialog fieldset div.publish div.desc label,
+	.notifier fieldset div.publish div.desc label {
+		display: inline-block;
+	}
+}
+
+/* Resolution 320 */
+@media only screen and (max-width:320px) {
+	/* Fieldset Sidebar ON */
+	fieldset.clearfix div.right div.clearfix div.desc img {
+		width: 100%;
+	}
+}

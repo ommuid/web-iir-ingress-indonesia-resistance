@@ -1,0 +1,132 @@
+/* typography.css *
+* Copyright (c) 2012, Nirwasita Studio. All rights reserved.
+* version: 0.1.0
+*
+*	CSS Reset
+*	Headings
+*	Hyperlink
+*	Subscript and Superscript
+*	Paragraf
+*	Font-Family
+*	Misc class for general use
+*	Content
+*
+*/ 
+
+/* =CSS Reset : reset default browser style
+-------------------------------------------------------------*/
+html, body, div, span, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, code,
+del, dfn, em, img, q, dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+input, button, select, textarea,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, details, figcaption, figure, footer, header,
+hgroup, nav, section {
+	color: #333; 
+	font-size: 12px; 
+	line-height: 16px;
+	font-weight: 400;
+	font-family: Tahoma, Arial, Helvetica, sans-serif;
+}
+
+
+/* =Headings
+------------------------------------------------------------ */
+h1, h2, h3, h4, h5, h6 {
+  margin: 10px 0;
+  font-family: inherit;
+  font-weight: bold;
+  line-height: 20px;
+  color: inherit;
+  text-rendering: optimizelegibility;
+}
+h1, h2, h3 {line-height: 40px;}
+h1 {font-size: 38.5px;}
+h2 {font-size: 31.5px;}
+h3 {font-size: 24.5px;}
+h4 {font-size: 17.5px;}
+h5 {font-size: 14px;}
+h6 {font-size: 11.9px;}
+
+h1.small {
+	margin: 0 0 12px 0;
+	font-size: 14px;
+	line-height: 20px;
+}
+
+/* =Hyperlink
+------------------------------------------------------------ */
+a:link {color: #333; text-decoration: none;}
+a:visited {color: #111; text-decoration: none;}
+a:hover {color: #111; text-decoration: underline;}
+a:hover, a:active {outline: 0;}
+
+/* =Subscript and Superscript
+------------------------------------------------------------ */
+sub, sup {
+  position: relative;
+  font-size: 75%;
+  line-height: 0;
+  vertical-align: baseline;
+}
+
+/* Subscript */
+sup {top: -0.5em;}
+
+/* Superscript */
+sub {bottom: -0.25em;}
+
+/* =Paragraf
+------------------------------------------------------------ */
+p {margin: 0 0 10px;}
+
+/* =Font-Family
+------------------------------------------------------------ */
+.tahoma {font-family: Tahoma, Arial, Helvetica, sans-serif;}
+.trebuchet {font-family: Trebuchet MS, Arial, Helvetica, sans-serif;}
+.verdana {font-family: Verdana, Arial, Helvetica, sans-serif;}
+@font-face {
+    font-family: 'iconSweets';
+    src: url('../fonts/icon-webfont.eot');
+    src: url('../fonts/icon-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/icon-webfont.woff') format('woff'),
+         url('../fonts/icon-webfont.ttf') format('truetype'),
+         url('../fonts/icon-webfont.svg#iconSweetsRegular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+/* =Misc class for general use 
+------------------------------------------------------------ */
+/* Font Weight */
+.bold {font-weight: bold;} .italic {font-weight: italic;} .normal {font-weight: normal;}
+
+/* Text Align */
+.text-left {text-align: left;} .text-right {text-align: right;} .text-center, .center {text-align: center;}
+
+/* Font Size */
+.smallo-px {font-size: 12px;} .small-px {font-size: 11px;} .smaller-px {font-size: 10px;} .smallest-px {font-size: 9px;}
+.large-px {font-size: 13px; line-height: 18px;} .larger-px {font-size: 15px; line-height: 22px;} .xtra-large {font-size:17px; font-size: 25px;}
+
+/* Remove n Clear */
+.decor-none, .decor-none:hover{text-decoration:none; border-bottom:none;}
+.hide-text {
+  font: 0/0 a;
+  color: transparent;
+  text-shadow: none;
+  background-color: transparent;
+  border: 0;
+}
+
+/* Font Color */
+.black {color: #000;}
+.white {color: #FFF;}
+.silent {color: #777;}
+.link {color:4e6a97;}
+.orange {color: orange;}
+.red {color: #ad0b0c;}
+
+/* =Content
+------------------------------------------------------------ */
