@@ -1,0 +1,17 @@
+code			: 23000
+name			: Support
+description		: Support
+folder_name		: support
+global_model	: SupportMails
+version			: 1.1.5
+created_date	: 2012-08-30 14:03
+author			: Putra Sudaryanto
+
+db_table_name	: 
+ - ommu_support_contact_category
+ - ommu_support_contacts
+ - ommu_support_mail_setting
+ - ommu_support_mails
+ - ommu_support_newsletter
+ 
+db_sql_filename	: 
