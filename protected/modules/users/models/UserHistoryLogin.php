@@ -1,6 +1,6 @@
 <?php
 /**
- * UserHistoryEmail 
+ * UserHistoryLogin 
  * @author Putra Sudaryanto <putra.sudaryanto@gmail.com>
  * @copyright Copyright (c) 2014 Ommu Platform (ommu.co)
  * @link http://company.ommu.co
@@ -17,18 +17,18 @@
  *
  * --------------------------------------------------------------------------------------
  *
- * This is the model class for table "ommu_user_history_email".
+ * This is the model class for table "ommu_user_history_login".
  *
- * The followings are the available columns in table 'ommu_user_history_email':
+ * The followings are the available columns in table 'ommu_user_history_login':
  * @property string $id
  * @property string $user_id
- * @property string $email
- * @property string $update_date
+ * @property string $lastlogin_date
+ * @property string $lastlogin_ip
  *
  * The followings are the available model relations:
  * @property OmmuUsers $user
  */
-class UserHistoryEmail extends CActiveRecord
+class UserHistoryLogin extends CActiveRecord
 {
 	public $defaultColumns = array();
 
@@ -36,7 +36,7 @@ class UserHistoryEmail extends CActiveRecord
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
 	 * @param string $className active record class name.
-	 * @return UserHistoryEmail the static model class
+	 * @return UserHistoryLogin the static model class
 	 */
 	public static function model($className=__CLASS__)
 	{
@@ -48,7 +48,7 @@ class UserHistoryEmail extends CActiveRecord
 	 */
 	public function tableName()
 	{
-		return 'ommu_user_history_email';
+		return 'ommu_user_history_login';
 	}
 
 	/**
@@ -59,12 +59,12 @@ class UserHistoryEmail extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('user_id, email, update_date', 'required'),
+			array('user_id, lastlogin_date, lastlogin_ip', 'required'),
 			array('user_id', 'length', 'max'=>11),
-			array('email', 'length', 'max'=>32),
+			array('lastlogin_ip', 'length', 'max'=>20),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, user_id, email, update_date', 'safe', 'on'=>'search'),
+			array('id, user_id, lastlogin_date, lastlogin_ip', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -88,8 +88,8 @@ class UserHistoryEmail extends CActiveRecord
 		return array(
 			'id' => 'ID',
 			'user_id' => 'User',
-			'email' => 'Email',
-			'update_date' => 'Update Date',
+			'lastlogin_date' => 'Lastlogin Date',
+			'lastlogin_ip' => 'Lastlogin Ip',
 		);
 	}
 
@@ -117,11 +117,11 @@ class UserHistoryEmail extends CActiveRecord
 		} else {
 			$criteria->compare('t.user_id',$this->user_id);
 		}
-		$criteria->compare('t.email',$this->email,true);
-		if($this->update_date != null && !in_array($this->update_date, array('0000-00-00 00:00:00', '0000-00-00')))
-			$criteria->compare('date(t.update_date)',date('Y-m-d', strtotime($this->update_date)));
+		if($this->lastlogin_date != null && !in_array($this->lastlogin_date, array('0000-00-00 00:00:00', '0000-00-00')))
+			$criteria->compare('date(t.lastlogin_date)',date('Y-m-d', strtotime($this->lastlogin_date)));
+		$criteria->compare('t.lastlogin_ip',$this->lastlogin_ip,true);
 
-		if(!isset($_GET['UserHistoryEmail_sort']))
+		if(!isset($_GET['UserHistoryLogin_sort']))
 			$criteria->order = 'id DESC';
 
 		return new CActiveDataProvider($this, array(
@@ -152,8 +152,8 @@ class UserHistoryEmail extends CActiveRecord
 		} else {
 			//$this->defaultColumns[] = 'id';
 			$this->defaultColumns[] = 'user_id';
-			$this->defaultColumns[] = 'email';
-			$this->defaultColumns[] = 'update_date';
+			$this->defaultColumns[] = 'lastlogin_date';
+			$this->defaultColumns[] = 'lastlogin_ip';
 		}
 
 		return $this->defaultColumns;
@@ -177,21 +177,20 @@ class UserHistoryEmail extends CActiveRecord
 				'value' => '$this->grid->dataProvider->pagination->currentPage*$this->grid->dataProvider->pagination->pageSize + $row+1'
 			);
 			$this->defaultColumns[] = 'user_id';
-			$this->defaultColumns[] = 'email';
 			$this->defaultColumns[] = array(
-				'name' => 'update_date',
-				'value' => 'Utility::dateFormat($data->update_date)',
+				'name' => 'lastlogin_date',
+				'value' => 'Utility::dateFormat($data->lastlogin_date)',
 				'htmlOptions' => array(
 					'class' => 'center',
 				),
 				'filter' => Yii::app()->controller->widget('zii.widgets.jui.CJuiDatePicker', array(
 					'model'=>$this,
-					'attribute'=>'update_date',
+					'attribute'=>'lastlogin_date',
 					'language' => 'ja',
 					'i18nScriptFile' => 'jquery.ui.datepicker-en.js',
 					//'mode'=>'datetime',
 					'htmlOptions' => array(
-						'id' => 'update_date_filter',
+						'id' => 'lastlogin_date_filter',
 					),
 					'options'=>array(
 						'showOn' => 'focus',
@@ -204,6 +203,7 @@ class UserHistoryEmail extends CActiveRecord
 					),
 				), true),
 			);
+			$this->defaultColumns[] = 'lastlogin_ip';
 		}
 		parent::afterConstruct();
 	}
@@ -255,6 +255,7 @@ class UserHistoryEmail extends CActiveRecord
 	/*
 	protected function beforeSave() {
 		if(parent::beforeSave()) {
+			//$this->lastlogin_date = date('Y-m-d', strtotime($this->lastlogin_date));
 		}
 		return true;	
 	}
