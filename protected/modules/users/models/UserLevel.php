@@ -319,23 +319,6 @@ class UserLevel extends CActiveRecord
 			return false;
 		}
 	}
-
-
-	/**
-	 * before validate attributes
-	 */
-	protected function beforeValidate() {
-		if(parent::beforeValidate()) {		
-			if($this->isNewRecord) {
-				$this->profile_privacy = '-';
-				$this->profile_comments = '-';
-				$this->photo_width = 200;
-				$this->photo_height = 200;
-				$this->photo_exts = 'jpg,jpeg,gif,png';
-			}
-		}
-		return true;
-	}
 	
 	/**
 	 * before save attributes
