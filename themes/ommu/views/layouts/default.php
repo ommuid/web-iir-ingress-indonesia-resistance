@@ -42,7 +42,7 @@ if(isset($_GET['protocol']) && $_GET['protocol'] == 'script') {
 			$return = array(
 				'redirect' => $urlAddress,		
 			);
-		
+
 		} else {
 			$page = $this->contentOther == true ? 1 : 0;
 			$dialog = $this->dialogDetail == true ? (empty($this->dialogWidth) ? 1 : 2) : 0;		// 0 = static, 1 = dialog, 2 = notifier

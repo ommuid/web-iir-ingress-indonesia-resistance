@@ -1,12 +1,20 @@
-/* form.css *
-* Copyright (c) 2012, Nirwasita Studio. All rights reserved.
-* version: 0.1.0
-*
-*	CSS Reset
-*	Input
-*	Content
-*
-*/ 
+/** 
+ * form.css
+ * @author Putra Sudaryanto <putra.sudaryanto@gmail.com>
+ * @copyright Copyright (c) 2014 Ommu Platform (ommu.co)
+ * version: 0.1.0
+ * @link http://company.ommu.co
+ * @contact (+62)856-299-4114
+ *
+ *	Input : custom size
+ *	Input : reset default browser style
+ *	Message
+ *	Content
+ *	Form
+ * 	Dialog
+ *	Responsive
+ *
+ */
 
 /* =CSS Reset : reset default browser style
 -------------------------------------------------------------*/
@@ -308,8 +316,7 @@ a.button:active {
 	background-image: linear-gradient(to bottom,#787b83 0,#44474e 100%);
 }
 
-
-/* Message
+/* =Message
 -------------------------------------------------------------- */
 .body div.errorSummary {
 	display: none;

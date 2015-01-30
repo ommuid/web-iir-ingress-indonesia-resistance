@@ -110,6 +110,16 @@ function dialogClosedPush() {
 
 //dialog close action
 function dialogActionClosed() {
+	$('.dialog .dialog-box a.closed').click(function(){
+		dialogClosed();
+		dialogClosedPush();
+	});
+	$('.notifier .dialog-box input#closed').click(function(){
+		notifierClosed();
+		if($('div[name="dialog-wrapper"]').html() == '') {
+			dialogClosedPush();
+		}
+	});
 	/* $("div.dialog .dialog-box .content").mouseup(function() {
 		return false
 	});
@@ -120,17 +130,6 @@ function dialogActionClosed() {
 			dialogClosedPush();
 		}
 	}); */
-
-	$('.dialog .dialog-box a.closed').live('click',function(){
-		dialogClosed();
-		dialogClosedPush();
-	});
-	$('.notifier .dialog-box input#closed').live('click',function(){
-		notifierClosed();
-		if($('div[name="dialog-wrapper"]').html() == '') {
-			dialogClosedPush();
-		}
-	});
 }
 
 /**
@@ -164,7 +163,7 @@ function ajaxFunction() {
 	});
 
 	// Default url push
-	$('a:not("[off_address]")').live('click',function(){
+	$('a:not("[off_address]")').click(function(){
 		var url = $(this).attr('href');
 		if (typeof(url) != 'undefined') {
 			if(url != 'javascript:void(0);') {
@@ -179,7 +178,7 @@ function ajaxFunction() {
 	*/
 	
 	// Custom show dialog
-	$('a.link-dialog').live('click', function() {
+	$('a.link-dialog').click(function() {
 		var id = $(this).attr('id');
 		var width = $(this).attr('rel');
 		var url = $(this).attr('href');
@@ -224,7 +223,7 @@ $(document).ready(function() {
 	 */ 
 
 	// Dialog and General Function Form
-	$('div[name="post-on"] form, .dialog .dialog-box form:not("[on_post]"), .notifier .dialog-box form:not("[on_post]")').live('submit', function(event) {
+	$('div[name="post-on"] form, .dialog .dialog-box form:not("[on_post]"), .notifier .dialog-box form:not("[on_post]")').submit(function(event) {
 		$(this).find('input[type="submit"]').addClass('active');
 		var attrSave = '?&enablesave=' + isEnableSave;
 		//var attrSave = '/enablesave/' + isEnableSave;
@@ -451,13 +450,13 @@ if(dialogGroundUrl != '') {
 					var content = data.render.content;
 				else 
 					var content = data.render;
-					
+
 				if(data.dialog == 0) {
 					//push title and last url
 					lastTitle = data.title;
 					lastDescription = data.description;
 					lastKeywords = data.keywords;
-					lastUrl = data.address;				
+					lastUrl = data.address;
 					$('div.body .sidebar .menu').html(data.header);
 					$('div.body div.wrapper').html(content);
 
@@ -581,7 +580,7 @@ utilityFunction();
  * 
  **/
 function reinstallDatePicker() {
-	$('input[on_datepicker]').live('focus',function(){
+	$('input[on_datepicker]').focus(function(){
 		$(this).datepicker(jQuery.extend({showMonthAfterYear:false},jQuery.datepicker.regional['ja'],[]));
 	});
 }

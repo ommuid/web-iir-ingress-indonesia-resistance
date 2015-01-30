@@ -1,17 +1,28 @@
-/* typography.css *
-* Copyright (c) 2012, Nirwasita Studio. All rights reserved.
-* version: 0.1.0
-*
-*	CSS Reset
-*	Headings
-*	Hyperlink
-*	Subscript and Superscript
-*	Paragraf
-*	Font-Family
-*	Misc class for general use
-*	Content
-*
-*/ 
+/** 
+ * typography.css
+ * @author Putra Sudaryanto <putra.sudaryanto@gmail.com>
+ * @copyright Copyright (c) 2014 Ommu Platform (ommu.co)
+ * version: 0.1.0
+ * @link http://company.ommu.co
+ * @contact (+62)856-299-4114
+ *
+ *	Import Google Font
+ *	CSS Reset : reset default browser style
+ *	Headings
+ *	Hyperlink
+ *	Subscript and Superscript
+ *	Paragraf
+ *	Font-Family
+ *	Misc class for general use
+ *	Content
+ *	Responsive
+ *
+ */
+
+/*
+@import url(http://fonts.googleapis.com/css?family=Raleway:300,400,500,600,700);
+@import url(http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,300,400,600,700);
+*/
 
 /* =CSS Reset : reset default browser style
 -------------------------------------------------------------*/
