@@ -10,14 +10,9 @@
  *
  * TOC :
  *	Index
- *	View
- *	Manage
- *	Add
- *	Edit
- *	RunAction
- *	Delete
- *	Publish
- *	Headline
+ *	Login
+ *	Email
+ *	Password
  *
  *	LoadModel
  *	performAjaxValidation
