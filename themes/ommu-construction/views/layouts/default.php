@@ -22,38 +22,14 @@ if(isset($_GET['protocol']) && $_GET['protocol'] == 'script') {
 
 	/**
 	 * = Dialog Condition
-	 * $construction = 1 (construction active)
 	 */
-	if($construction == 1) {
-		if($this->pageGuest == false) {
-			if($currentModuleAction == 'support/newsletter/subscribe' || (Yii::app()->request->isAjaxRequest && (($module == null || ($module != null && $module == 'pose')) && $currentAction == 'site/index'))) {
-			} else {
-				$this->redirect(Yii::app()->createUrl('support/newsletter/subscribe'));
-			}
-		}
+	if($this->dialogDetail == true) {
 		$dialogWidth = !empty($this->dialogWidth) ? ($this->dialogFixed == false ? $this->dialogWidth.'px' : '600px') : '900px';
-
 	} else {
-		if(Yii::app()->user->isGuest && $this->pageGuest == false && ($setting->site_type == 1 && $setting->signup_inviteonly != 0)) {
-			if(($module == null || ($module != null && $module == 'pose')) && $currentAction == 'site/index') {
-			} else {
-				$this->redirect(Yii::app()->createUrl('site/login'));
-			}
-		}
-		if($this->dialogDetail == true) {
-			$dialogWidth = !empty($this->dialogWidth) ? ($this->dialogFixed == false ? $this->dialogWidth.'px' : '600px') : '900px';
-		} else {
-			$dialogWidth = '';
-		}
+		$dialogWidth = '';
 	}
 	
 	$display = ($this->dialogDetail == true && !Yii::app()->request->isAjaxRequest) ? 'style="display: block;"' : '';
-	
-	/**
-	 * = Slider condition
-	 */	
-	$slideDisplay = Quicknews::findPublish('find', 1, 'quicknews_id');
-	$slideCondition = ($slideDisplay != null) ? 1 : 0;
 	
 	/**
 	 * = pushState condition
@@ -95,7 +71,6 @@ if(isset($_GET['protocol']) && $_GET['protocol'] == 'script') {
 			$return['apps'] = $apps;
 			$return['header'] = $this->dialogDetail != true ? $header : '';
 			$return['render'] = $render;
-			$return['slide'] = $slideCondition;
 			$return['script'] = $cs=Yii::app()->getClientScript()->getOmmuScript();
 		}
 		echo CJSON::encode($return);
@@ -112,10 +87,6 @@ if(isset($_GET['protocol']) && $_GET['protocol'] == 'script') {
 		$cs->registerScriptFile(Yii::app()->theme->baseUrl.'/js/plugin/less-1.7.4.min.js', CClientScript::POS_END);
 		//$cs->registerScriptFile(Yii::app()->theme->baseUrl.'/js/plugin/jquery.scrollTo.1.4.3.1-min.js', CClientScript::POS_END);
 		$cs->registerScriptFile(Yii::app()->theme->baseUrl.'/js/plugin/jquery.ajaxuplaod-3.5.js', CClientScript::POS_END);
-		if($slideDisplay != null) {
-			$cs->registerScriptFile(Yii::app()->request->baseUrl.'/externals/quicknews/plugin/supersized.3.2.7.min.js', CClientScript::POS_END);
-			$cs->registerScriptFile(Yii::app()->request->baseUrl.'/externals/quicknews/plugin/supersized.shutter.min.js', CClientScript::POS_END);
-		}
 		$cs->registerScriptFile(Yii::app()->theme->baseUrl.'/js/custom/custom.js', CClientScript::POS_END);
 		
 		//Javascript Attribute
@@ -127,8 +98,6 @@ if(isset($_GET['protocol']) && $_GET['protocol'] == 'script') {
 			'lastUrl'=>$urlAddress,
 			'dialogConstruction'=>$construction == 1 ? 1 : 0,
 			'dialogGroundUrl'=>$this->dialogDetail == true ? ($this->dialogGroundUrl != '' ? $this->dialogGroundUrl : '') : '',
-			'slide'=>$slideCondition,
-			'slideData'=>$slideDisplay != null ? Quicknews::getSlider('title, url, media') : '',
 		);
 		if($this->contentOther == true) {
 			$jsAttribute['contentOther'] = $this->contentAttribute;
@@ -140,7 +109,7 @@ if(isset($_GET['protocol']) && $_GET['protocol'] == 'script') {
   <meta charset="UTF-8" />
   <title><?php echo $title;?></title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="author" content="Ommu Platform (ommu@sudaryanto.me)" />
+  <meta name="author" content="Ommu Platform (putra@ommu.co)" />
   <script type="text/javascript">
 	var globals = '<?php echo CJSON::encode($jsAttribute);?>';
   </script>
@@ -186,27 +155,6 @@ if(isset($_GET['protocol']) && $_GET['protocol'] == 'script') {
 
 	<?php //begin.BodyContent ?>
 	<div class="body">
-		<?php //begin.Slider ?>
-		<div id="slider" class="slider <?php echo $slideCondition == 0 ? 'hide' : '' ?>">
-			<?php //begin.Thumbnail Navigation ?>
-			<div id="prevthumb"></div>
-			<div id="nextthumb"></div>
-		
-			<?php //begin.Time Bar ?>
-			<div id="progress-back" class="load-item">
-				<div id="progress-bar"></div>
-			</div>
-
-			<?php //Control Bar ?>
-			<div id="controls-wrapper" class="load-item">
-				<div id="controls">	
-					<?php //Navigation ?>
-					<ul id="slide-list"></ul>
-				</div>
-			</div>
-		</div>
-		<?php //end.Slider ?>
-
 		<?php //begin.Content ?>
 		<div class="wrapper"><?php echo $this->dialogDetail == false ? $content : '';?></div>
 		<?php //end.Content ?>
