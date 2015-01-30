@@ -2,12 +2,7 @@
 return array(
 	'modules' => array(
 		'article',
-		'download',
-		'faq',
-		'pose',
-		'product',
-		'project',
-		'quicknews',
+		'daop',
 		'report',
 		'support',
 		'users'

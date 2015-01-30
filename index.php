@@ -16,7 +16,7 @@ if(!file_exists(dirname(__FILE__).'/protected/runtime')) {
 }
 
 // change the following paths if necessary
-$yii    = dirname(__FILE__).'/../../yii-1.1.14/framework/yii.php';
+$yii    = dirname(__FILE__).'/../../yii-1.1.16/framework/yii.php';
 $config = dirname(__FILE__).'/protected/config/common.php';
 
 if($_SERVER["SERVER_ADDR"]=='127.0.0.1' || $_SERVER["HTTP_HOST"]=='localhost') {

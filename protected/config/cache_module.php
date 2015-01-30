@@ -2,9 +2,13 @@ album
 article
 backup
 banner
+book
+daop
+directory
 download
 faq
 graduate
+kanban
 message
 payment
 personal
