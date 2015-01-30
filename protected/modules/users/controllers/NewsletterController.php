@@ -389,7 +389,7 @@ class NewsletterController extends Controller
 		}
 		$columns = $model->getGridColumn($columnTemp);
 
-		$this->pageTitle = Phrase::trans(23052,1);
+		$this->pageTitle = Phrase::trans(16243,1);
 		$this->pageDescription = '';
 		$this->pageMeta = '';
 		$this->render('admin_manage',array(

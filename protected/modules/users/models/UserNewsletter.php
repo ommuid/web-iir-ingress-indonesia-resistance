@@ -32,6 +32,9 @@ class UserNewsletter extends CActiveRecord
 {
 	public $defaultColumns = array();
 	public $unsubscribe;
+	
+	// Variable Search
+	public $user_search;
 
 	/**
 	 * Returns the static model of the specified AR class.
@@ -70,7 +73,8 @@ class UserNewsletter extends CActiveRecord
 				unsubscribe', 'safe'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('id, user_id, email, subscribe, subscribe_date, unsubscribe_date, unsubscribe_ip', 'safe', 'on'=>'search'),
+			array('id, user_id, email, subscribe, subscribe_date, unsubscribe_date, unsubscribe_ip,
+				user_search', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -93,12 +97,13 @@ class UserNewsletter extends CActiveRecord
 	{
 		return array(
 			'id' => 'ID',
-			'user_id' => 'User',
-			'email' => Phrase::trans(23056,1),
+			'user_id' => Phrase::trans(16001,1),
+			'email' => Phrase::trans(16108,1),
 			'subscribe' => Phrase::trans(23057,1),
 			'subscribe_date' => Phrase::trans(23058,1),
 			'unsubscribe_date' => Phrase::trans(23059,1),
 			'unsubscribe_ip' => Phrase::trans(23060,1),
+			'user_id' => Phrase::trans(16001,1),
 		);
 	}
 	
@@ -122,6 +127,15 @@ class UserNewsletter extends CActiveRecord
 		if($this->unsubscribe_date != null && !in_array($this->unsubscribe_date, array('0000-00-00 00:00:00', '0000-00-00')))
 			$criteria->compare('date(t.unsubscribe_date)',date('Y-m-d', strtotime($this->unsubscribe_date)));
 		$criteria->compare('t.unsubscribe_ip',$this->unsubscribe_ip,true);
+		
+		// Custom Search
+		$criteria->with = array(
+			'user' => array(
+				'alias'=>'user',
+				'select'=>'displayname'
+			),
+		);
+		$criteria->compare('user.displayname',strtolower($this->user_search), true);
 		
 		if(!isset($_GET['UserNewsletter_sort'])) {
 			$criteria->order = 'id DESC';
@@ -175,14 +189,18 @@ class UserNewsletter extends CActiveRecord
 				'value' => '$this->grid->dataProvider->pagination->currentPage*$this->grid->dataProvider->pagination->pageSize + $row+1'
 			);
 			$this->defaultColumns[] = array(
+				'name' => 'user_search',
+				'value' => '$data->user_id != 0 ? $data->user->displayname : "-"',
+			);
+			$this->defaultColumns[] = array(
 				'name' => 'email',
-				'value' => '$data->user_id == 0 ? $data->email : $data->user->email',
+				'value' => '$data->email',
 			);
 			$this->defaultColumns[] = array(
 				'name' => 'subscribe_date',
-				'value' => 'Utility::dateFormat($data->subscribe_date)',
+				'value' => 'Utility::dateFormat($data->subscribe_date, true)',
 				'htmlOptions' => array(
-					'class' => 'center',
+					//'class' => 'center',
 				),
 				'filter' => Yii::app()->controller->widget('zii.widgets.jui.CJuiDatePicker', array(
 					'model'=>$this, 
@@ -206,9 +224,9 @@ class UserNewsletter extends CActiveRecord
 			);
 			$this->defaultColumns[] = array(
 				'name' => 'unsubscribe_date',
-				'value' => 'Utility::dateFormat($data->unsubscribe_date)',
+				'value' => '$data->unsubscribe_date == "0000-00-00 00:00:00" ? "-" : Utility::dateFormat($data->unsubscribe_date, true)',
 				'htmlOptions' => array(
-					'class' => 'center',
+					//'class' => 'center',
 				),
 				'filter' => Yii::app()->controller->widget('zii.widgets.jui.CJuiDatePicker', array(
 					'model'=>$this, 
@@ -234,7 +252,7 @@ class UserNewsletter extends CActiveRecord
 				'name' => 'unsubscribe_ip',
 				'value' => '$data->unsubscribe_ip',
 				'htmlOptions' => array(
-					'class' => 'center',
+					//'class' => 'center',
 				),
 			);
 			$this->defaultColumns[] = array(
