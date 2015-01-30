@@ -1,6 +1,6 @@
 <?php
-
 /**
+ * UserStatisticTotal
  * @author Putra Sudaryanto <putra.sudaryanto@gmail.com>
  * @copyright Copyright (c) 2014 Ommu Platform (ommu.co)
  * @link http://company.ommu.co
@@ -31,6 +31,7 @@ class UserStatisticTotal extends CActiveRecord
 
 	/**
 	 * Returns the static model of the specified AR class.
+	 * Please note that you should have this exact method in all your CActiveRecord descendants!
 	 * @param string $className active record class name.
 	 * @return UserStatisticTotal the static model class
 	 */
@@ -60,7 +61,7 @@ class UserStatisticTotal extends CActiveRecord
 			array('statistic_key', 'length', 'max'=>32),
 			array('note', 'length', 'max'=>64),
 			// The following rule is used by search().
-			// Please remove those attributes that should not be searched.
+			// @todo Please remove those attributes that should not be searched.
 			array('statistic_key, total, flag, note', 'safe', 'on'=>'search'),
 		);
 	}
@@ -88,15 +89,22 @@ class UserStatisticTotal extends CActiveRecord
 			'note' => 'Note',
 		);
 	}
-	
+
 	/**
 	 * Retrieves a list of models based on the current search/filter conditions.
-	 * @return CActiveDataProvider the data provider that can return the models based on the search/filter conditions.
+	 *
+	 * Typical usecase:
+	 * - Initialize the model fields with values from filter form.
+	 * - Execute this method to get CActiveDataProvider instance which will filter
+	 * models according to data in model fields.
+	 * - Pass data provider to CGridView, CListView or any similar widget.
+	 *
+	 * @return CActiveDataProvider the data provider that can return the models
+	 * based on the search/filter conditions.
 	 */
 	public function search()
 	{
-		// Warning: Please modify the following code to remove attributes that
-		// should not be searched.
+		// @todo Please modify the following code to remove attributes that should not be searched.
 
 		$criteria=new CDbCriteria;
 
@@ -110,6 +118,9 @@ class UserStatisticTotal extends CActiveRecord
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
+			'pagination'=>array(
+				'pageSize'=>30,
+			),
 		));
 	}
 
@@ -130,7 +141,7 @@ class UserStatisticTotal extends CActiveRecord
 				*/
 				$this->defaultColumns[] = $val;
 			}
-		}else {
+		} else {
 			//$this->defaultColumns[] = 'statistic_key';
 			$this->defaultColumns[] = 'total';
 			$this->defaultColumns[] = 'flag';
@@ -145,11 +156,30 @@ class UserStatisticTotal extends CActiveRecord
 	 */
 	protected function afterConstruct() {
 		if(count($this->defaultColumns) == 0) {
-			$this->defaultColumns[] = 'flag';
+			$this->defaultColumns[] = array(
+				'header' => 'No',
+				'value' => '$this->grid->dataProvider->pagination->currentPage*$this->grid->dataProvider->pagination->pageSize + $row+1'
+			);
 			$this->defaultColumns[] = 'statistic_key';
 			$this->defaultColumns[] = 'total';
-			$this->defaultColumns[] = 'note';
 		}
 		parent::afterConstruct();
+	}
+
+	/**
+	 * User get information
+	 */
+	public static function getInfo($id, $column=null)
+	{
+		if($column != null) {
+			$model = self::model()->findByPk($id,array(
+				'select' => $column
+			));
+			return $model->$column;
+			
+		} else {
+			$model = self::model()->findByPk($id);
+			return $model;			
+		}
 	}
 }

@@ -1,6 +1,6 @@
 <?php
-
 /**
+ * UserStatisticData
  * @author Putra Sudaryanto <putra.sudaryanto@gmail.com>
  * @copyright Copyright (c) 2014 Ommu Platform (ommu.co)
  * @link http://company.ommu.co
@@ -31,6 +31,7 @@ class UserStatisticData extends CActiveRecord
 
 	/**
 	 * Returns the static model of the specified AR class.
+	 * Please note that you should have this exact method in all your CActiveRecord descendants!
 	 * @param string $className active record class name.
 	 * @return UserStatisticData the static model class
 	 */
@@ -59,7 +60,7 @@ class UserStatisticData extends CActiveRecord
 			array('flag', 'numerical', 'integerOnly'=>true),
 			array('content_id', 'length', 'max'=>11),
 			// The following rule is used by search().
-			// Please remove those attributes that should not be searched.
+			// @todo Please remove those attributes that should not be searched.
 			array('id, content_id, flag, creation_date', 'safe', 'on'=>'search'),
 		);
 	}
@@ -87,15 +88,22 @@ class UserStatisticData extends CActiveRecord
 			'creation_date' => 'Creation Date',
 		);
 	}
-	
+
 	/**
 	 * Retrieves a list of models based on the current search/filter conditions.
-	 * @return CActiveDataProvider the data provider that can return the models based on the search/filter conditions.
+	 *
+	 * Typical usecase:
+	 * - Initialize the model fields with values from filter form.
+	 * - Execute this method to get CActiveDataProvider instance which will filter
+	 * models according to data in model fields.
+	 * - Pass data provider to CGridView, CListView or any similar widget.
+	 *
+	 * @return CActiveDataProvider the data provider that can return the models
+	 * based on the search/filter conditions.
 	 */
 	public function search()
 	{
-		// Warning: Please modify the following code to remove attributes that
-		// should not be searched.
+		// @todo Please modify the following code to remove attributes that should not be searched.
 
 		$criteria=new CDbCriteria;
 
@@ -110,6 +118,9 @@ class UserStatisticData extends CActiveRecord
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
+			'pagination'=>array(
+				'pageSize'=>30,
+			),
 		));
 	}
 
@@ -130,7 +141,7 @@ class UserStatisticData extends CActiveRecord
 				*/
 				$this->defaultColumns[] = $val;
 			}
-		}else {
+		} else {
 			//$this->defaultColumns[] = 'id';
 			$this->defaultColumns[] = 'content_id';
 			$this->defaultColumns[] = 'flag';
@@ -145,11 +156,18 @@ class UserStatisticData extends CActiveRecord
 	 */
 	protected function afterConstruct() {
 		if(count($this->defaultColumns) == 0) {
+			/*
+			$this->defaultColumns[] = array(
+				'class' => 'CCheckBoxColumn',
+				'name' => 'id',
+				'selectableRows' => 2,
+				'checkBoxHtmlOptions' => array('name' => 'trash_id[]')
+			);
+			*/
 			$this->defaultColumns[] = array(
 				'header' => 'No',
 				'value' => '$this->grid->dataProvider->pagination->currentPage*$this->grid->dataProvider->pagination->pageSize + $row+1'
 			);
-			//$this->defaultColumns[] = 'id';
 			$this->defaultColumns[] = 'content_id';
 			$this->defaultColumns[] = 'flag';
 			$this->defaultColumns[] = array(
@@ -159,8 +177,8 @@ class UserStatisticData extends CActiveRecord
 					'class' => 'center',
 				),
 				'filter' => Yii::app()->controller->widget('zii.widgets.jui.CJuiDatePicker', array(
-					'model'=>$this, 
-					'attribute'=>'creation_date', 
+					'model'=>$this,
+					'attribute'=>'creation_date',
 					'language' => 'ja',
 					'i18nScriptFile' => 'jquery.ui.datepicker-en.js',
 					//'mode'=>'datetime',
@@ -181,4 +199,22 @@ class UserStatisticData extends CActiveRecord
 		}
 		parent::afterConstruct();
 	}
+
+	/**
+	 * User get information
+	 */
+	public static function getInfo($id, $column=null)
+	{
+		if($column != null) {
+			$model = self::model()->findByPk($id,array(
+				'select' => $column
+			));
+			return $model->$column;
+			
+		} else {
+			$model = self::model()->findByPk($id);
+			return $model;			
+		}
+	}
+
 }
