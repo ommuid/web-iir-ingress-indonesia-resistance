@@ -130,7 +130,7 @@ class HistoryController extends Controller
 		}
 		$columns = $model->getGridColumn($columnTemp);
 
-		$this->pageTitle = 'User History Logins Manage';
+		$this->pageTitle = Phrase::trans(16237,1);
 		$this->pageDescription = '';
 		$this->pageMeta = '';
 		$this->render('admin_history_login',array(
@@ -160,7 +160,7 @@ class HistoryController extends Controller
 		}
 		$columns = $model->getGridColumn($columnTemp);
 
-		$this->pageTitle = 'User History Logins Manage';
+		$this->pageTitle = Phrase::trans(16238,1);
 		$this->pageDescription = '';
 		$this->pageMeta = '';
 		$this->render('admin_history_email',array(
@@ -190,7 +190,7 @@ class HistoryController extends Controller
 		}
 		$columns = $model->getGridColumn($columnTemp);
 
-		$this->pageTitle = 'User History Logins Manage';
+		$this->pageTitle = Phrase::trans(16239,1);
 		$this->pageDescription = '';
 		$this->pageMeta = '';
 		$this->render('admin_history_password',array(

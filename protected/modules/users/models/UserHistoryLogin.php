@@ -31,6 +31,9 @@
 class UserHistoryLogin extends CActiveRecord
 {
 	public $defaultColumns = array();
+	
+	// Variable Search
+	public $user_search;
 
 	/**
 	 * Returns the static model of the specified AR class.
@@ -64,7 +67,8 @@ class UserHistoryLogin extends CActiveRecord
 			array('lastlogin_ip', 'length', 'max'=>20),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, user_id, lastlogin_date, lastlogin_ip', 'safe', 'on'=>'search'),
+			array('id, user_id, lastlogin_date, lastlogin_ip,
+				user_search', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -76,7 +80,7 @@ class UserHistoryLogin extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'user' => array(self::BELONGS_TO, 'OmmuUsers', 'user_id'),
+			'user' => array(self::BELONGS_TO, 'Users', 'user_id'),
 		);
 	}
 
@@ -87,9 +91,10 @@ class UserHistoryLogin extends CActiveRecord
 	{
 		return array(
 			'id' => 'ID',
-			'user_id' => 'User',
-			'lastlogin_date' => 'Lastlogin Date',
-			'lastlogin_ip' => 'Lastlogin Ip',
+			'user_id' => Phrase::trans(16001,1),
+			'lastlogin_date' => Phrase::trans(16164,1),
+			'lastlogin_ip' => Phrase::trans(16165,1),
+			'user_search' => Phrase::trans(16001,1),
 		);
 	}
 
@@ -120,6 +125,15 @@ class UserHistoryLogin extends CActiveRecord
 		if($this->lastlogin_date != null && !in_array($this->lastlogin_date, array('0000-00-00 00:00:00', '0000-00-00')))
 			$criteria->compare('date(t.lastlogin_date)',date('Y-m-d', strtotime($this->lastlogin_date)));
 		$criteria->compare('t.lastlogin_ip',$this->lastlogin_ip,true);
+		
+		// Custom Search
+		$criteria->with = array(
+			'user' => array(
+				'alias'=>'user',
+				'select'=>'displayname'
+			),
+		);
+		$criteria->compare('user.displayname',strtolower($this->user_search), true);
 
 		if(!isset($_GET['UserHistoryLogin_sort']))
 			$criteria->order = 'id DESC';
@@ -176,12 +190,15 @@ class UserHistoryLogin extends CActiveRecord
 				'header' => 'No',
 				'value' => '$this->grid->dataProvider->pagination->currentPage*$this->grid->dataProvider->pagination->pageSize + $row+1'
 			);
-			$this->defaultColumns[] = 'user_id';
+			$this->defaultColumns[] = array(
+				'name' => 'user_search',
+				'value' => '$data->user->displayname',
+			);
 			$this->defaultColumns[] = array(
 				'name' => 'lastlogin_date',
-				'value' => 'Utility::dateFormat($data->lastlogin_date)',
+				'value' => 'Utility::dateFormat($data->lastlogin_date, true)',
 				'htmlOptions' => array(
-					'class' => 'center',
+					//'class' => 'center',
 				),
 				'filter' => Yii::app()->controller->widget('zii.widgets.jui.CJuiDatePicker', array(
 					'model'=>$this,
@@ -224,73 +241,5 @@ class UserHistoryLogin extends CActiveRecord
 			return $model;			
 		}
 	}
-
-	/**
-	 * before validate attributes
-	 */
-	/*
-	protected function beforeValidate() {
-		if(parent::beforeValidate()) {
-			// Create action
-		}
-		return true;
-	}
-	*/
-
-	/**
-	 * after validate attributes
-	 */
-	/*
-	protected function afterValidate()
-	{
-		parent::afterValidate();
-			// Create action
-		return true;
-	}
-	*/
-	
-	/**
-	 * before save attributes
-	 */
-	/*
-	protected function beforeSave() {
-		if(parent::beforeSave()) {
-			//$this->lastlogin_date = date('Y-m-d', strtotime($this->lastlogin_date));
-		}
-		return true;	
-	}
-	*/
-	
-	/**
-	 * After save attributes
-	 */
-	/*
-	protected function afterSave() {
-		parent::afterSave();
-		// Create action
-	}
-	*/
-
-	/**
-	 * Before delete attributes
-	 */
-	/*
-	protected function beforeDelete() {
-		if(parent::beforeDelete()) {
-			// Create action
-		}
-		return true;
-	}
-	*/
-
-	/**
-	 * After delete attributes
-	 */
-	/*
-	protected function afterDelete() {
-		parent::afterDelete();
-		// Create action
-	}
-	*/
 
 }
