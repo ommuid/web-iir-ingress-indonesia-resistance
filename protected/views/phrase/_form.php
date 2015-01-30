@@ -42,8 +42,8 @@
 			<?php echo CHtml::label($val->name, 'OmmuPhrases_'.$val->code); ?>
 			<div class="desc">
 				<?php 
-				//echo $form->textArea($model,$val->code,array('rows'=>6, 'cols'=>50, 'class'=>'span-11 smaller'));
-				$this->widget('application.extensions.cleditor.ECLEditor', array(
+				echo $form->textArea($model,$val->code,array('rows'=>6, 'cols'=>50, 'class'=>'span-11 smaller'));
+				/*$this->widget('application.extensions.cleditor.ECLEditor', array(
 					'model'=>$model,
 					'attribute'=>$val->code,
 					'options'=>array(
@@ -52,7 +52,7 @@
 						'useCSS'=>true,
 						'controls'=>'bold italic underline strikethrough subscript superscript | bullets numbering | outdent indent | alignleft center alignright justify | undo redo | rule image link unlink | cut copy paste pastetext | print source',
 					),
-				)); ?>
+				));*/ ?>
 				<?php echo $form->error($model, $val->code); ?>
 			</div>
 		</div>
