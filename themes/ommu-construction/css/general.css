@@ -1,0 +1,178 @@
+/**
+ * general.css
+ * @author Putra Sudaryanto <putra.sudaryanto@gmail.com>
+ * @copyright Copyright (c) 2014 Ommu Platform (ommu.co)
+ * version: 0.1.0
+ * @link http://company.ommu.co
+ * @contact (+62)856-299-4114
+ *
+ *	CSS Reset
+ *	Icons
+ *	Lists
+ *	Images
+ *	Tables
+ *	Misc class for general use
+ *
+ */ 
+
+/* =CSS Reset : reset default browser style
+-------------------------------------------------------------*/
+html, body, div, span, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, code,
+del, dfn, em, img, q, dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, details, figcaption, figure, footer, header,
+hgroup, nav, section {
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
+article, aside, details, figcaption, figure, footer,
+header, hgroup, nav, section {
+	display: block;
+}
+
+/* HTML */
+html {
+	-webkit-text-size-adjust: 100%;
+	-ms-text-size-adjust: 100%;
+}
+
+/* Multimedia */
+audio, canvas, video {
+	display: inline-block;
+	*display: inline;
+	*zoom: 1;
+}
+audio:not([controls]) {
+	display: none;
+}
+
+/* Container */
+.container {
+	margin-right: auto;
+	margin-left: auto;
+	*zoom: 1;
+}
+.container:before,
+.container:after {
+	display: table;
+	line-height: 0;
+	content: "";
+}
+.container:after {
+	clear: both;
+}
+
+/* =Lists 
+-------------------------------------------------------------*/
+ul, ol {
+	display: block;
+	padding: 0;
+	margin: 0 0 10px 25px;
+}
+ul ul, ul ol,
+ol ol, ol ul {margin-bottom: 0;}
+li {line-height: 20px;}
+
+/* Unstyle */
+ul.unstyled, ol.unstyled {margin-left: 0; list-style: none;}
+
+
+/* =Images 
+-------------------------------------------------------------*/
+img {
+	display: block;
+	height: auto;
+	vertical-align: middle;
+	-ms-interpolation-mode: bicubic;
+}
+
+/* Custom */
+.img-rounded {
+	-webkit-border-radius: 6px;
+	-moz-border-radius: 6px;
+	border-radius: 6px;
+}
+.img-polaroid {
+	padding: 4px;
+	background-color: #fff;
+	border: 1px solid #ccc;
+	border: 1px solid rgba(0, 0, 0, 0.2);
+	-webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+	-moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+.img-circle {
+	-webkit-border-radius: 500px;
+	-moz-border-radius: 500px;
+	border-radius: 500px;
+}
+
+
+/* =Tables
+-------------------------------------------------------------*/
+table {width: 100%; border-collapse: collapse; border-spacing: 0;}
+.table {
+	display: table;
+	width: 100%;
+}
+.cell {
+	display: table-cell;
+}
+.row {
+	display: table-row;
+}
+
+
+/* =Misc class for general use 
+------------------------------------------------------------ */
+/* Hidden */
+.hide, .hidden, .display-none {display: none;}
+.invisible {visibility: hidden;}
+
+/* Arrow style */
+.right, .float-right, .pull-right {float: right;} 
+.left, .float-left, .pull-left {float: left;} 
+.block, .show {display: block;} 
+.inline {display: inline;} 
+.inline-block {display: inline-block;}
+
+/*Remove n Clear*/
+.clear {
+	clear: both;
+	width: 100%;
+}
+.clearfix {*zoom: 1;}
+.clearfix:before, 
+.clearfix:after {
+	content: ".";
+	display: block;
+	height: 0px;
+	overflow: hidden;
+	visibility: hidden;
+	width: 0px;
+}
+.clearfix:after {clear: both;}
+
+/* Vertical Position style */
+.v-top {vertical-align: top;} 
+.v-middle {vertical-align: middle;} 
+.v-bottom {vertical-align: bottom;}
+
+/* Positioning */
+.relative {position: relative;} 
+.absolute {position: absolute;} 
+.fixed {position: fixed;}
+
+/* Padding and Margin */
+.pt-0 {padding-top: 0px;} .pt-5 {padding-top: 5px;} .pt-10 {padding-top: 10px;} .pt-15 {padding-top: 15px;} .pt-20 {padding-top: 20px;} .pt-25 {padding-top: 25px;}
+.pr-0 {padding-right: 0px;} .pr-5 {padding-right: 5px;} .pr-10 {padding-right: 10px;} .pr-15 {padding-right: 15px;} .pr-20 {padding-right: 20px;} .pr-25 {padding-right: 25px;}
+.pb-0 {padding-bottom: 0px;} .pb-5 {padding-bottom: 5px;} .pb-10 {padding-bottom: 10px;} .pb-15 {padding-bottom: 15px;} .pb-20 {padding-bottom: 20px;} .pb-25 {padding-bottom: 25px;}
+.pl-0 {padding-left: 0px;} .pl-5 {padding-left: 5px;} .pl-10 {padding-left: 10px;} .pl-15 {padding-left: 15px;} .pl-20 {padding-left: 20px;} .pl-25 {padding-left: 25px;}
+.mt-0 {margin-top: 0px;} .mt-5 {margin-top: 5px;} .mt-10 {margin-top: 10px;} .mt-15 {margin-top: 15px;} .mt-20 {margin-top: 20px;} .mt-25 {margin-top: 25px;}
+.mr-0 {margin-right: 0px;} .mr-5 {margin-right: 5px;} .mr-10 {margin-right: 10px;} .mr-15 {margin-right: 15px;} .mr-20 {margin-right: 20px;} .mr-25 {margin-right: 25px;}
+.mb-0 {margin-bottom: 0px;} .mb-5 {margin-bottom: 5px;} .mb-10 {margin-bottom: 10px;} .mb-15 {margin-bottom: 15px;} .mb-20 {margin-bottom: 20px;} .mb-25 {margin-bottom: 25px;}
+.ml-0 {margin-left: 0px;} .ml-5 {margin-left: 5px;} .ml-10 {margin-left: 10px;} .ml-15 {margin-left: 15px;} .ml-20 {margin-left: 20px;} .ml-25 {margin-left: 25px;}
