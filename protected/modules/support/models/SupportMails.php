@@ -61,7 +61,7 @@ class SupportMails extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('email, subject, message', 'required'),
+			array('email, displayname, subject, message', 'required'),
 			//array('displayname, phone', 'required', 'on'=>'contactus'),
 			array('', 'numerical', 'integerOnly'=>true),
 			array('user_id, reply', 'length', 'max'=>11),
