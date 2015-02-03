@@ -118,7 +118,7 @@ class PageController extends Controller
 		$this->layout = $arrThemes['layout'];
 		Utility::applyCurrentTheme($this->module);
 		
-		$this->pageGuest = true;
+		//$this->pageGuest = true;
 		
 		if($id == null) {
 			$criteria=new CDbCriteria;

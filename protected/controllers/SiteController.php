@@ -54,7 +54,7 @@ class SiteController extends Controller
 		$arrThemes = Utility::getCurrentTemplate('public');
 		Yii::app()->theme = $arrThemes['folder'];
 		$this->layout = $arrThemes['layout'];
-		$this->pageGuest = true;
+		//$this->pageGuest = true;
 	}
 
 	/**
@@ -84,32 +84,27 @@ class SiteController extends Controller
 
 		//$this->ownerId = 2;
 		$setting = OmmuSettings::model()->findByPk(1,array(
-			'select' => 'online, site_title, construction_date, construction_text',
+			'select' => 'online, construction_date',
 		));
 		//$this->redirect(Yii::app()->createUrl('project/site/index'));
 
 		if($setting->online == 0 && date('Y-m-d', strtotime($setting->construction_date)) > date('Y-m-d')) {
-			$render = 'front_construction';
-			/* $this->pageTitle = Phrase::trans(329,0);
-			$this->pageDescription = '';
-			$this->pageMeta = '';
-			$render = 'front_construction'; */
+			$this->redirect(Yii::app()->createUrl('maintenance/index'));
 
 		} else {
-			$render = 'front_index';
 			/* if(!Yii::app()->user->isGuest) {
 				$this->redirect(Yii::app()->createUrl('pose/site/index'));
 			} else {
 				$render = 'front_index';
 			} */
-		}
 
-		$this->pageTitle = $setting->site_title;
-		$this->pageDescription = '';
-		$this->pageMeta = '';
-		$this->render($render, array(
-			'setting'=>$setting,
-		));
+			$this->pageTitle = '';
+			$this->pageDescription = '';
+			$this->pageMeta = '';
+			$this->render('front_index', array(
+				'setting'=>$setting,
+			));
+		}
 	}
 
 	/**
