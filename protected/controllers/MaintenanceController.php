@@ -103,14 +103,70 @@ class MaintenanceController extends Controller
 			}
 			Yii::app()->end();
 			
-		} else {
-		
+		} else {		
 			$this->pageTitle = isset($_GET['email']) ? Phrase::trans(23121,1) : Phrase::trans(23102,1);
 			$this->pageDescription = isset($_GET['email']) ? (isset($_GET['name']) ? Phrase::trans(23123,1, array($_GET['name'], $_GET['email'])) : Phrase::trans(23122,1, array($_GET['email']))) : '';
 			$this->pageMeta = '';
 			$this->render('front_feedback',array(
 				'model'=>$model,
 				'user'=>$user,
+			));
+		}
+	}
+
+	/**
+	 * This is the default 'index' action that is invoked
+	 * when an action is not explicitly requested by users.
+	 */
+	public function actionSubscribe()
+	{
+		$model=new UserNewsletter;
+
+		// Uncomment the following line if AJAX validation is needed
+		//$this->performAjaxValidation($model);
+
+		if(isset($_POST['UserNewsletter'])) {
+			$model->attributes=$_POST['UserNewsletter'];
+
+			$jsonError = CActiveForm::validate($model);
+			if(strlen($jsonError) > 2) {
+				echo $jsonError;
+				
+			} else {
+				if(isset($_GET['enablesave']) && $_GET['enablesave'] == 1) {
+					if($model->save()) {
+						if($model->user_id == 0) {
+							$get = Yii::app()->controller->createUrl('subscribe', array('name'=>$model->email, 'email'=>$model->email));
+						} else {
+							$get = Yii::app()->controller->createUrl('subscribe', array('name'=>$model->user->displayname, 'email'=>$model->user->email));
+						}
+						echo CJSON::encode(array(
+							'type' => 5,
+							'get' => $get,
+						));
+					} else {
+						print_r($model->getErrors());
+					}
+				}
+			}
+			Yii::app()->end();
+			
+		} else {
+			$launch = 1;
+			if($launch == 0) {
+				$title = (isset($_GET['name']) && isset($_GET['email'])) ? Phrase::trans(23108,1) : Phrase::trans(16244,1);
+				$desc = (isset($_GET['name']) && isset($_GET['email'])) ? '' : Phrase::trans(16245,1);					
+			} else {
+				$title = (isset($_GET['name']) && isset($_GET['email'])) ? Phrase::trans(23105,1) : Phrase::trans(23103,1);
+				$desc = (isset($_GET['name']) && isset($_GET['email'])) ? '' : Phrase::trans(23104,1);			
+			}
+				
+			$this->pageTitle = $title;
+			$this->pageDescription = $desc;
+			$this->pageMeta = '';
+			$this->render('front_subscribe',array(
+				'model'=>$model,
+				'launch'=>$launch,
 			));
 		}
 	}

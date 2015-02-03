@@ -125,7 +125,7 @@ class ContactController extends Controller
 
 		$this->dialogDetail = true;
 		$this->dialogGroundUrl = Yii::app()->createUrl('site/index');
-		$this->pageGuest = true;
+		//$this->pageGuest = true;
 		
 		$this->pageTitle = Phrase::trans(23038,1);
 		$this->pageDescription = '';

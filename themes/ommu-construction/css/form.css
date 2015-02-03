@@ -578,31 +578,6 @@ fieldset.clearfix div.submit div.desc {
 	text-align: center;
 }
 
-/* Balance Position */
-fieldset.clearfix.balance div.left,
-fieldset.clearfix.balance div.right {
-	width: 50%;
-}
-fieldset.clearfix.balance div.right div.clearfix label,
-fieldset.clearfix.balance div.right div.clearfix div.desc {
-	float: left;
-}
-fieldset.clearfix.balance div.left div.clearfix label,
-fieldset.clearfix.balance div.right div.clearfix label {
-	width: 30%;
-}
-fieldset.clearfix.balance div.right div.clearfix.publish label {
-	display: block;
-}
-fieldset.clearfix.balance div.left div.clearfix div.desc,
-fieldset.clearfix.balance div.right div.clearfix div.desc {
-	width: 70%;
-	margin: 0 0 0 0;
-}
-fieldset.clearfix.balance div.right div.clearfix.publish div.desc label {
-	display: none;
-}
-
 /* Submit Button */
 div.submit-button {
 	padding: 15px 20px;
@@ -718,12 +693,6 @@ div.submit-button input {
 
 /* Resolution 600 */
 @media only screen and (max-width:600px) {
-	/* Fieldset Style */
-	.body fieldset div.intro,
-	.body fieldset div.clearfix,
-	fieldset.clearfix div.right div.clearfix {
-		padding: 10px 15px;
-	}
 	.body fieldset div label,
 	.body fieldset div div.desc,
 	fieldset.clearfix div.right div.clearfix label,

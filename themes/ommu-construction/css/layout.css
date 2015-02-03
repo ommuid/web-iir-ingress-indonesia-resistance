@@ -85,7 +85,7 @@ div.body .wrapper h1,
 div.body .wrapper h1 * {
 	text-transform: uppercase;
 	font-size: 35px;
-	font-size: 42px;
+	line-height: 41px;
 	font-weight: 300;
 	color: #fff;
 }
@@ -145,7 +145,8 @@ div.body .wrapper .boxed select {
 /* =Feedback
 -------------------------------------------------------------- */
 #feedback .boxed,
-#feedback p.notifier-on {
+#feedback p.notifier-on,
+#subscribe .boxed {
 	width: 500px;
 	margin: 25px auto 20px auto;
 }
@@ -188,6 +189,38 @@ div.body .wrapper .boxed select {
 	margin: 30px auto 30px auto;
 }
 
+/* =Subscribe
+-------------------------------------------------------------- */
+#subscribe .clearfix .table {}
+#subscribe .clearfix .table input[type="text"],
+#subscribe .clearfix .table input[type="submit"] {
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	-webkit-border-radius: 0; 
+	-moz-border-radius: 0; 
+	border-radius: 0; 
+	height: 48px;
+}
+#subscribe .clearfix .table input[type="text"] {
+	-webkit-border-top-left-radius: 4px;
+	-webkit-border-bottom-left-radius: 4px;
+	-moz-border-radius-topleft: 4px;
+	-moz-border-radius-bottomleft: 4px;
+	border-top-left-radius: 4px;
+	border-bottom-left-radius: 4px;
+	width: 60%;
+}
+#subscribe .clearfix .table input[type="submit"] {	
+	-webkit-border-top-right-radius: 4px;
+	-webkit-border-bottom-right-radius: 4px;
+	-moz-border-radius-topright: 4px;
+	-moz-border-radius-bottomright: 4px;
+	border-top-right-radius: 4px;
+	border-bottom-right-radius: 4px;
+	width: 40%;
+}
+
 /* =Footer
 -------------------------------------------------------------- */
 footer {}
@@ -217,7 +250,8 @@ div.body .wrapper .copyright a:hover {
 @media only screen and (max-width:1024px) {
 	/* Feedback */
 	#feedback .boxed,
-	#feedback p.notifier-on {
+	#feedback p.notifier-on,
+	#subscribe .boxed {
 		width: 100%;
 		margin: 25px 0 20px 0;
 	}
@@ -228,6 +262,12 @@ div.body .wrapper .copyright a:hover {
 
 /* Resolution 900 */
 @media only screen and (max-width:900px) {
+	/* Body Content */
+	div.body .wrapper h1,
+	div.body .wrapper h1 * {
+		font-size: 32px;
+		line-height: 38px;
+	}
 
 }
 
@@ -251,7 +291,19 @@ div.body .wrapper .copyright a:hover {
 	div.body .wrapper .content,
 	div.body .wrapper .content.scroll-on {
 		padding: 25px 20px 20px 20px;
-	}	
+	}
+	div.body .wrapper h1,
+	div.body .wrapper h1 * {
+		font-size: 35px;
+		line-height: 41px;
+	}
+	/* Feedback */
+	#feedback .boxed,
+	#feedback p.notifier-on,
+	#subscribe .boxed {
+		width: 500px;
+		margin: 25px auto 20px auto;
+	}
 }
 
 /* Resolution 600 */
@@ -260,6 +312,18 @@ div.body .wrapper .copyright a:hover {
 	div.body .wrapper .content,
 	div.body .wrapper .content.scroll-on {
 		padding: 20px 15px 15px 15px;
+	}
+	div.body .wrapper h1,
+	div.body .wrapper h1 * {
+		font-size: 32px;
+		line-height: 38px;
+	}
+	/* Feedback */
+	#feedback .boxed,
+	#feedback p.notifier-on,
+	#subscribe .boxed {
+		width: 100%;
+		margin: 25px 0 20px 0;
 	}
 	/* Footer */
 	div.body .wrapper .copyright span {

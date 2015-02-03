@@ -175,7 +175,6 @@ class NewsletterController extends Controller
 			'model'=>$model,
 			'launch'=>$launch,
 		));
-
 	}
 
 	/**
