@@ -1,2 +1,2 @@
-<?php echo Phrase::trans(331,0);?> &copy; 2014 <a href="<?php echo Yii::app()->createUrl('site/index');?>" title="<?php echo $model->site_title;?>"> <?php echo $model->site_title;?></a>. <?php echo Phrase::trans(332,0);?>.
-<span class="powered"><?php echo Phrase::trans(333,0);?> <a off_address="" href="http://ommu.sudaryanto.me" target="_blank" title="Ommu Platform">Ommu Platform</a></span>
+<?php echo Phrase::trans(331,0);?> &copy; 2015 <a href="<?php echo Yii::app()->createUrl('site/index');?>" title="<?php echo $model->site_title;?>"> <?php echo $model->site_title;?></a>. <?php echo Phrase::trans(332,0);?>.
+<span class="powered"><?php echo Phrase::trans(333,0);?> <a off_address="" href="http://company.ommu.co" target="_blank" title="Ommu Platform">Ommu Platform</a></span>

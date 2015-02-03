@@ -16,7 +16,7 @@ if(isset($_GET['protocol']) && $_GET['protocol'] == 'script') {
 	 ** Construction condition
 	 */
 	$setting = OmmuSettings::model()->findByPk(1,array(
-		'select' => 'online, site_type, site_title, construction_date, signup_inviteonly, general_include',
+		'select' => 'online, site_type, site_title, construction_date',
 	));
 	$construction = ($setting->online == 0 && date('Y-m-d', strtotime($setting->construction_date)) > date('Y-m-d')) ? 1 : 0 ;
 
@@ -41,38 +41,32 @@ if(isset($_GET['protocol']) && $_GET['protocol'] == 'script') {
 	$apps = $this->dialogDetail == true ? ($this->dialogFixed == false ? 'apps' : 'module') : '';
 
 	if(Yii::app()->request->isAjaxRequest && !isset($_GET['ajax'])) {
-		if(Yii::app()->session['theme_active'] != Yii::app()->theme->name) {
-			$return = array(
-				'redirect' => $urlAddress,		
+		$page = $this->contentOther == true ? 1 : 0;
+		$dialog = $this->dialogDetail == true ? (empty($this->dialogWidth) ? 1 : 2) : 0;		// 0 = static, 1 = dialog, 2 = notifier
+		$header = /*$this->widget('FrontTopmenu', array(), true)*/'';
+		
+		if($this->contentOther == true) {
+			$render = array(
+				'content' => $content, 
+				'other' => $this->contentAttribute,
 			);
-
 		} else {
-			$page = $this->contentOther == true ? 1 : 0;
-			$dialog = $this->dialogDetail == true ? (empty($this->dialogWidth) ? 1 : 2) : 0;		// 0 = static, 1 = dialog, 2 = notifier
-			$header = /*$this->widget('FrontTopmenu', array(), true)*/'';
-			
-			if($this->contentOther == true) {
-				$render = array(
-					'content' => $content, 
-					'other' => $this->contentAttribute,
-				);
-			} else {
-				$render = $content;
-			}
-			$return = array(
-				'title' => $title,
-				'description' => $description,
-				'keywords' => $keywords,
-				'address' => $urlAddress,
-				'dialogWidth' => $dialogWidth,			
-			);
-			$return['page'] = $page;
-			$return['dialog'] = $dialog;
-			$return['apps'] = $apps;
-			$return['header'] = $this->dialogDetail != true ? $header : '';
-			$return['render'] = $render;
-			$return['script'] = $cs=Yii::app()->getClientScript()->getOmmuScript();
+			$render = $content;
 		}
+		$return = array(
+			'title' => $title,
+			'description' => $description,
+			'keywords' => $keywords,
+			'address' => $urlAddress,
+			'dialogWidth' => $dialogWidth,			
+		);
+		$return['page'] = $page;
+		$return['dialog'] = $dialog;
+		$return['apps'] = $apps;
+		$return['header'] = $this->dialogDetail != true ? $header : '';
+		$return['render'] = $render;
+		$return['script'] = $cs=Yii::app()->getClientScript()->getOmmuScript();
+			
 		echo CJSON::encode($return);
 
 	} else {
@@ -81,12 +75,7 @@ if(isset($_GET['protocol']) && $_GET['protocol'] == 'script') {
 		$cs->registerCssFile(Yii::app()->theme->baseUrl.'/css/form.css');
 		$cs->registerCssFile(Yii::app()->theme->baseUrl.'/css/typography.css');
 		$cs->registerCssFile(Yii::app()->theme->baseUrl.'/css/layout.css');
-		$cs->registerCssFile(Yii::app()->request->baseUrl.'/externals/page/font-awesome.min.css');
-		$cs->registerCssFile(Yii::app()->request->baseUrl.'/externals/content.css');
 		$cs->registerCoreScript('jquery', CClientScript::POS_END);
-		$cs->registerScriptFile(Yii::app()->theme->baseUrl.'/js/plugin/less-1.7.4.min.js', CClientScript::POS_END);
-		//$cs->registerScriptFile(Yii::app()->theme->baseUrl.'/js/plugin/jquery.scrollTo.1.4.3.1-min.js', CClientScript::POS_END);
-		$cs->registerScriptFile(Yii::app()->theme->baseUrl.'/js/plugin/jquery.ajaxuplaod-3.5.js', CClientScript::POS_END);
 		$cs->registerScriptFile(Yii::app()->theme->baseUrl.'/js/custom/custom.js', CClientScript::POS_END);
 		
 		//Javascript Attribute
@@ -113,60 +102,49 @@ if(isset($_GET['protocol']) && $_GET['protocol'] == 'script') {
   <script type="text/javascript">
 	var globals = '<?php echo CJSON::encode($jsAttribute);?>';
   </script>
-  <?php echo $setting->general_include != '' ? $setting->general_include : ''?>
   <link rel="shortcut icon" href="<?php echo Yii::app()->request->baseUrl?>/favicon.ico" />
   <style type="text/css"></style>
  </head>
  <body <?php echo $this->dialogDetail == true ? 'style="overflow-y: hidden;"' : '';?>>
 
-	<?php //begin.Loading ?>
-	<div class="loading"></div>
-	<?php //end.Loading ?>
-
-	<?php //begin.Header ?>
-	<header>
-
-	</header>
-	<?php //end.Header ?>
-
-	<?php //begin.Dialog ?>
-	<div class="dialog" id="<?php echo $apps;?>" <?php echo ($this->dialogDetail == true && empty($this->dialogWidth)) ? 'name="'.$dialogWidth.'" '.$display : '';?>>
-		<div class="fixed">
-			<div class="valign">
-				<div class="dialog-box">
-					<div class="content" id="<?php echo $dialogWidth;?>" name="dialog-wrapper"><?php echo ($this->dialogDetail == true && empty($this->dialogWidth)) ? $content : '';?></div>
-				</div>
-			</div>
-		</div>
+	<?php //begin.Mainmenu ?>
+	<div class="mainmenu" style="display: none;">
+		<ul class="clearfix">
+			<li><a href="" title=""></a></li>
+			<li><a href="" title=""></a></li>
+			<li><a href="" title=""></a></li>
+			<li><a href="" title=""></a></li>
+			<li><a href="" title=""></a></li>
+		</ul>
 	</div>
-	<?php //end.Dialog ?>
-
-	<?php //begin.Notifier ?>
-	<div class="notifier" <?php echo ($this->dialogDetail == true && !empty($this->dialogWidth)) ? 'name="'.$dialogWidth.'" '.$display : '';?>>
-		<div class="fixed">
-			<div class="valign">
-				<div class="dialog-box">
-					<div class="content" id="<?php echo $dialogWidth;?>" name="notifier-wrapper"><?php echo ($this->dialogDetail == true && !empty($this->dialogWidth)) ? $content : '';?></div>
-				</div>
-			</div>
-		</div>
-	</div>
-	<?php //end.Notifier ?>
-
-	<?php //begin.BodyContent ?>
+	<?php //end.Mainmenu ?>
+	
 	<div class="body">
+		<?php //begin.Header ?>
+		<header>
+			1
+			<ul class="clearfix">
+				<li>
+					<a href="" title=""></a>
+					<ul class="clearfix">
+						<li><a href="" title=""></a></li>
+						<li><a href="" title=""></a></li>
+						<li><a href="" title=""></a></li>
+						<li><a href="" title=""></a></li>
+						<li><a href="" title=""></a></li>
+					</ul>				
+				</li>
+			</ul>
+		</header>
+		<?php //end.Header ?>
+		
 		<?php //begin.Content ?>
-		<div class="wrapper"><?php echo $this->dialogDetail == false ? $content : '';?></div>
+		<div class="wrapper">
+			<?php echo $content;?>
+		</div>
 		<?php //end.Content ?>
 	</div>
-	<?php //end.BodyContent ?>
-
-	<?php //begin.Footer ?>
-	<footer class="clearfix">
-		<?php $this->widget('FrontFooterCopyright'); ?>
-	</footer>
-	<?php //end.Footer ?>
-
+	
 	<?php $this->widget('FrontGoogleAnalytics'); ?>
 
  </body>
