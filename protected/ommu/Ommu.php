@@ -42,6 +42,7 @@ class Ommu extends CApplicationComponent
 			
 			//controller condition
 			'<id:\d+>-<t:[\w\-]+>'										=> 'page/view',
+			'<id:\d+>-<t:[\w\-]+>'										=> 'maintenance/page',
 			'<controller:\w+>/view/<id:\d+>-<t:[\w\-]+>'				=> '<controller>/view',
 			//'<controller:\w+>/<action:\w+>'							=> '<controller>/<action>',
 			
