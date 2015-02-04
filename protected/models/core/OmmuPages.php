@@ -95,6 +95,7 @@ class OmmuPages extends CActiveRecord
 			'user' => array(self::BELONGS_TO, 'Users', 'user_id'),
 			'title' => array(self::BELONGS_TO, 'OmmuSystemPhrase', 'name'),
 			'description' => array(self::BELONGS_TO, 'OmmuSystemPhrase', 'desc'),
+			'modified' => array(self::BELONGS_TO, 'Users', 'user_id'),
 		);
 	}
 
@@ -296,6 +297,8 @@ class OmmuPages extends CActiveRecord
 		if(parent::beforeValidate()) {		
 			if($this->isNewRecord) {
 				$this->user_id = Yii::app()->user->id;			
+			} else {
+				$this->modified_id = Yii::app()->user->id;	
 			}
 		}
 		return true;
@@ -307,6 +310,7 @@ class OmmuPages extends CActiveRecord
 	protected function beforeSave() {
 		if(parent::beforeSave()) {
 			$currentAction = strtolower(Yii::app()->controller->id.'/'.Yii::app()->controller->action->id);
+			$action = strtolower(Yii::app()->controller->action->id);
 			if($this->isNewRecord) {
 				$title=new OmmuSystemPhrase;
 				$title->location = $currentAction;
@@ -321,14 +325,16 @@ class OmmuPages extends CActiveRecord
 				if($desc->save()) {
 					$this->desc = $desc->phrase_id;
 				}
-			}else {
-				$title = OmmuSystemPhrase::model()->findByPk($this->name);
-				$title->en = $this->title;
-				$title->save();
+			} else {
+				if($action == 'edit') {
+					$title = OmmuSystemPhrase::model()->findByPk($this->name);
+					$title->en = $this->title;
+					$title->save();
 
-				$desc = OmmuSystemPhrase::model()->findByPk($this->desc);
-				$desc->en = $this->description;
-				$desc->save();
+					$desc = OmmuSystemPhrase::model()->findByPk($this->desc);
+					$desc->en = $this->description;
+					$desc->save();
+				}
 			}
 		}
 		return true;
