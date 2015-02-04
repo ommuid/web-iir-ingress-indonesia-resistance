@@ -39,36 +39,169 @@ body {
 /* =Body Content
 -------------------------------------------------------------- */
 div.body,
+div.body .cell,
 div.body header,
 div.body .wrapper,
-div.body .wrapper .content.scroll-on {
+div.body .wrapper .content {
 	box-sizing: border-box;
 	-moz-box-sizing: border-box;
 	-webkit-box-sizing: border-box;
-	display: table;
 }
 div.body {
-	width: 100%;
 	height: 100%;
 }
 div.body header,
 div.body .wrapper {
-	display: table-cell;
-	vertical-align: middle;
+	display: table;
 	width: 50%;
+	height: 100%;
 }
 div.body header {
 	-moz-box-shadow:    0 0 5px 5px rgba(0, 0, 0, 0.08);
 	-webkit-box-shadow: 0 0 5px 5px rgba(0, 0, 0, 0.08);
 	box-shadow:         0 0 5px 5px rgba(0, 0, 0, 0.08);
+	position: fixed;
+	left: 0;
+	top: 0;
+	float: left;
 	background: #fff;
+	text-align: center;
 }
-div.body .wrapper {}
+body[style*="overflow-y"] div.body header {
+	position: relative;
+}
+div.body header .cell,
+div.body .wrapper .cell {
+	display: table-cell;
+	vertical-align: middle;
+	width: 100%;
+	height: 100%;
+}
+div.body .wrapper {
+	float: right;
+	padding: 0 0 0 0;
+}
 
 /* =Header
 -------------------------------------------------------------- */
-header {
-	
+header {}
+header a.hamburger {
+	display: block;
+	overflow: hidden;
+	background: #fff url('../images/resource/menu.png') no-repeat center center;
+	width: 30px;
+	height: 20px;
+	padding: 10px;
+	color: transparent;
+	text-indent: -999999px;
+}
+header ul.menu,
+header ul.menu ul,
+div.mainmenu ul {
+	margin: 0 0 0 0;
+	padding: 0 0 0 0;
+	list-style: none;
+}
+header ul.menu {
+	position: absolute;
+	top: 0;
+	right: 0;
+	display: block;
+}
+header ul.menu ul,
+header ul.menu ul li {
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;	
+}
+header ul.menu ul {
+	-webkit-border-top-left-radius: 4px;
+	-webkit-border-bottom-left-radius: 4px;
+	-moz-border-radius-topleft: 4px;
+	-moz-border-radius-bottomleft: 4px;
+	border-top-left-radius: 4px;
+	border-bottom-left-radius: 4px;
+	-moz-box-shadow:    0 0 3px 3px rgba(0, 0, 0, 0.08);
+	-webkit-box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.08);
+	box-shadow:         0 0 3px 3px rgba(0, 0, 0, 0.08);
+	position: absolute;
+	top: 100%;
+	right: 0;
+	width: 200px;
+	padding: 5px 5px 5px 5px;
+	background: #fff;
+	z-index: 100;
+	display: none;
+}
+header ul.menu li.menu-fixed,
+header ul.menu li.menu-static {
+	position: relative;
+}
+header ul.menu li.menu-fixed {
+	margin-right: -25px;
+}
+header ul.menu li.menu-static {
+	display: none;
+}
+header ul.menu li.menu-static a.hamburger {
+	position: relative;
+}
+header ul.menu li.menu-static a.hamburger:before,
+div.mainmenu:before {
+	content: '';
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+	height: 10px;
+	background: #fff;
+	z-index: 101;
+}
+header ul.menu li.menu-static:hover a.hamburger {
+	-moz-box-shadow:    0 0 3px 3px rgba(0, 0, 0, 0.08);
+	-webkit-box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.08);
+	box-shadow:         0 0 3px 3px rgba(0, 0, 0, 0.08);
+}
+header ul.menu li.menu-static:hover ul {
+	display: block;
+}
+header ul.menu ul li {
+	margin: 0 0 3px 0;
+}
+header ul.menu ul li:last-child {
+	margin: 0 0 0 0;
+}
+header ul.menu ul li a {
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+	-moz-box-shadow: inset 0 0 3px 3px rgba(0, 0, 0, 0.08);
+	-webkit-box-shadow: inset 0 0 3px 3px rgba(0, 0, 0, 0.08);
+	box-shadow: inset 0 0 3px 3px rgba(0, 0, 0, 0.08);
+	display: block;
+	background: #2babd0;
+	padding: 10px 15px 10px 15px;
+	text-decoration: none;
+	text-transform: uppercase;
+	color: #fff;
+}
+header ul.menu ul li:hover a {
+	-moz-box-shadow: inset 0 0 5px 5px rgba(0, 0, 0, 0.08);
+	-webkit-box-shadow: inset 0 0 5px 5px rgba(0, 0, 0, 0.08);
+	box-shadow: inset 0 0 5px 5px rgba(0, 0, 0, 0.08);
+	background: #176694;
+	color: #fff;
+}
+
+/* Mainmenu */
+div.mainmenu {
+	position: relative;
+	background: #fff;
+	padding: 10px 10px 10px 10px;
+	display: none;
+}
+body[style*="overflow-y"] div.mainmenu {
+	display: block;
 }
 
 /* =Body
@@ -78,7 +211,6 @@ div.body .wrapper .content {
 	padding: 30px 20px 30px 20px;
 }
 div.body .wrapper .content.scroll-on {
-	padding: 40px 20px 40px 20px;
 	height: 100%;
 }
 div.body .wrapper h1,
@@ -112,7 +244,7 @@ div.body .wrapper .boxed {
 	-webkit-box-sizing: border-box;
 	-webkit-border-radius: 4px; 
 	-moz-border-radius: 4px; 
-	border-radius: 4px; 
+	border-radius: 4px;
 	-moz-box-shadow:    0 0 2px 2px rgba(0, 0, 0, 0.1);
 	-webkit-box-shadow: 0 0 2px 2px rgba(0, 0, 0, 0.1);
 	box-shadow:         0 0 2px 2px rgba(0, 0, 0, 0.1);
@@ -140,6 +272,64 @@ div.body .wrapper .boxed input,
 div.body .wrapper .boxed textarea,
 div.body .wrapper .boxed select {
 	width: 100%;
+}
+
+/* =Main
+-------------------------------------------------------------- */
+#main .countdown {
+	text-align: center;
+}
+#main .countdown ul {
+	display: inline-block;
+	margin: 0 auto 0 auto;
+	padding: 0 0 0 0;
+	list-style: none;
+}
+#main .countdown ul li,
+#main .countdown ul li span {
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;	
+}
+#main .countdown ul li,
+#main .countdown ul li * {
+	text-transform: uppercase;
+	color: rgba(255, 255 ,255 ,0.7);
+}
+#main .countdown ul li {
+	float: left;
+	margin: 0 13px 0 0;
+	border: 1px solid #fff;
+}
+#main .countdown ul li:last-child {
+	margin: 0 0 0 0;
+}
+#main .countdown ul li span {
+	display: block;
+	width: 90px;
+	height: 70px;
+	font-size: 60px;
+	line-height: 60px;
+	font-weight: 700;
+	background: rgba(255, 255 ,255 ,0.2);
+	color: #fff;
+}
+#main p {
+	margin: 30px 0 40px 0;
+	font-size: 15px;
+	line-height: 21px;
+}
+
+/* =Page
+-------------------------------------------------------------- */
+#page .boxed {
+	padding: 30px 30px 30px 30px;
+}
+#page .boxed .date {
+	margin: 10px 0 0 0;
+	font-size: 12px;
+	line-height: 16px;
+	color: #808080;
 }
 
 /* =Feedback
@@ -248,6 +438,10 @@ div.body .wrapper .copyright a:hover {
 
 /* Resolution 1024 */
 @media only screen and (max-width:1024px) {
+	/* Page */
+	#page .boxed {
+		padding: 25px 25px 25px 25px;
+	}
 	/* Feedback */
 	#feedback .boxed,
 	#feedback p.notifier-on,
@@ -268,34 +462,72 @@ div.body .wrapper .copyright a:hover {
 		font-size: 32px;
 		line-height: 38px;
 	}
-
+	/* Main */
+	#main .countdown ul li,
+	#main .countdown ul li:last-child {
+		margin: 0 7px 13px 7px;
+	}
+	#main p {
+		margin: 20px 0 30px 0;
+	}
+	/* Page */
+	#page .boxed {
+		padding: 20px 20px 20px 20px;
+	}
 }
 
 /* Resolution 800 */
 @media only screen and (max-width:800px) {
 	/* Body Content */
-	div.body,
 	div.body header,
-	div.body .wrapper {
+	div.body .wrapper,
+	div.body header .cell,
+	div.body .wrapper .cell {
 		display: block;
+		height: auto;
 	}
 	div.body header,
 	div.body .wrapper {
+		float: none;
 		width: 100%;
+	}
+	div.body header {
+		position: static;
 	}
 	/* Body */
 	div.body,
 	div.body .wrapper .content.scroll-on {
 		height: auto;
 	}
-	div.body .wrapper .content,
-	div.body .wrapper .content.scroll-on {
+	div.body .wrapper .content {
 		padding: 25px 20px 20px 20px;
 	}
 	div.body .wrapper h1,
 	div.body .wrapper h1 * {
 		font-size: 35px;
 		line-height: 41px;
+	}
+	/* Header */
+	header ul.menu {
+		right: 0;
+	}
+	header ul.menu li.menu-fixed,
+	body[style*="overflow-y"] div.mainmenu {
+		display: none;
+	}
+	header ul.menu li.menu-static {
+		display: block;
+	}
+	/* Main */
+	#main .countdown ul li {
+		margin: 0 13px 0 0;
+	}
+	#main .countdown ul li:last-child {
+		margin: 0 0 0 0;
+	}
+	/* Page */
+	#page .boxed {
+		padding: 30px 30px 30px 30px;
 	}
 	/* Feedback */
 	#feedback .boxed,
@@ -309,14 +541,28 @@ div.body .wrapper .copyright a:hover {
 /* Resolution 600 */
 @media only screen and (max-width:600px) {
 	/* Body */
-	div.body .wrapper .content,
-	div.body .wrapper .content.scroll-on {
+	div.body .wrapper .content {
 		padding: 20px 15px 15px 15px;
 	}
 	div.body .wrapper h1,
 	div.body .wrapper h1 * {
 		font-size: 32px;
 		line-height: 38px;
+	}
+	div.body .wrapper .boxed {
+		padding: 15px 15px 15px 15px;
+	}
+	/* Main */
+	#main .countdown ul li,
+	#main .countdown ul li:last-child {
+		margin: 0 7px 13px 7px;
+	}
+	#main p {
+		margin: 10px 0 20px 0;
+	}
+	/* Page */
+	#page .boxed {
+		padding: 25px 25px 25px 25px;
 	}
 	/* Feedback */
 	#feedback .boxed,
@@ -334,9 +580,15 @@ div.body .wrapper .copyright a:hover {
 /* Resolution 480 */
 @media only screen and (max-width:480px) {
 	/* Body */
-	div.body .wrapper .content,
-	div.body .wrapper .content.scroll-on {
+	div.body .wrapper .content {
 		padding: 15px 10px 10px 10px;
+	}
+	div.body .wrapper .boxed {
+		padding: 10px 10px 10px 10px;
+	}
+	/* Page */
+	#page .boxed {
+		padding: 20px 20px 20px 20px;
 	}
 }
 

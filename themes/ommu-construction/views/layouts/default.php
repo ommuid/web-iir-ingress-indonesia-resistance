@@ -105,10 +105,11 @@ if(isset($_GET['protocol']) && $_GET['protocol'] == 'script') {
   <link rel="shortcut icon" href="<?php echo Yii::app()->request->baseUrl?>/favicon.ico" />
   <style type="text/css"></style>
  </head>
- <body <?php echo $this->dialogDetail == true ? 'style="overflow-y: hidden;"' : '';?>>
+ <body <?php /*style="overflow-y: hidden;"*/ ?>>
 
 	<?php //begin.Mainmenu ?>
-	<div class="mainmenu" style="display: none;">
+	<div class="mainmenu">
+		asdfghgfdghjhgjk
 		<ul class="clearfix">
 			<li><a href="" title=""></a></li>
 			<li><a href="" title=""></a></li>
@@ -121,26 +122,31 @@ if(isset($_GET['protocol']) && $_GET['protocol'] == 'script') {
 	
 	<div class="body">
 		<?php //begin.Header ?>
-		<header>
-			1
-			<ul class="clearfix">
-				<li>
-					<a href="" title=""></a>
-					<ul class="clearfix">
-						<li><a href="" title=""></a></li>
-						<li><a href="" title=""></a></li>
-						<li><a href="" title=""></a></li>
-						<li><a href="" title=""></a></li>
-						<li><a href="" title=""></a></li>
-					</ul>				
-				</li>
-			</ul>
+		<header class="clearfix">
+			<div class="cell">
+				<ul class="menu">
+					<li class="menu-fixed"><a class="hamburger" href="javascript:void(0);" title="Mainmenu">Mainmenu</a></li>
+					<li class="menu-static">
+						<a class="hamburger" href="javascript:void(0);" title="Mainmenu">Mainmenu</a>
+						<ul class="clearfix">
+							<li><a href="<?php echo Yii::app()->controller->createUrl('index');?>" title="Home">Home</a></li>
+							<li><a href="<?php echo Yii::app()->controller->createUrl('page', array('id'=>1, 't'=>Utility::getUrlTitle('About')));?>" title="About">About</a></li>
+							<li><a href="<?php echo Yii::app()->controller->createUrl('page', array('id'=>2, 't'=>Utility::getUrlTitle('Privacy Policy')));?>" title="Privacy Policy">Privacy Policy</a></li>
+							<li><a href="<?php echo Yii::app()->controller->createUrl('subscribe');?>" title="Subscribe">Subscribe</a></li>
+							<li><a href="<?php echo Yii::app()->controller->createUrl('feedback');?>" title="Feedback">Feedback</a></li>
+						</ul>				
+					</li>
+				</ul>
+				<a>asss</a>
+			</div>
 		</header>
 		<?php //end.Header ?>
 		
 		<?php //begin.Content ?>
 		<div class="wrapper">
-			<?php echo $content;?>
+			<div class="cell">
+				<?php echo $content;?>
+			</div>
 		</div>
 		<?php //end.Content ?>
 	</div>

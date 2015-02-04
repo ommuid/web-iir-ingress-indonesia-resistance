@@ -23,14 +23,20 @@
 
 	<div class="content" id="<?php echo $class;?>">
 		<?php //begin.Title and Description ?>
-		<h1><?php echo CHtml::encode($this->pageTitle); ?></h1>		
-		<?php if(!empty($this->pageDescription)) {
+		<?php if($action != 'index') {?>
+			<h1><?php echo CHtml::encode($this->pageTitle); ?></h1>		
+		<?php } else {
+			echo $content;
+		}
+		if($action != 'page' && !empty($this->pageDescription)) {
 			$pClass = isset($_GET['email']) ? 'class="notifier-on"' : '';
 			echo '<p '.$pClass.'>'.$this->pageDescription.'</p>';
 		}?>
 		<?php //end.Title and Description ?>
 		
-		<?php echo $content;?>
+		<?php if($action != 'index') {
+			echo $content;
+		}?>
 		
 		<?php //begin.Copyright ?>
 		<div class="copyright">

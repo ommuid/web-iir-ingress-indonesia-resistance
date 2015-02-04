@@ -70,7 +70,41 @@ function pushStateBar(title, description, keywords, url) {
 	$('meta[name="keywords"]').attr('content', keywords);
 }
 
+/*
+$(window).load(function(){
+    var width2 = $('.dt-countdowntimer').outerWidth();
+    var width3 = width2/4 - width2/8;
+
+    var top = width3/4 - '5';
+
+    $('.timeface').css({
+        'width' : width3,
+        'height' : width3,
+        'top' : -top,
+        'left' : width3/2
+    });
+
+    jQuery('.dt-countdowntimer').fadeTo("slow",'1');
+});
+*/
+
 $(document).ready(function() {
+
+	/* Countdown
+	$(".dt-countdowntimer").TimeCircles({
+		use_background: false,
+		fg_width: 0.01,
+		time: {
+			Days: { color: "#1abc9c" },
+			Hours: { color: "#1abc9c" },
+			Minutes: { color: "#1abc9c" },
+			Seconds: { color: "#1abc9c" }
+		},
+		circle_bg_color: "#222222",
+		bg_width: 8
+	}); 
+	*/
+	
 	/**
 	 * For general ajax submit
 	 * redirect
@@ -105,8 +139,8 @@ $(document).ready(function() {
 		var attrSave = '?&enablesave=' + isEnableSave;
 		//var attrSave = '/enablesave/' + isEnableSave;
 		var method  = $(this).attr('method');
-		var url     = $(this).attr('action') + attrSave;
-		var link     = $(this).attr('action');
+		var url	 = $(this).attr('action') + attrSave;
+		var link	 = $(this).attr('action');
 
 		if(method != 'get') {
 			var options = {

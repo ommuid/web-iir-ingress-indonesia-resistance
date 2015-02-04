@@ -55,10 +55,33 @@ class MaintenanceController extends Controller
 	 */
 	public function actionIndex()
 	{
-		$this->pageTitle = '';
-		$this->pageDescription = '';
+		$setting = OmmuSettings::model()->findByPk(1,array(
+			'select' => 'construction_date, construction_text',
+		));
+		$this->pageTitle = 'Contruction';
+		$this->pageDescription = $setting->construction_text;
 		$this->pageMeta = '';
-		$this->render('front_index');
+		$this->render('front_index',array(
+			'setting'=>$setting,
+		));
+	}
+
+	/**
+	 * This is the default 'index' action that is invoked
+	 * when an action is not explicitly requested by users.
+	 */
+	public function actionPage($id)
+	{
+		$model = OmmuPages::model()->findByPk($id,array(
+			//'select' => '',
+		));
+		$this->pageTitle = Phrase::trans($model->name,2);
+		$this->pageDescription = Utility::shortText(Utility::hardDecode(Phrase::trans($model->desc,2)),300);
+		$this->pageMeta = '';
+		$this->pageImage = ($model->media != '' && $model->media_show == 1) ? Yii::app()->request->baseUrl.'/public/page/'.$model->media : '';
+		$this->render('front_page',array(
+			'model'=>$model,
+		));
 	}
 
 	/**
@@ -152,7 +175,7 @@ class MaintenanceController extends Controller
 			Yii::app()->end();
 			
 		} else {
-			$launch = 1;
+			$launch = 0;
 			if($launch == 0) {
 				$title = (isset($_GET['name']) && isset($_GET['email'])) ? Phrase::trans(23108,1) : Phrase::trans(16244,1);
 				$desc = (isset($_GET['name']) && isset($_GET['email'])) ? '' : Phrase::trans(16245,1);					
