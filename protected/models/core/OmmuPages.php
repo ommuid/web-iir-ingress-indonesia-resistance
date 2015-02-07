@@ -95,7 +95,7 @@ class OmmuPages extends CActiveRecord
 			'user' => array(self::BELONGS_TO, 'Users', 'user_id'),
 			'title' => array(self::BELONGS_TO, 'OmmuSystemPhrase', 'name'),
 			'description' => array(self::BELONGS_TO, 'OmmuSystemPhrase', 'desc'),
-			'modified' => array(self::BELONGS_TO, 'Users', 'user_id'),
+			'modified' => array(self::BELONGS_TO, 'Users', 'modified_id'),
 		);
 	}
 
@@ -296,7 +296,7 @@ class OmmuPages extends CActiveRecord
 	protected function beforeValidate() {
 		if(parent::beforeValidate()) {		
 			if($this->isNewRecord) {
-				$this->user_id = Yii::app()->user->id;			
+				$this->user_id = Yii::app()->user->id;
 			} else {
 				$this->modified_id = Yii::app()->user->id;	
 			}

@@ -1201,6 +1201,10 @@ footer .powered {
 	.notifier[name="600px"] .content {
 		width: auto !important;
 	}
+	/* Header */
+	header {
+		position: static;
+	}
 	/* Body */
 	div.body {
 		display: block;
