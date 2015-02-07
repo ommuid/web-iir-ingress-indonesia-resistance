@@ -96,6 +96,24 @@
 		</div>
 		<?php }?>
 
+		<div class="clearfix publish">
+			<?php echo $form->labelEx($model,'enabled'); ?>
+			<div class="desc">
+				<?php echo $form->checkBox($model,'enabled'); ?>
+				<?php echo $form->labelEx($model,'enabled'); ?>
+				<?php echo $form->error($model,'enabled'); ?>
+			</div>
+		</div>
+
+		<div class="clearfix publish">
+			<?php echo $form->labelEx($model,'verified'); ?>
+			<div class="desc">
+				<?php echo $form->checkBox($model,'verified'); ?>
+				<?php echo $form->labelEx($model,'verified'); ?>
+				<?php echo $form->error($model,'verified'); ?>
+			</div>
+		</div>
+
 	</fieldset>
 </div>
 <div class="dialog-submit">

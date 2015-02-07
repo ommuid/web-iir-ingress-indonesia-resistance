@@ -20,7 +20,7 @@
 <div class="dialog-content">
 
 	<fieldset>
-		
+
 		<?php if(!$model->isNewRecord) {?>
 		<div class="intro">
 			<?php echo Phrase::trans(16105,1);?>
@@ -65,7 +65,7 @@
 		<div class="clearfix">
 			<label><?php echo $model->getAttributeLabel('username')?> <span class="required">*</span></label>
 			<div class="desc">
-				<?php echo $form->textField($model,'username',array('maxlength'=>32)); ?>
+				<?php echo $form->textField($model,'username',array('maxlength'=>32,'class'=>'span-7')); ?>
 				<?php echo $form->error($model,'username'); ?>
 			</div>
 		</div>
@@ -96,6 +96,15 @@
 			</div>
 		</div>
 		<?php }?>
+
+		<div class="clearfix publish">
+			<?php echo $form->labelEx($model,'enabled'); ?>
+			<div class="desc">
+				<?php echo $form->checkBox($model,'enabled'); ?>
+				<?php echo $form->labelEx($model,'enabled'); ?>
+				<?php echo $form->error($model,'enabled'); ?>
+			</div>
+		</div>
 
 		<div class="clearfix publish">
 			<?php echo $form->labelEx($model,'verified'); ?>

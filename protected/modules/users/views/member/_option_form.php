@@ -6,7 +6,7 @@
 
 	$cs = Yii::app()->getClientScript();
 $js=<<<EOP
-	$('form[name="gridoption"] :checkbox').live('click', function(){
+	$('form[name="gridoption"] :checkbox').click(function(){
 		var url = $('form[name="gridoption"]').attr('action');
 		$.ajax({
 			url: url,

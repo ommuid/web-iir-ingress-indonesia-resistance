@@ -525,7 +525,7 @@ class Users extends CActiveRecord
 					}
 
 				} else {
-					$this->enabled = 1;
+					//$this->enabled = 1;
 					$this->modified_id = !Yii::app()->user->isGuest ? Yii::app()->user->id : 0;
 				}
 
@@ -668,13 +668,15 @@ class Users extends CActiveRecord
 				}
 			//}
 
+			/*
 			if($this->level_id == 1) {
-				$option = UserOption::model()->findByAttributes(array('user_id' => $this->user_id), array(
-					'select' => 'id, user_id, ommu_status',
+				$option = UserOption::model()->findByAttributes(array('option_id' => $this->user_id), array(
+					'select' => 'option_id, ommu_status',
 				));
 				$option->ommu_status = 1;
 				$option->update();
 			}
+			*/
 				
 			// Send Welcome Email
 			if($setting->signup_welcome == 1) {
