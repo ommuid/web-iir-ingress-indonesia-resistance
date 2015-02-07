@@ -21,6 +21,7 @@
 	}
 ?>
 
+<div class="cell">
 	<div class="content" id="<?php echo $class;?>">
 		<?php //begin.Title and Description ?>
 		<?php if($action != 'index') {?>
@@ -44,5 +45,6 @@
 		</div>
 		<?php //end.Copyright ?>
 	</div>
+</div>
 
 <?php $this->endContent(); ?>

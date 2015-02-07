@@ -295,7 +295,7 @@ function replaceContent(data, type) {
 	lastDescription = data.description;
 	lastKeywords = data.keywords;
 	lastUrl = data.address;
-	$('header').html(data.header);
+	//$('header').html(data.header);
 	$('div.body div.wrapper').html(content);
 
 	if(data.script.cssFiles != '' || data.script.scriptFiles != '') {
@@ -336,6 +336,12 @@ scrollDefaultFunction();
  * Global Utility Function
  */
 function utilityFunction() {
+	/* Fixed Mainmenu */
+	$('header ul.menu li.menu-fixed a').click(function() {
+		$('div.mainmenu').slideToggle();
+		$('body').toggleClass('enabled');	
+	});
+	
 	// Error Dialog Fixed Formulir Type
 	$('.dialog#module form.form div.errorMessage').hover(function() {
 		var text = $(this).text();

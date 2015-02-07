@@ -105,17 +105,17 @@ if(isset($_GET['protocol']) && $_GET['protocol'] == 'script') {
   <link rel="shortcut icon" href="<?php echo Yii::app()->request->baseUrl?>/favicon.ico" />
   <style type="text/css"></style>
  </head>
- <body <?php /*style="overflow-y: hidden;"*/ ?>>
+ <body <?php /*style="overflow-y: hidden;"*/?>>
 
 	<?php //begin.Mainmenu ?>
 	<div class="mainmenu">
-		asdfghgfdghjhgjk
 		<ul class="clearfix">
-			<li><a href="" title=""></a></li>
-			<li><a href="" title=""></a></li>
-			<li><a href="" title=""></a></li>
-			<li><a href="" title=""></a></li>
-			<li><a href="" title=""></a></li>
+			<li><a href="<?php echo Yii::app()->controller->createUrl('index');?>" title="Home"><span></span>Home</a></li>
+			<li><a href="<?php echo Yii::app()->controller->createUrl('page', array('id'=>1, 't'=>Utility::getUrlTitle('About')));?>" title="About"><span></span>About</a></li>
+			<li><a href="<?php echo Yii::app()->controller->createUrl('page', array('id'=>2, 't'=>Utility::getUrlTitle('Privacy Policy')));?>" title="Privacy Policy"><span></span>Privacy</a></li>
+			<li><a href="<?php echo Yii::app()->controller->createUrl('support');?>" title="Support"><span></span>Support</a></li>
+			<li><a href="<?php echo Yii::app()->controller->createUrl('subscribe');?>" title="Subscribe"><span></span>Subscribe</a></li>
+			<li><a href="<?php echo Yii::app()->controller->createUrl('feedback');?>" title="Feedback"><span></span>Feedback</a></li>
 		</ul>
 	</div>
 	<?php //end.Mainmenu ?>
@@ -132,21 +132,27 @@ if(isset($_GET['protocol']) && $_GET['protocol'] == 'script') {
 							<li><a href="<?php echo Yii::app()->controller->createUrl('index');?>" title="Home">Home</a></li>
 							<li><a href="<?php echo Yii::app()->controller->createUrl('page', array('id'=>1, 't'=>Utility::getUrlTitle('About')));?>" title="About">About</a></li>
 							<li><a href="<?php echo Yii::app()->controller->createUrl('page', array('id'=>2, 't'=>Utility::getUrlTitle('Privacy Policy')));?>" title="Privacy Policy">Privacy Policy</a></li>
+							<li><a href="<?php echo Yii::app()->controller->createUrl('support');?>" title="Support">Support</a></li>
 							<li><a href="<?php echo Yii::app()->controller->createUrl('subscribe');?>" title="Subscribe">Subscribe</a></li>
 							<li><a href="<?php echo Yii::app()->controller->createUrl('feedback');?>" title="Feedback">Feedback</a></li>
 						</ul>				
 					</li>
 				</ul>
-				<a>asss</a>
+				<div class="logo clearfix">
+					<a target="_blank" href="https://www.ingress.com/" title=""><img src="<?php echo Yii::app()->request->baseUrl?>/public/logo_ingress.png" alt=""></a>
+					<a target="_blank" href="" title=""><img src="<?php echo Yii::app()->request->baseUrl?>/public/logo_resistance.png" alt=""></a>
+				</div>
+				<h2>
+					Ingress Resistance
+					<strong>Indonesia</strong>
+				</h2>
 			</div>
 		</header>
 		<?php //end.Header ?>
 		
 		<?php //begin.Content ?>
 		<div class="wrapper">
-			<div class="cell">
-				<?php echo $content;?>
-			</div>
+			<?php echo $content;?>
 		</div>
 		<?php //end.Content ?>
 	</div>

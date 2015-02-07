@@ -32,6 +32,9 @@ div.body {
 body {
 	overflow-x: hidden;
 }
+body.enabled {
+	overflow-y: hidden;
+}
 .container {
 	
 }
@@ -67,7 +70,7 @@ div.body header {
 	background: #fff;
 	text-align: center;
 }
-body[style*="overflow-y"] div.body header {
+body.enabled div.body header {
 	position: relative;
 }
 div.body header .cell,
@@ -84,7 +87,14 @@ div.body .wrapper {
 
 /* =Header
 -------------------------------------------------------------- */
+header,
+header * {
+	color: #444;
+}
 header {}
+header .cell {
+	padding: 50px 40px 50px 40px;
+}
 header a.hamburger {
 	display: block;
 	overflow: hidden;
@@ -179,7 +189,7 @@ header ul.menu ul li a {
 	-webkit-box-shadow: inset 0 0 3px 3px rgba(0, 0, 0, 0.08);
 	box-shadow: inset 0 0 3px 3px rgba(0, 0, 0, 0.08);
 	display: block;
-	background: #2babd0;
+	background: #75d3f6;
 	padding: 10px 15px 10px 15px;
 	text-decoration: none;
 	text-transform: uppercase;
@@ -189,20 +199,129 @@ header ul.menu ul li:hover a {
 	-moz-box-shadow: inset 0 0 5px 5px rgba(0, 0, 0, 0.08);
 	-webkit-box-shadow: inset 0 0 5px 5px rgba(0, 0, 0, 0.08);
 	box-shadow: inset 0 0 5px 5px rgba(0, 0, 0, 0.08);
-	background: #176694;
+	background: #00aeef;
 	color: #fff;
 }
 
 /* Mainmenu */
 div.mainmenu {
 	position: relative;
-	background: #fff;
-	padding: 10px 10px 10px 10px;
+	background: #F9F9F9;
+	padding: 50px 40px 55px 40px;
 	display: none;
+	text-align: center;
 }
-body[style*="overflow-y"] div.mainmenu {
+body.enabled div.mainmenu {
 	display: block;
 }
+div.mainmenu:before {
+	background: #F9F9F9;
+}
+div.mainmenu ul {
+	display: inline-block;
+	text-align: center;
+}
+div.mainmenu ul li {
+	float: left;
+	margin: 0 30px 0 0;
+}
+div.mainmenu ul li:last-child {
+	margin: 0 0 0 0;
+}
+div.mainmenu ul li a,
+div.mainmenu ul li a span {
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;	
+	height: 40px;
+}
+div.mainmenu ul li a {
+	display: block;
+	padding-right: 13px;
+	font-size: 22px;
+	line-height: 30px;
+	text-transform: uppercase;
+	text-decoration: none;
+	color: #00aeef;
+}
+div.mainmenu ul li a:hover {
+	color: #00aeef;
+}
+div.mainmenu ul li a span {
+	display: inline-block;
+	margin: 0 10px -13px 0;
+	width: 30px;
+	height: 40px;
+	background: #75d3f6;
+	position: relative;
+}
+div.mainmenu ul li a span:before {
+	content: "";
+	position: absolute;
+	bottom: 100%; 
+	left: 0;
+	width: 0;
+	height: 0;
+	border-left: 35px solid transparent;
+	border-right: 35px solid transparent;
+	border-bottom: 20px solid #75d3f6;	
+}
+div.mainmenu ul li a span:after {
+	content: "";
+	position: absolute;
+	top: 100%; 
+	left: 0;
+	width: 0;
+	height: 0;
+	border-left: 35px solid transparent;
+	border-right: 35px solid transparent;
+	border-top: 20px solid #75d3f6;	
+}
+div.mainmenu ul li a:hover span {	
+	background: #00aeef;
+}
+div.mainmenu ul li a:hover span:before {
+	border-bottom: 20px solid #00aeef;		
+}
+div.mainmenu ul li a:hover span:after {
+	border-top: 20px solid #00aeef;		
+}
+
+/* Logo and Title */
+header h2,
+header h2 * {
+	text-transform: uppercase;
+	font-weight: 800;
+	font-size: 22px;
+	line-height: 28px;
+}
+header h2 {
+	margin: 0 0 15px 0;
+}
+header h2 strong {
+	display: block;
+	font-size: 30px;
+	line-height: 30px;
+}
+header .logo {
+	display: inline-block;
+	margin: 0 0 15px 0;
+	text-align: center;
+}
+header h2:last-child,
+header .logo:last-child,
+header .logo a:last-child {
+	margin: 0 0 0 0;
+}
+header .logo a,
+header .logo a img {
+	display: block;
+}
+header .logo a {
+	float: left;
+	margin: 0 35px 0 0;
+}
+header .logo a img {}
 
 /* =Body
 -------------------------------------------------------------- */
@@ -332,6 +451,16 @@ div.body .wrapper .boxed select {
 	color: #808080;
 }
 
+/* =Support
+-------------------------------------------------------------- */
+#support {
+	text-align: center;
+}
+#support a.googleplus {
+	display: inline-block;
+	margin: 20px auto 30px auto;
+}
+
 /* =Feedback
 -------------------------------------------------------------- */
 #feedback .boxed,
@@ -438,6 +567,46 @@ div.body .wrapper .copyright a:hover {
 
 /* Resolution 1024 */
 @media only screen and (max-width:1024px) {
+	/* Header */
+	div.mainmenu {
+		padding: 40px 30px 45px 30px;
+	}
+	div.mainmenu ul li {
+		margin: 0 20px 0 0;
+	}
+	div.mainmenu ul li:last-child {
+		margin: 0 0 0 0;
+	}
+	div.mainmenu ul li a,
+	div.mainmenu ul li a span {
+		height: 30px;
+	}
+	div.mainmenu ul li a {
+		padding-right: 10px;
+		font-size: 20px;
+		line-height: 27px;		
+	}
+	div.mainmenu ul li a span {
+		margin: 0 8px -8px 0;
+		width: 20px;
+		height: 30px;
+	}
+	div.mainmenu ul li a span:before {
+		border-left: 25px solid transparent;
+		border-right: 25px solid transparent;
+		border-bottom: 13px solid #75d3f6;	
+	}
+	div.mainmenu ul li a span:after {
+		border-left: 25px solid transparent;
+		border-right: 25px solid transparent;
+		border-top: 13px solid #75d3f6;		
+	}
+	div.mainmenu ul li a:hover span:before {
+		border-bottom: 13px solid #00aeef;
+	}
+	div.mainmenu ul li a:hover span:after {
+		border-top: 13px solid #00aeef;
+	}
 	/* Page */
 	#page .boxed {
 		padding: 25px 25px 25px 25px;
@@ -456,6 +625,10 @@ div.body .wrapper .copyright a:hover {
 
 /* Resolution 900 */
 @media only screen and (max-width:900px) {
+	/* Header */
+	div.mainmenu {
+		padding: 30px 20px 35px 20px;
+	}
 	/* Body Content */
 	div.body .wrapper h1,
 	div.body .wrapper h1 * {
@@ -478,6 +651,9 @@ div.body .wrapper .copyright a:hover {
 
 /* Resolution 800 */
 @media only screen and (max-width:800px) {
+	body.enabled {
+		overflow-y: auto;
+	}
 	/* Body Content */
 	div.body header,
 	div.body .wrapper,
@@ -508,12 +684,18 @@ div.body .wrapper .copyright a:hover {
 		line-height: 41px;
 	}
 	/* Header */
+	header .cell {
+		padding: 40px 30px 40px 30px;
+	}
+	header .logo a {
+		margin: 0 30px 0 0;
+	}
 	header ul.menu {
 		right: 0;
 	}
 	header ul.menu li.menu-fixed,
-	body[style*="overflow-y"] div.mainmenu {
-		display: none;
+	body.enabled div.mainmenu {
+		display: none !important;
 	}
 	header ul.menu li.menu-static {
 		display: block;
@@ -552,7 +734,17 @@ div.body .wrapper .copyright a:hover {
 	div.body .wrapper .boxed {
 		padding: 15px 15px 15px 15px;
 	}
+	/* Header */
+	header .cell {
+		padding: 30px 20px 30px 20px;
+	}
+	header .logo a {
+		margin: 0 25px 0 0;
+	}
 	/* Main */
+	#main .countdown ul {
+		display: inline-block !important;
+	}
 	#main .countdown ul li,
 	#main .countdown ul li:last-child {
 		margin: 0 7px 13px 7px;
@@ -586,6 +778,18 @@ div.body .wrapper .copyright a:hover {
 	div.body .wrapper .boxed {
 		padding: 10px 10px 10px 10px;
 	}
+	/* Header */
+	header .cell {
+		padding: 20px 20px 20px 20px;
+	}
+	/* Main */
+	#main .countdown ul li {
+		float: left;
+		margin: 0 12px 12px 0;
+	}
+	#main .countdown ul li:last-child {
+		margin: 0 0 12px 0;
+	}
 	/* Page */
 	#page .boxed {
 		padding: 20px 20px 20px 20px;
@@ -593,6 +797,25 @@ div.body .wrapper .copyright a:hover {
 }
 
 /* Resolution 320 */
-@media only screen and (max-width:320px) {
+@media only screen and (max-width:380px) {
+	/* Main */
+	#main .countdown ul li {
+		float: left;
+		margin: 0 5px 10px 50px;
+	}
+	#main .countdown ul li:nth-child(even) {
+		float: right;
+		margin: 0 50px 10px 5px;
+	}
+}
 
+/* Resolution 320 */
+@media only screen and (max-width:320px) {
+	/* Main */
+	#main .countdown ul li {
+		margin: 0 5px 10px 30px;
+	}
+	#main .countdown ul li:nth-child(even) {
+		margin: 0 30px 10px 5px;
+	}
 }
