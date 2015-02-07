@@ -59,7 +59,7 @@ class MaintenanceController extends Controller
 			'select' => 'construction_date, construction_text',
 		));
 		$this->pageTitle = 'Contruction';
-		$this->pageDescription = $setting->construction_text;
+		$this->pageDescription = '';
 		$this->pageMeta = '';
 		$this->render('front_index',array(
 			'setting'=>$setting,
@@ -192,6 +192,18 @@ class MaintenanceController extends Controller
 				'launch'=>$launch,
 			));
 		}
+	}
+
+	/**
+	 * This is the default 'index' action that is invoked
+	 * when an action is not explicitly requested by users.
+	 */
+	public function actionSupport()
+	{	
+		$this->pageTitle = 'Support';
+		$this->pageDescription = '';
+		$this->pageMeta = '';
+		$this->render('front_support');
 	}
 
 	

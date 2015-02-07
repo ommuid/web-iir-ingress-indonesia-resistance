@@ -47,6 +47,8 @@ EOP;
 	</ul>
 </div>
 
+<p><?php echo $setting->construction_text;?></p>
+
 <?php /*
 <div class="dt-countdowntimer" data-date="<?php echo $setting->construction_date;?>" style="height: 250px;"></div>
 */?>
