@@ -342,7 +342,10 @@ class UserNewsletter extends CActiveRecord
 		if($this->isNewRecord) {
 			// Guest Subscribe
 			if($this->user_id == 0 && $this->subscribe == 1) {
-				SupportMailSetting::sendEmail($this->email, $this->email, 'Subscribe Success', 'Subscribe Success', 1);
+				$message = OmmuTemplate::getMessage('user_subscribe_launching', array(
+					CHtml::encode($this->email),
+				));
+				SupportMailSetting::sendEmail($this->email, $this->email, 'Subscribe Success', $message, 1);
 			}
 		} else {
 			if($this->subscribe == 0) {
