@@ -41,6 +41,9 @@
 class OmmuWalls extends CActiveRecord
 {
 	public $defaultColumns = array();
+	
+	// Variable Search
+	public $user_search;
 
 	/**
 	 * Returns the static model of the specified AR class.
@@ -69,13 +72,14 @@ class OmmuWalls extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('user_id, wall_media, wall_status, comments, likes, creation_date', 'required'),
+			array('user_id, wall_media, wall_status', 'required'),
 			array('publish, comments, likes', 'numerical', 'integerOnly'=>true),
 			array('user_id', 'length', 'max'=>11),
 			array('modified_date', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('wall_id, publish, user_id, wall_media, wall_status, comments, likes, creation_date, modified_date', 'safe', 'on'=>'search'),
+			array('wall_id, publish, user_id, wall_media, wall_status, comments, likes, creation_date, modified_date,
+				user_search', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -87,9 +91,7 @@ class OmmuWalls extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'ommuCoreWallComments' => array(self::HAS_MANY, 'OmmuCoreWallComment', 'wall_id'),
-			'ommuCoreWallLikes' => array(self::HAS_MANY, 'OmmuCoreWallLikes', 'wall_id'),
-			'ommuCoreWallUsers' => array(self::HAS_MANY, 'OmmuCoreWallUser', 'wall_id'),
+			'user' => array(self::BELONGS_TO, 'Users', 'user_id'),
 			'ommuWallComments' => array(self::HAS_MANY, 'OmmuWallComment', 'wall_id'),
 			'ommuWallLikes' => array(self::HAS_MANY, 'OmmuWallLikes', 'wall_id'),
 			'ommuWallUsers' => array(self::HAS_MANY, 'OmmuWallUser', 'wall_id'),
@@ -103,14 +105,15 @@ class OmmuWalls extends CActiveRecord
 	{
 		return array(
 			'wall_id' => 'Wall',
-			'publish' => 'Publish',
-			'user_id' => 'User',
+			'publish' => Phrase::trans(192,0),
+			'user_id' => Phrase::trans(191,0),
 			'wall_media' => 'Wall Media',
 			'wall_status' => 'Wall Status',
 			'comments' => 'Comments',
 			'likes' => 'Likes',
-			'creation_date' => 'Creation Date',
-			'modified_date' => 'Modified Date',
+			'creation_date' => Phrase::trans(365,0),
+			'modified_date' => Phrase::trans(446,0),
+			'user_search' => Phrase::trans(191,0),
 		);
 	}
 
@@ -142,7 +145,7 @@ class OmmuWalls extends CActiveRecord
 		} else {
 			$criteria->addInCondition('t.publish',array(0,1));
 			$criteria->compare('t.publish',$this->publish);
-		}
+		}		
 		if(isset($_GET['user'])) {
 			$criteria->compare('t.user_id',$_GET['user']);
 		} else {
@@ -156,6 +159,15 @@ class OmmuWalls extends CActiveRecord
 			$criteria->compare('date(t.creation_date)',date('Y-m-d', strtotime($this->creation_date)));
 		if($this->modified_date != null && !in_array($this->modified_date, array('0000-00-00 00:00:00', '0000-00-00')))
 			$criteria->compare('date(t.modified_date)',date('Y-m-d', strtotime($this->modified_date)));
+		
+		// Custom Search
+		$criteria->with = array(
+			'user' => array(
+				'alias'=>'user',
+				'select'=>'displayname'
+			),
+		);
+		$criteria->compare('user.displayname',strtolower($this->user_search), true);
 
 		if(!isset($_GET['OmmuWalls_sort']))
 			$criteria->order = 'wall_id DESC';
@@ -212,30 +224,33 @@ class OmmuWalls extends CActiveRecord
 				'selectableRows' => 2,
 				'checkBoxHtmlOptions' => array('name' => 'trash_id[]')
 			);
-			*/
+			*/		
 			$this->defaultColumns[] = array(
 				'header' => 'No',
 				'value' => '$this->grid->dataProvider->pagination->currentPage*$this->grid->dataProvider->pagination->pageSize + $row+1'
+			);		
+			$this->defaultColumns[] = array(
+				'name' => 'user_search',
+				'value' => '$data->user->displayname',
 			);
-			if(!isset($_GET['type'])) {
-				$this->defaultColumns[] = array(
-					'name' => 'publish',
-					'value' => 'Utility::getPublish(Yii::app()->controller->createUrl("publish",array("id"=>$data->wall_id)), $data->publish, 1)',
-					'htmlOptions' => array(
-						'class' => 'center',
-					),
-					'filter'=>array(
-						1=>Phrase::trans(588,0),
-						0=>Phrase::trans(589,0),
-					),
-					'type' => 'raw',
-				);
-			}
-			$this->defaultColumns[] = 'user_id';
 			$this->defaultColumns[] = 'wall_media';
 			$this->defaultColumns[] = 'wall_status';
-			$this->defaultColumns[] = 'comments';
-			$this->defaultColumns[] = 'likes';
+			$this->defaultColumns[] = array(
+				'name' => 'comments',
+				'value' => 'CHtml::link($data->comments, Yii::app()->createUrl("wallcomment",array("wall"=>$data->wall_id)))',
+				'htmlOptions' => array(
+					'class' => 'center',
+				),
+				'type' => 'raw',
+			);
+			$this->defaultColumns[] = array(
+				'name' => 'likes',
+				'value' => 'CHtml::link($data->likes, Yii::app()->createUrl("walllike",array("wall"=>$data->wall_id)))',
+				'htmlOptions' => array(
+					'class' => 'center',
+				),
+				'type' => 'raw',
+			);
 			$this->defaultColumns[] = array(
 				'name' => 'creation_date',
 				'value' => 'Utility::dateFormat($data->creation_date)',
@@ -262,32 +277,20 @@ class OmmuWalls extends CActiveRecord
 					),
 				), true),
 			);
-			$this->defaultColumns[] = array(
-				'name' => 'modified_date',
-				'value' => 'Utility::dateFormat($data->modified_date)',
-				'htmlOptions' => array(
-					'class' => 'center',
-				),
-				'filter' => Yii::app()->controller->widget('zii.widgets.jui.CJuiDatePicker', array(
-					'model'=>$this,
-					'attribute'=>'modified_date',
-					'language' => 'ja',
-					'i18nScriptFile' => 'jquery.ui.datepicker-en.js',
-					//'mode'=>'datetime',
+			if(!isset($_GET['type'])) {
+				$this->defaultColumns[] = array(
+					'name' => 'publish',
+					'value' => 'Utility::getPublish(Yii::app()->controller->createUrl("publish",array("id"=>$data->wall_id)), $data->publish, 1)',
 					'htmlOptions' => array(
-						'id' => 'modified_date_filter',
+						'class' => 'center',
 					),
-					'options'=>array(
-						'showOn' => 'focus',
-						'dateFormat' => 'dd-mm-yy',
-						'showOtherMonths' => true,
-						'selectOtherMonths' => true,
-						'changeMonth' => true,
-						'changeYear' => true,
-						'showButtonPanel' => true,
+					'filter'=>array(
+						1=>Phrase::trans(588,0),
+						0=>Phrase::trans(589,0),
 					),
-				), true),
-			);
+					'type' => 'raw',
+				);
+			}
 		}
 		parent::afterConstruct();
 	}
@@ -308,72 +311,5 @@ class OmmuWalls extends CActiveRecord
 			return $model;			
 		}
 	}
-
-	/**
-	 * before validate attributes
-	 */
-	/*
-	protected function beforeValidate() {
-		if(parent::beforeValidate()) {
-			// Create action
-		}
-		return true;
-	}
-	*/
-
-	/**
-	 * after validate attributes
-	 */
-	/*
-	protected function afterValidate()
-	{
-		parent::afterValidate();
-			// Create action
-		return true;
-	}
-	*/
-	
-	/**
-	 * before save attributes
-	 */
-	/*
-	protected function beforeSave() {
-		if(parent::beforeSave()) {
-		}
-		return true;	
-	}
-	*/
-	
-	/**
-	 * After save attributes
-	 */
-	/*
-	protected function afterSave() {
-		parent::afterSave();
-		// Create action
-	}
-	*/
-
-	/**
-	 * Before delete attributes
-	 */
-	/*
-	protected function beforeDelete() {
-		if(parent::beforeDelete()) {
-			// Create action
-		}
-		return true;
-	}
-	*/
-
-	/**
-	 * After delete attributes
-	 */
-	/*
-	protected function afterDelete() {
-		parent::afterDelete();
-		// Create action
-	}
-	*/
 
 }
