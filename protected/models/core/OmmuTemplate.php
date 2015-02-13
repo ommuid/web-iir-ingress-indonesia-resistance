@@ -217,7 +217,7 @@ class OmmuTemplate extends CActiveRecord
 				'name' => 'template_key',
 				'value' => '$data->template_key',
 			);
-			$this->defaultColumns[] = 'template';
+			//$this->defaultColumns[] = 'template';
 			$this->defaultColumns[] = 'variable';
 			$this->defaultColumns[] = array(
 				'name' => 'user_search',

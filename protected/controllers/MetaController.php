@@ -53,11 +53,6 @@ class MetaController extends Controller
 		} else {
 			$this->redirect(Yii::app()->createUrl('site/login'));
 		}
-		/*
-		$arrThemes = Utility::getCurrentTemplate('public');
-		Yii::app()->theme = $arrThemes['folder'];
-		$this->layout = $arrThemes['layout'];
-		*/
 	}
 
 	/**
