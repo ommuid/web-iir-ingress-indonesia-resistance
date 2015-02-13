@@ -1,7 +1,7 @@
 <?php
 /**
- * Ommu Wall Comments (ommu-wall-comment)
- * @var $this WallcommentController * @var $model OmmuWallComment * @var $form CActiveForm
+ * Ommu Walls (ommu-walls)
+ * @var $this WallController * @var $model OmmuWalls * @var $form CActiveForm
  *
  * @author Putra Sudaryanto <putra.sudaryanto@gmail.com>
  * @copyright Copyright (c) 2014 Ommu Platform (ommu.co)
@@ -11,21 +11,22 @@
  */
 
 	$this->breadcrumbs=array(
-		'Ommu Wall Comments'=>array('manage'),
-		'Headline',
+		'Ommu Walls'=>array('manage'),
+		'Publish',
 	);
 ?>
 
 <?php $form=$this->beginWidget('application.components.system.OActiveForm', array(
-	'id'=>'ommu-wall-comment-form',
+	'id'=>'ommu-walls-form',
 	'enableAjaxValidation'=>true,
 	//'htmlOptions' => array('enctype' => 'multipart/form-data')
 )); ?>
 
 	<div class="dialog-content">
-		<?php echo Phrase::trans(339,0);?>	</div>
+		<?php echo $model->publish == 1 ? Phrase::trans(282,0) : Phrase::trans(281,0)?>
+	</div>
 	<div class="dialog-submit">
-		<?php echo CHtml::submitButton(Phrase::trans(338,0), array('onclick' => 'setEnableSave()')); ?>
+		<?php echo CHtml::submitButton($title, array('onclick' => 'setEnableSave()')); ?>
 		<?php echo CHtml::button(Phrase::trans(174,0), array('id'=>'closed')); ?>
 	</div>
 	

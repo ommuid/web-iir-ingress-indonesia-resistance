@@ -228,16 +228,18 @@ class OmmuWalls extends CActiveRecord
 			$this->defaultColumns[] = array(
 				'header' => 'No',
 				'value' => '$this->grid->dataProvider->pagination->currentPage*$this->grid->dataProvider->pagination->pageSize + $row+1'
-			);		
-			$this->defaultColumns[] = array(
-				'name' => 'user_search',
-				'value' => '$data->user->displayname',
 			);
+			if(!isset($_GET['user'])) {
+				$this->defaultColumns[] = array(
+					'name' => 'user_search',
+					'value' => '$data->user->displayname',
+				);
+			}
 			$this->defaultColumns[] = 'wall_media';
 			$this->defaultColumns[] = 'wall_status';
 			$this->defaultColumns[] = array(
 				'name' => 'comments',
-				'value' => 'CHtml::link($data->comments, Yii::app()->createUrl("wallcomment",array("wall"=>$data->wall_id)))',
+				'value' => 'CHtml::link($data->comments, Yii::app()->createUrl("wallcomment/manage",array("wall"=>$data->wall_id)))',
 				'htmlOptions' => array(
 					'class' => 'center',
 				),
@@ -245,7 +247,7 @@ class OmmuWalls extends CActiveRecord
 			);
 			$this->defaultColumns[] = array(
 				'name' => 'likes',
-				'value' => 'CHtml::link($data->likes, Yii::app()->createUrl("walllike",array("wall"=>$data->wall_id)))',
+				'value' => 'CHtml::link($data->likes, Yii::app()->createUrl("walllike/manage",array("wall"=>$data->wall_id)))',
 				'htmlOptions' => array(
 					'class' => 'center',
 				),
@@ -310,6 +312,18 @@ class OmmuWalls extends CActiveRecord
 			$model = self::model()->findByPk($id);
 			return $model;			
 		}
+	}
+
+	/**
+	 * before validate attributes
+	 */
+	protected function beforeValidate() {
+		if(parent::beforeValidate()) {		
+			if($this->isNewRecord) {
+				$this->user_id = Yii::app()->user->id;
+			}
+		}
+		return true;
 	}
 
 }

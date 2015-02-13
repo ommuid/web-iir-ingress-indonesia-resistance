@@ -16,6 +16,7 @@
  *	View
  *	RunAction
  *	Delete
+ *	Publish
  *
  *	LoadModel
  *	performAjaxValidation
@@ -260,7 +261,7 @@ class WallController extends Controller
 	 * @param integer $id the ID of the model to be displayed
 	 */
 	public function actionRunAction() {
-		$id       = $_POST['trash_id'];
+		$id	   = $_POST['trash_id'];
 		$criteria = null;
 		$actions  = $_GET['action'];
 
@@ -323,7 +324,55 @@ class WallController extends Controller
 			$this->pageMeta = '';
 			$this->render('admin_delete');
 		}
-	}
+	} 
+
+	/** 
+	 * Deletes a particular model. 
+	 * If deletion is successful, the browser will be redirected to the 'admin' page. 
+	 * @param integer $id the ID of the model to be deleted 
+	 */ 
+	public function actionPublish($id)  
+	{ 
+		$model=$this->loadModel($id); 
+		 
+		if($model->publish == 1) { 
+			$title = Phrase::trans(276,0); 
+			$replace = 0; 
+		} else { 
+			$title = Phrase::trans(275,0);  
+			$replace = 1; 
+		} 
+
+		if(Yii::app()->request->isPostRequest) { 
+			// we only allow deletion via POST request 
+			if(isset($id)) { 
+				//change value active or publish 
+				$model->publish = $replace; 
+
+				if($model->update()) { 
+					echo CJSON::encode(array( 
+						'type' => 5, 
+						'get' => Yii::app()->controller->createUrl('manage'), 
+						'id' => 'partial-ommu-walls', 
+						'msg' => '<div class="errorSummary success"><strong>OmmuWalls success published.</strong></div>', 
+					)); 
+				} 
+			} 
+
+		} else { 
+			$this->dialogDetail = true; 
+			$this->dialogGroundUrl = Yii::app()->controller->createUrl('manage'); 
+			$this->dialogWidth = 350; 
+
+			$this->pageTitle = $title; 
+			$this->pageDescription = ''; 
+			$this->pageMeta = ''; 
+			$this->render('admin_publish',array( 
+				'title'=>$title, 
+				'model'=>$model, 
+			)); 
+		} 
+	} 
 
 	/**
 	 * Returns the data model based on the primary key given in the GET variable.
