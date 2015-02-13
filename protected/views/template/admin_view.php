@@ -20,13 +20,26 @@
 		'data'=>$model,
 		'attributes'=>array(
 			'template_key',
-			'plugin_id',
-			'user_id',
-			'template',
+			array(
+				'name'=>'plugin_id',
+				'value'=>$model->plugin->name,
+			),
+			array(
+				'name'=>'user_id',
+				'value'=>$model->user->displayname,
+			),
+			array(
+				'name'=>'template',
+				'value'=>$model->template,
+				'type'=>'raw',
+			),
 			'variable',
 			'creation_date',
 			'modified_date',
-			'modified_id',
+			array(
+				'name'=>'modified_id',
+				'value'=>$model->modified->displayname,
+			),
 		),
 	)); ?>
 </div>
