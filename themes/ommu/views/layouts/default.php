@@ -183,7 +183,7 @@ if ($currentAction == 'site/login') {
 	<div class="body clearfix">
 		<?php //begin.Sidebar ?>
 		<div class="sidebar">
-			<div class="table">
+			<div class="table clearfix">
 				<?php //begin.Information ?>
 				<?php $this->widget('AdminAccount'); ?>
 				<?php //end.Information ?>
