@@ -308,11 +308,11 @@ class UserInvites extends CActiveRecord
 								':user' => Yii::app()->user->id,
 							),
 						));
-						if($invite == null) {			
+						if($invite == null) {
 							$this->queue_id = $model->queue_id;
 						} else {															// email sudah invite sebelumnya
 							$this->addError('email', Phrase::trans(16212,1));
-						}						
+						}
 					}
 				}
 			}

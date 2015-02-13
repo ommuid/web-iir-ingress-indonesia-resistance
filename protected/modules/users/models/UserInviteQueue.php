@@ -193,10 +193,22 @@ class UserInviteQueue extends CActiveRecord
 			);
 			$this->defaultColumns[] = 'email';
 			$this->defaultColumns[] = array(
+				'name' => 'inviters',
+				'value' => 'CHtml::link($data->inviters." ".Phrase::trans(16172, 1), Yii::app()->controller->createUrl("invite/manage",array("queue"=>$data->queue_id)))',
+				'htmlOptions' => array(
+					'class' => 'center',
+				),
+				'type' => 'raw',
+			);
+			$this->defaultColumns[] = array(
 				'name' => 'invite',
 				'value' => '$data->invite == 1 ? Phrase::trans(16220,1) : Phrase::trans(16221,1)',
 				'htmlOptions' => array(
 					'class' => 'center',
+				),
+				'filter'=>array(
+					1=>Phrase::trans(16220,1),
+					0=>Phrase::trans(16221,1),
 				),
 			);
 		}
