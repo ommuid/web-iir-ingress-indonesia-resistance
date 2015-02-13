@@ -13,3 +13,8 @@
 	$this->breadcrumbs=array();
 	//$this->widget('AdminDashboardStatistic');
 ?>
+
+<div class="table">
+	<div class="wall">1</div>
+	<div class="recent">2</div>
+</div>

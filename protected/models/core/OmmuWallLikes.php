@@ -32,6 +32,10 @@
 class OmmuWallLikes extends CActiveRecord
 {
 	public $defaultColumns = array();
+	
+	// Variable Search
+	public $wall_search;
+	public $user_search;
 
 	/**
 	 * Returns the static model of the specified AR class.
@@ -60,12 +64,14 @@ class OmmuWallLikes extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('wall_id, user_id, likes_date, likes_ip', 'required'),
+			array('wall_id', 'required'),
 			array('wall_id, user_id', 'length', 'max'=>11),
 			array('likes_ip', 'length', 'max'=>20),
+			array('user_id, likes_ip', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('like_id, wall_id, user_id, likes_date, likes_ip', 'safe', 'on'=>'search'),
+			array('like_id, wall_id, user_id, likes_date, likes_ip,
+				wall_search, user_search', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -78,6 +84,7 @@ class OmmuWallLikes extends CActiveRecord
 		// class name for the relations automatically generated below.
 		return array(
 			'wall' => array(self::BELONGS_TO, 'OmmuWalls', 'wall_id'),
+			'user' => array(self::BELONGS_TO, 'Users', 'user_id'),
 		);
 	}
 
@@ -89,9 +96,11 @@ class OmmuWallLikes extends CActiveRecord
 		return array(
 			'like_id' => 'Like',
 			'wall_id' => 'Wall',
-			'user_id' => 'User',
+			'user_id' => Phrase::trans(191,0),
 			'likes_date' => 'Likes Date',
 			'likes_ip' => 'Likes Ip',
+			'wall_search' => 'Wall',
+			'user_search' => Phrase::trans(191,0),
 		);
 	}
 
@@ -127,6 +136,20 @@ class OmmuWallLikes extends CActiveRecord
 		if($this->likes_date != null && !in_array($this->likes_date, array('0000-00-00 00:00:00', '0000-00-00')))
 			$criteria->compare('date(t.likes_date)',date('Y-m-d', strtotime($this->likes_date)));
 		$criteria->compare('t.likes_ip',$this->likes_ip,true);
+		
+		// Custom Search
+		$criteria->with = array(
+			'wall' => array(
+				'alias'=>'wall',
+				'select'=>'wall_status'
+			),
+			'user' => array(
+				'alias'=>'user',
+				'select'=>'displayname'
+			),
+		);
+		$criteria->compare('wall.wall_status',strtolower($this->wall_search), true);
+		$criteria->compare('user.displayname',strtolower($this->user_search), true);
 
 		if(!isset($_GET['OmmuWallLikes_sort']))
 			$criteria->order = 'like_id DESC';
@@ -172,25 +195,27 @@ class OmmuWallLikes extends CActiveRecord
 	 */
 	protected function afterConstruct() {
 		if(count($this->defaultColumns) == 0) {
-			/*
-			$this->defaultColumns[] = array(
-				'class' => 'CCheckBoxColumn',
-				'name' => 'id',
-				'selectableRows' => 2,
-				'checkBoxHtmlOptions' => array('name' => 'trash_id[]')
-			);
-			*/
 			$this->defaultColumns[] = array(
 				'header' => 'No',
 				'value' => '$this->grid->dataProvider->pagination->currentPage*$this->grid->dataProvider->pagination->pageSize + $row+1'
 			);
-			$this->defaultColumns[] = 'wall_id';
-			$this->defaultColumns[] = 'user_id';
+			if(!isset($_GET['wall'])) {
+				$this->defaultColumns[] = array(
+					'name' => 'wall_search',
+					'value' => '$data->wall->wall_status',
+				);
+			}
+			if(!isset($_GET['user'])) {
+				$this->defaultColumns[] = array(
+					'name' => 'user_search',
+					'value' => '$data->user->displayname',
+				);
+			}
 			$this->defaultColumns[] = array(
 				'name' => 'likes_date',
 				'value' => 'Utility::dateFormat($data->likes_date)',
 				'htmlOptions' => array(
-					'class' => 'center',
+					//'class' => 'center',
 				),
 				'filter' => Yii::app()->controller->widget('zii.widgets.jui.CJuiDatePicker', array(
 					'model'=>$this,
@@ -212,7 +237,10 @@ class OmmuWallLikes extends CActiveRecord
 					),
 				), true),
 			);
-			$this->defaultColumns[] = 'likes_ip';
+			$this->defaultColumns[] = array(
+				'name' => 'likes_ip',
+				'value' => '$data->likes_ip',
+			);
 		}
 		parent::afterConstruct();
 	}
@@ -233,72 +261,18 @@ class OmmuWallLikes extends CActiveRecord
 			return $model;			
 		}
 	}
-
-	/**
-	 * before validate attributes
-	 */
-	/*
-	protected function beforeValidate() {
-		if(parent::beforeValidate()) {
-			// Create action
-		}
-		return true;
-	}
-	*/
-
-	/**
-	 * after validate attributes
-	 */
-	/*
-	protected function afterValidate()
-	{
-		parent::afterValidate();
-			// Create action
-		return true;
-	}
-	*/
 	
 	/**
 	 * before save attributes
 	 */
-	/*
 	protected function beforeSave() {
 		if(parent::beforeSave()) {
+			if($this->isNewRecord) {
+				$this->user_id = Yii::app()->user->id;
+				$this->likes_ip = $_SERVER['REMOTE_ADDR'];
+			}
 		}
 		return true;	
 	}
-	*/
-	
-	/**
-	 * After save attributes
-	 */
-	/*
-	protected function afterSave() {
-		parent::afterSave();
-		// Create action
-	}
-	*/
-
-	/**
-	 * Before delete attributes
-	 */
-	/*
-	protected function beforeDelete() {
-		if(parent::beforeDelete()) {
-			// Create action
-		}
-		return true;
-	}
-	*/
-
-	/**
-	 * After delete attributes
-	 */
-	/*
-	protected function afterDelete() {
-		parent::afterDelete();
-		// Create action
-	}
-	*/
 
 }

@@ -69,7 +69,8 @@ class OmmuWallUser extends CActiveRecord
 			array('wall_id, user_id', 'length', 'max'=>11),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, status, wall_id, user_id, creation_date', 'safe', 'on'=>'search'),
+			array('id, status, wall_id, user_id, creation_date,
+				wall_search, user_search', 'safe', 'on'=>'search'),
 		);
 	}
 
