@@ -1,6 +1,6 @@
 <?php
 /**
- * UserHistoryPassword 
+ * UserNewsletterHistory
  * @author Putra Sudaryanto <putra.sudaryanto@gmail.com>
  * @copyright Copyright (c) 2014 Ommu Platform (ommu.co)
  * @link http://company.ommu.co
@@ -17,29 +17,30 @@
  *
  * --------------------------------------------------------------------------------------
  *
- * This is the model class for table "ommu_user_history_password".
+ * This is the model class for table "ommu_user_newsletter_history".
  *
- * The followings are the available columns in table 'ommu_user_history_password':
+ * The followings are the available columns in table 'ommu_user_newsletter_history':
  * @property string $id
- * @property string $user_id
- * @property string $password
- * @property string $update_date
+ * @property string $newsletter_id
+ * @property integer $status
+ * @property string $creation_date
  *
  * The followings are the available model relations:
- * @property OmmuUsers $user
+ * @property OmmuUserNewsletter $newsletter
  */
-class UserHistoryPassword extends CActiveRecord
+class UserNewsletterHistory extends CActiveRecord
 {
 	public $defaultColumns = array();
 	
 	// Variable Search
 	public $user_search;
+	public $email_search;
 
 	/**
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
 	 * @param string $className active record class name.
-	 * @return UserHistoryPassword the static model class
+	 * @return UserNewsletterHistory the static model class
 	 */
 	public static function model($className=__CLASS__)
 	{
@@ -51,7 +52,7 @@ class UserHistoryPassword extends CActiveRecord
 	 */
 	public function tableName()
 	{
-		return 'ommu_user_history_password';
+		return 'ommu_user_newsletter_history';
 	}
 
 	/**
@@ -62,13 +63,13 @@ class UserHistoryPassword extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('user_id, password, update_date', 'required'),
-			array('user_id', 'length', 'max'=>11),
-			array('password', 'length', 'max'=>32),
+			array('newsletter_id, status, creation_date', 'required'),
+			array('status', 'numerical', 'integerOnly'=>true),
+			array('newsletter_id', 'length', 'max'=>11),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, user_id, password, update_date,
-				user_search', 'safe', 'on'=>'search'),
+			array('id, newsletter_id, status, creation_date,
+				user_search, email_search', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -80,7 +81,7 @@ class UserHistoryPassword extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'user' => array(self::BELONGS_TO, 'Users', 'user_id'),
+			'newsletter' => array(self::BELONGS_TO, 'UserNewsletter', 'newsletter_id'),
 		);
 	}
 
@@ -91,10 +92,11 @@ class UserHistoryPassword extends CActiveRecord
 	{
 		return array(
 			'id' => 'ID',
-			'user_id' => Phrase::trans(16001,1),
-			'password' => Phrase::trans(16112,1),
-			'update_date' => Phrase::trans(16166,1),
+			'newsletter_id' => 'Newsletter',
+			'status' => Phrase::trans(23057,1),
+			'creation_date' => 'Creation Date',
 			'user_search' => Phrase::trans(16001,1),
+			'email_search' => Phrase::trans(16108,1),
 		);
 	}
 
@@ -117,26 +119,31 @@ class UserHistoryPassword extends CActiveRecord
 		$criteria=new CDbCriteria;
 
 		$criteria->compare('t.id',$this->id,true);
-		if(isset($_GET['user'])) {
-			$criteria->compare('t.user_id',$_GET['user']);
+		if(isset($_GET['newsletter'])) {
+			$criteria->compare('t.newsletter_id',$_GET['newsletter']);
 		} else {
-			$criteria->compare('t.user_id',$this->user_id);
+			$criteria->compare('t.newsletter_id',$this->newsletter_id);
 		}
-		$criteria->compare('t.password',$this->password,true);
-		if($this->update_date != null && !in_array($this->update_date, array('0000-00-00 00:00:00', '0000-00-00')))
-			$criteria->compare('date(t.update_date)',date('Y-m-d', strtotime($this->update_date)));
+		$criteria->compare('t.status',$this->status);
+		if($this->creation_date != null && !in_array($this->creation_date, array('0000-00-00 00:00:00', '0000-00-00')))
+			$criteria->compare('date(t.creation_date)',date('Y-m-d', strtotime($this->creation_date)));
 		
 		// Custom Search
 		$criteria->with = array(
-			'user' => array(
-				'alias'=>'user',
+			'newsletter.user' => array(
+				'alias'=>'users',
 				'select'=>'displayname'
 			),
+			'newsletter' => array(
+				'alias'=>'newsletter',
+				'select'=>'email'
+			),
 		);
-		$criteria->compare('user.displayname',strtolower($this->user_search), true);
+		$criteria->compare('users.displayname',strtolower($this->user_search), true);
+		$criteria->compare('newsletter.email',strtolower($this->email_search), true);
 
-		if(!isset($_GET['UserHistoryPassword_sort']))
-			$criteria->order = 'id DESC';
+		//if(!isset($_GET['UserNewsletterHistory_sort']))
+		//	$criteria->order = 'id DESC';
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
@@ -165,9 +172,9 @@ class UserHistoryPassword extends CActiveRecord
 			}
 		} else {
 			//$this->defaultColumns[] = 'id';
-			$this->defaultColumns[] = 'user_id';
-			$this->defaultColumns[] = 'password';
-			$this->defaultColumns[] = 'update_date';
+			$this->defaultColumns[] = 'newsletter_id';
+			$this->defaultColumns[] = 'status';
+			$this->defaultColumns[] = 'creation_date';
 		}
 
 		return $this->defaultColumns;
@@ -184,23 +191,38 @@ class UserHistoryPassword extends CActiveRecord
 			);
 			$this->defaultColumns[] = array(
 				'name' => 'user_search',
-				'value' => '$data->user->displayname',
+				'value' => '$data->newsletter->user_id != 0 ? $data->newsletter->user->displayname : "-"',
 			);
-			//$this->defaultColumns[] = 'password';
 			$this->defaultColumns[] = array(
-				'name' => 'update_date',
-				'value' => 'Utility::dateFormat($data->update_date, true)',
+				'name' => 'email_search',
+				'value' => '$data->newsletter->email',
+			);
+			$this->defaultColumns[] = array(
+				'name' => 'status',
+				'value' => '$data->status == 1 ? Phrase::trans(23057,1) : Phrase::trans(16256,1)',
 				'htmlOptions' => array(
-					//'class' => 'center',
+					'class' => 'center',
+				),
+				'filter'=>array(
+					1=>Phrase::trans(23057,1),
+					0=>Phrase::trans(16256,1),
+				),
+				'type' => 'raw',
+			);
+			$this->defaultColumns[] = array(
+				'name' => 'creation_date',
+				'value' => 'Utility::dateFormat($data->creation_date)',
+				'htmlOptions' => array(
+					'class' => 'center',
 				),
 				'filter' => Yii::app()->controller->widget('zii.widgets.jui.CJuiDatePicker', array(
 					'model'=>$this,
-					'attribute'=>'update_date',
+					'attribute'=>'creation_date',
 					'language' => 'ja',
 					'i18nScriptFile' => 'jquery.ui.datepicker-en.js',
 					//'mode'=>'datetime',
 					'htmlOptions' => array(
-						'id' => 'update_date_filter',
+						'id' => 'creation_date_filter',
 					),
 					'options'=>array(
 						'showOn' => 'focus',
@@ -233,4 +255,72 @@ class UserHistoryPassword extends CActiveRecord
 			return $model;			
 		}
 	}
+
+	/**
+	 * before validate attributes
+	 */
+	/*
+	protected function beforeValidate() {
+		if(parent::beforeValidate()) {
+			// Create action
+		}
+		return true;
+	}
+	*/
+
+	/**
+	 * after validate attributes
+	 */
+	/*
+	protected function afterValidate()
+	{
+		parent::afterValidate();
+			// Create action
+		return true;
+	}
+	*/
+	
+	/**
+	 * before save attributes
+	 */
+	/*
+	protected function beforeSave() {
+		if(parent::beforeSave()) {
+		}
+		return true;	
+	}
+	*/
+	
+	/**
+	 * After save attributes
+	 */
+	/*
+	protected function afterSave() {
+		parent::afterSave();
+		// Create action
+	}
+	*/
+
+	/**
+	 * Before delete attributes
+	 */
+	/*
+	protected function beforeDelete() {
+		if(parent::beforeDelete()) {
+			// Create action
+		}
+		return true;
+	}
+	*/
+
+	/**
+	 * After delete attributes
+	 */
+	/*
+	protected function afterDelete() {
+		parent::afterDelete();
+		// Create action
+	}
+	*/
+
 }

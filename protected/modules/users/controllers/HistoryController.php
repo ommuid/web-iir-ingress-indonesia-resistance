@@ -13,6 +13,10 @@
  *	Login
  *	Email
  *	Password
+ *	Forgot
+ *	Block
+ *	Username
+ *	Subscribe
  *
  *	LoadModel
  *	performAjaxValidation
@@ -189,6 +193,126 @@ class HistoryController extends Controller
 		$this->pageDescription = '';
 		$this->pageMeta = '';
 		$this->render('admin_history_password',array(
+			'model'=>$model,
+			'columns' => $columns,
+		));
+	}
+
+	/**
+	 * Manages all models.
+	 */
+	public function actionForgot() 
+	{
+		$model=new UserHistoryForgot('search');
+		$model->unsetAttributes();  // clear any default values
+		if(isset($_GET['UserHistoryForgot'])) {
+			$model->attributes=$_GET['UserHistoryForgot'];
+		}
+
+		$columnTemp = array();
+		if(isset($_GET['GridColumn'])) {
+			foreach($_GET['GridColumn'] as $key => $val) {
+				if($_GET['GridColumn'][$key] == 1) {
+					$columnTemp[] = $key;
+				}
+			}
+		}
+		$columns = $model->getGridColumn($columnTemp);
+
+		$this->pageTitle = Phrase::trans(16249,1);
+		$this->pageDescription = '';
+		$this->pageMeta = '';
+		$this->render('admin_history_forgot',array(
+			'model'=>$model,
+			'columns' => $columns,
+		));
+	}
+
+	/**
+	 * Manages all models.
+	 */
+	public function actionBlock() 
+	{
+		$model=new UserHistoryBlock('search');
+		$model->unsetAttributes();  // clear any default values
+		if(isset($_GET['UserHistoryBlock'])) {
+			$model->attributes=$_GET['UserHistoryBlock'];
+		}
+
+		$columnTemp = array();
+		if(isset($_GET['GridColumn'])) {
+			foreach($_GET['GridColumn'] as $key => $val) {
+				if($_GET['GridColumn'][$key] == 1) {
+					$columnTemp[] = $key;
+				}
+			}
+		}
+		$columns = $model->getGridColumn($columnTemp);
+
+		$this->pageTitle = Phrase::trans(16250,1);
+		$this->pageDescription = '';
+		$this->pageMeta = '';
+		$this->render('admin_history_block',array(
+			'model'=>$model,
+			'columns' => $columns,
+		));
+	}
+
+	/**
+	 * Manages all models.
+	 */
+	public function actionUsername() 
+	{
+		$model=new UserHistoryUsername('search');
+		$model->unsetAttributes();  // clear any default values
+		if(isset($_GET['UserHistoryUsername'])) {
+			$model->attributes=$_GET['UserHistoryUsername'];
+		}
+
+		$columnTemp = array();
+		if(isset($_GET['GridColumn'])) {
+			foreach($_GET['GridColumn'] as $key => $val) {
+				if($_GET['GridColumn'][$key] == 1) {
+					$columnTemp[] = $key;
+				}
+			}
+		}
+		$columns = $model->getGridColumn($columnTemp);
+
+		$this->pageTitle = Phrase::trans(16254,1);
+		$this->pageDescription = '';
+		$this->pageMeta = '';
+		$this->render('admin_history_username',array(
+			'model'=>$model,
+			'columns' => $columns,
+		));
+	}
+
+	/**
+	 * Manages all models.
+	 */
+	public function actionSubscribe() 
+	{
+		$model=new UserNewsletterHistory('search');
+		$model->unsetAttributes();  // clear any default values
+		if(isset($_GET['UserNewsletterHistory'])) {
+			$model->attributes=$_GET['UserNewsletterHistory'];
+		}
+
+		$columnTemp = array();
+		if(isset($_GET['GridColumn'])) {
+			foreach($_GET['GridColumn'] as $key => $val) {
+				if($_GET['GridColumn'][$key] == 1) {
+					$columnTemp[] = $key;
+				}
+			}
+		}
+		$columns = $model->getGridColumn($columnTemp);
+
+		$this->pageTitle = Phrase::trans(16255,1);
+		$this->pageDescription = '';
+		$this->pageMeta = '';
+		$this->render('admin_history_username',array(
 			'model'=>$model,
 			'columns' => $columns,
 		));

@@ -1,6 +1,6 @@
 <?php
 /**
- * UserHistoryPassword 
+ * UserHistoryBlock
  * @author Putra Sudaryanto <putra.sudaryanto@gmail.com>
  * @copyright Copyright (c) 2014 Ommu Platform (ommu.co)
  * @link http://company.ommu.co
@@ -17,18 +17,19 @@
  *
  * --------------------------------------------------------------------------------------
  *
- * This is the model class for table "ommu_user_history_password".
+ * This is the model class for table "ommu_user_history_block".
  *
- * The followings are the available columns in table 'ommu_user_history_password':
+ * The followings are the available columns in table 'ommu_user_history_block':
  * @property string $id
+ * @property integer $type
  * @property string $user_id
- * @property string $password
- * @property string $update_date
+ * @property string $block_id
+ * @property string $creation_date
  *
  * The followings are the available model relations:
  * @property OmmuUsers $user
  */
-class UserHistoryPassword extends CActiveRecord
+class UserHistoryBlock extends CActiveRecord
 {
 	public $defaultColumns = array();
 	
@@ -39,7 +40,7 @@ class UserHistoryPassword extends CActiveRecord
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
 	 * @param string $className active record class name.
-	 * @return UserHistoryPassword the static model class
+	 * @return UserHistoryBlock the static model class
 	 */
 	public static function model($className=__CLASS__)
 	{
@@ -51,7 +52,7 @@ class UserHistoryPassword extends CActiveRecord
 	 */
 	public function tableName()
 	{
-		return 'ommu_user_history_password';
+		return 'ommu_user_history_block';
 	}
 
 	/**
@@ -62,12 +63,13 @@ class UserHistoryPassword extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('user_id, password, update_date', 'required'),
-			array('user_id', 'length', 'max'=>11),
-			array('password', 'length', 'max'=>32),
+			array('type, user_id, block_id', 'required'),
+			array('type', 'numerical', 'integerOnly'=>true),
+			array('user_id, block_id', 'length', 'max'=>11),
+			array('creation_date', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, user_id, password, update_date,
+			array('id, type, user_id, block_id, creation_date,
 				user_search', 'safe', 'on'=>'search'),
 		);
 	}
@@ -91,10 +93,10 @@ class UserHistoryPassword extends CActiveRecord
 	{
 		return array(
 			'id' => 'ID',
+			'type' => 'Type',
 			'user_id' => Phrase::trans(16001,1),
-			'password' => Phrase::trans(16112,1),
-			'update_date' => Phrase::trans(16166,1),
-			'user_search' => Phrase::trans(16001,1),
+			'block_id' => Phrase::trans(16181,1),
+			'creation_date' => 'Creation Date',
 		);
 	}
 
@@ -117,14 +119,15 @@ class UserHistoryPassword extends CActiveRecord
 		$criteria=new CDbCriteria;
 
 		$criteria->compare('t.id',$this->id,true);
+		$criteria->compare('t.type',$this->type);
 		if(isset($_GET['user'])) {
 			$criteria->compare('t.user_id',$_GET['user']);
 		} else {
 			$criteria->compare('t.user_id',$this->user_id);
 		}
-		$criteria->compare('t.password',$this->password,true);
-		if($this->update_date != null && !in_array($this->update_date, array('0000-00-00 00:00:00', '0000-00-00')))
-			$criteria->compare('date(t.update_date)',date('Y-m-d', strtotime($this->update_date)));
+		$criteria->compare('t.block_id',$this->block_id,true);
+		if($this->creation_date != null && !in_array($this->creation_date, array('0000-00-00 00:00:00', '0000-00-00')))
+			$criteria->compare('date(t.creation_date)',date('Y-m-d', strtotime($this->creation_date)));
 		
 		// Custom Search
 		$criteria->with = array(
@@ -135,7 +138,7 @@ class UserHistoryPassword extends CActiveRecord
 		);
 		$criteria->compare('user.displayname',strtolower($this->user_search), true);
 
-		if(!isset($_GET['UserHistoryPassword_sort']))
+		if(!isset($_GET['UserHistoryBlock_sort']))
 			$criteria->order = 'id DESC';
 
 		return new CActiveDataProvider($this, array(
@@ -165,9 +168,10 @@ class UserHistoryPassword extends CActiveRecord
 			}
 		} else {
 			//$this->defaultColumns[] = 'id';
+			$this->defaultColumns[] = 'type';
 			$this->defaultColumns[] = 'user_id';
-			$this->defaultColumns[] = 'password';
-			$this->defaultColumns[] = 'update_date';
+			$this->defaultColumns[] = 'block_id';
+			$this->defaultColumns[] = 'creation_date';
 		}
 
 		return $this->defaultColumns;
@@ -182,25 +186,39 @@ class UserHistoryPassword extends CActiveRecord
 				'header' => 'No',
 				'value' => '$this->grid->dataProvider->pagination->currentPage*$this->grid->dataProvider->pagination->pageSize + $row+1'
 			);
+			if(!isset($_GET['type'])) {
+				$this->defaultColumns[] = array(
+					'name' => 'type',
+					'value' => '$data->type == 1 ? Phrase::trans(16181,1) : Phrase::trans(16248,1)',
+					'htmlOptions' => array(
+						'class' => 'center',
+					),
+					'filter'=>array(
+						1=>Phrase::trans(16181,1),
+						0=>Phrase::trans(16248,1),
+					),
+					'type' => 'raw',
+				);
+			}
 			$this->defaultColumns[] = array(
 				'name' => 'user_search',
 				'value' => '$data->user->displayname',
 			);
-			//$this->defaultColumns[] = 'password';
+			$this->defaultColumns[] = 'block_id';
 			$this->defaultColumns[] = array(
-				'name' => 'update_date',
-				'value' => 'Utility::dateFormat($data->update_date, true)',
+				'name' => 'creation_date',
+				'value' => 'Utility::dateFormat($data->creation_date, true)',
 				'htmlOptions' => array(
 					//'class' => 'center',
 				),
 				'filter' => Yii::app()->controller->widget('zii.widgets.jui.CJuiDatePicker', array(
 					'model'=>$this,
-					'attribute'=>'update_date',
+					'attribute'=>'creation_date',
 					'language' => 'ja',
 					'i18nScriptFile' => 'jquery.ui.datepicker-en.js',
 					//'mode'=>'datetime',
 					'htmlOptions' => array(
-						'id' => 'update_date_filter',
+						'id' => 'creation_date_filter',
 					),
 					'options'=>array(
 						'showOn' => 'focus',
@@ -233,4 +251,5 @@ class UserHistoryPassword extends CActiveRecord
 			return $model;			
 		}
 	}
+
 }

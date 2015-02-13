@@ -1,6 +1,6 @@
 <?php
 /**
- * UserHistoryPassword 
+ * UserHistoryUsername
  * @author Putra Sudaryanto <putra.sudaryanto@gmail.com>
  * @copyright Copyright (c) 2014 Ommu Platform (ommu.co)
  * @link http://company.ommu.co
@@ -17,18 +17,18 @@
  *
  * --------------------------------------------------------------------------------------
  *
- * This is the model class for table "ommu_user_history_password".
+ * This is the model class for table "ommu_user_history_username".
  *
- * The followings are the available columns in table 'ommu_user_history_password':
+ * The followings are the available columns in table 'ommu_user_history_username':
  * @property string $id
  * @property string $user_id
- * @property string $password
+ * @property string $username_old
  * @property string $update_date
  *
  * The followings are the available model relations:
  * @property OmmuUsers $user
  */
-class UserHistoryPassword extends CActiveRecord
+class UserHistoryUsername extends CActiveRecord
 {
 	public $defaultColumns = array();
 	
@@ -39,7 +39,7 @@ class UserHistoryPassword extends CActiveRecord
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
 	 * @param string $className active record class name.
-	 * @return UserHistoryPassword the static model class
+	 * @return UserHistoryUsername the static model class
 	 */
 	public static function model($className=__CLASS__)
 	{
@@ -51,7 +51,7 @@ class UserHistoryPassword extends CActiveRecord
 	 */
 	public function tableName()
 	{
-		return 'ommu_user_history_password';
+		return 'ommu_user_history_username';
 	}
 
 	/**
@@ -62,12 +62,13 @@ class UserHistoryPassword extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('user_id, password, update_date', 'required'),
+			array('user_id, username_old', 'required'),
 			array('user_id', 'length', 'max'=>11),
-			array('password', 'length', 'max'=>32),
+			array('username_old', 'length', 'max'=>32),
+			array('update_date', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, user_id, password, update_date,
+			array('id, user_id, username_old, update_date,
 				user_search', 'safe', 'on'=>'search'),
 		);
 	}
@@ -92,9 +93,8 @@ class UserHistoryPassword extends CActiveRecord
 		return array(
 			'id' => 'ID',
 			'user_id' => Phrase::trans(16001,1),
-			'password' => Phrase::trans(16112,1),
+			'username_old' => 'Username Old',
 			'update_date' => Phrase::trans(16166,1),
-			'user_search' => Phrase::trans(16001,1),
 		);
 	}
 
@@ -122,7 +122,7 @@ class UserHistoryPassword extends CActiveRecord
 		} else {
 			$criteria->compare('t.user_id',$this->user_id);
 		}
-		$criteria->compare('t.password',$this->password,true);
+		$criteria->compare('t.username_old',$this->username_old,true);
 		if($this->update_date != null && !in_array($this->update_date, array('0000-00-00 00:00:00', '0000-00-00')))
 			$criteria->compare('date(t.update_date)',date('Y-m-d', strtotime($this->update_date)));
 		
@@ -135,7 +135,7 @@ class UserHistoryPassword extends CActiveRecord
 		);
 		$criteria->compare('user.displayname',strtolower($this->user_search), true);
 
-		if(!isset($_GET['UserHistoryPassword_sort']))
+		if(!isset($_GET['UserHistoryUsername_sort']))
 			$criteria->order = 'id DESC';
 
 		return new CActiveDataProvider($this, array(
@@ -166,7 +166,7 @@ class UserHistoryPassword extends CActiveRecord
 		} else {
 			//$this->defaultColumns[] = 'id';
 			$this->defaultColumns[] = 'user_id';
-			$this->defaultColumns[] = 'password';
+			$this->defaultColumns[] = 'username_old';
 			$this->defaultColumns[] = 'update_date';
 		}
 
@@ -186,7 +186,7 @@ class UserHistoryPassword extends CActiveRecord
 				'name' => 'user_search',
 				'value' => '$data->user->displayname',
 			);
-			//$this->defaultColumns[] = 'password';
+			$this->defaultColumns[] = 'username_old';
 			$this->defaultColumns[] = array(
 				'name' => 'update_date',
 				'value' => 'Utility::dateFormat($data->update_date, true)',
@@ -233,4 +233,5 @@ class UserHistoryPassword extends CActiveRecord
 			return $model;			
 		}
 	}
+
 }
