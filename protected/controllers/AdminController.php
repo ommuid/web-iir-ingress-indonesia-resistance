@@ -109,9 +109,46 @@ class AdminController extends Controller
 	 */
 	public function actionDashboard() 
 	{
+		/* Wall Post */
+		$model=new OmmuWalls;
+
+		/* Get Walll */
+		$criteria=new CDbCriteria; 
+		$criteria->condition = 'publish = :publish'; 
+		$criteria->params = array(':publish'=>1); 
+		$criteria->order = 'creation_date DESC'; 
+
+		$dataProvider = new CActiveDataProvider('OmmuWalls', array( 
+			'criteria'=>$criteria, 
+			'pagination'=>array( 
+				'pageSize'=>5, 
+			), 
+		));
+		
+		$data = '';
+		$wall = $dataProvider->getData();
+		if(!empty($wall)) {
+			foreach($wall as $key => $item) {
+				$data .= Utility::otherDecode($this->renderPartial('/wall/_view', array('data'=>$item), true, false));
+			}
+		}
+		$pager = OFunction::getDataProviderPager($dataProvider);
+		if($pager[nextPage] != '0') {
+			$summaryPager = 'Displaying 1-'.($pager[currentPage]*$pager[pageSize]).' of '.$pager[itemCount].' results.';
+		} else {
+			$summaryPager = 'Displaying 1-'.$pager[itemCount].' of '.$pager[itemCount].' results.';
+		}
+		$nextPager = $pager['nextPage'] != 0 ? Yii::app()->controller->createUrl('dashboard', array($pager['pageVar']=>$pager['nextPage'])) : 0;
+		
 		$this->pageTitle = Phrase::trans(248,0).', '.Yii::app()->user->displayname.'!';
 		$this->pageDescription = Phrase::trans(247,0);
 		$this->pageMeta = '';
-		$this->render('admin_dashboard');
+		$this->render('admin_dashboard', array(
+			'model'=>$model,			
+			'data'=>$data,
+			'pager'=>$pager,
+			'summaryPager'=>$summaryPager,
+			'nextPager'=>$nextPager,
+		));
 	}	
 }

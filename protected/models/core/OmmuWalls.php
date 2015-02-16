@@ -72,7 +72,7 @@ class OmmuWalls extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('user_id, wall_media, wall_status', 'required'),
+			array('user_id, wall_status', 'required'),
 			array('publish, comments, likes', 'numerical', 'integerOnly'=>true),
 			array('user_id', 'length', 'max'=>11),
 			array('modified_date', 'safe'),
