@@ -43,7 +43,7 @@ $commentNextPager = $commentPager['nextPage'] != 0 ? Yii::app()->controller->cre
 
 ?>
 
-<div class="sep">
+<div class="sep" id="wall-<?php echo $data->wall_id;?>">
 	<div class="user">
 		<?php
 			if($data->user->photo_id == 0) {
@@ -82,6 +82,18 @@ $commentNextPager = $commentPager['nextPage'] != 0 ? Yii::app()->controller->cre
 			<?php }?>
 			<div class="items">
 				<?php echo $val;?>
+			</div>
+			<div class="comment-post">
+				<?php $user = Users::model()->findByPk(Yii::app()->user->id, array(
+					'select' => 'photo_id',
+				));
+				if($user->photo_id == 0) {
+					$userImages = Utility::getTimThumb(Yii::app()->request->baseUrl.'/public/users/default.png', 40, 40, 1);
+				} else {
+					$userImages = Utility::getTimThumb(Yii::app()->request->baseUrl.'/public/users/'.Yii::app()->user->id.'/'.$model->photo->photo, 40, 40, 1);
+				}?>
+				<a href="javascript:void(0);" title="<?php echo Yii::app()->user->displayname;?>"><img src="<?php echo $userImages;?>" alt="<?php echo Yii::app()->user->displayname;?>"></a>
+				comment post
 			</div>
 		</div>
 	</div>	

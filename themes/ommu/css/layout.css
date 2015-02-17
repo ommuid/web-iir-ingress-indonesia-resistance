@@ -1116,6 +1116,7 @@ footer .powered {
 #admin .wall,
 #admin .recent {
 	display: table-cell;
+	vertical-align: top;
 }
 #admin .wall {
 	padding: 0 20px 0 0;
@@ -1144,13 +1145,16 @@ footer .powered {
 #admin .wall .sep .status .list-view .sep:last-child {
 	border-bottom: none;
 }
-#admin .wall .list-view .sep .user {
+#admin .wall .list-view .sep .user,
+#admin .wall .sep .status .list-view .comment-post a {
 	position: absolute;
 	top: 10px;
 	left: 10px;
 }
 #admin .wall .list-view .sep .user a,
-#admin .wall .list-view .sep .user img {
+#admin .wall .list-view .sep .user img,
+#admin .wall .sep .status .list-view .comment-post a,
+#admin .wall .sep .status .list-view .comment-post a img {
 	-webkit-border-radius: 5px;
 	-moz-border-radius: 5px;
 	border-radius: 5px;
@@ -1207,6 +1211,11 @@ footer .powered {
 	background: #333;
 	color: #fff;
 }
+#admin .wall .list-view .paging a.load,
+#admin .wall .sep .status .list-view .paging a.load {
+	background: #333 url('../images/resource/loader.png') 50% 50% no-repeat;
+	color: transparent;
+}
 #admin .wall .list-view .paging span {
 	float: left;
 }
@@ -1223,12 +1232,15 @@ footer .powered {
 	box-shadow: none;
 	border-top: none;
 	margin: 0 0 0 0;
+	display: none;
 }
-#admin .wall .sep .status .list-view .sep {
+#admin .wall .sep .status .list-view .sep,
+#admin .wall .sep .status .list-view .comment-post {
 	padding: 10px 10px 10px 50px;
 	min-height: 40px;	
 }
-#admin .wall .sep .status .list-view .sep .user {
+#admin .wall .sep .status .list-view .sep .user,
+#admin .wall .sep .status .list-view .comment-post a {
 	left: 0;
 }
 
@@ -1242,6 +1254,14 @@ footer .powered {
 	float: none;
 	padding: 8px 20px;	
 	text-align: center;
+}
+#admin .wall .sep .status .list-view .comment-post {
+	position: relative;
+	border-top: 1px dotted #ddd;
+	padding: 10px 10px 0 50px;
+}
+#admin .wall .sep .status .list-view .comment-post a {
+
 }
 
 
