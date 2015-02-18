@@ -12,6 +12,8 @@
 
 	$this->breadcrumbs=array();
 	//$this->widget('AdminDashboardStatistic');
+	$cs = Yii::app()->getClientScript();
+	$cs->registerScriptFile(Yii::app()->theme->baseUrl.'/js/custom/custom_wall.js', CClientScript::POS_END);
 ?>
 
 <div class="table">
@@ -23,13 +25,13 @@
 		
 		<?php //begin.Status List-View ?>
 		<div class="list-view">
-			<div class="items">
+			<div class="items wall">
 				<?php echo $data;?>
 			</div>
 			<div class="paging clearfix">
 				<span><?php echo $summaryPager;?></span>
 				<?php if($pager[nextPage] != '0') {?>
-					<a href="<?php echo $nextPager;?>" title="Readmore">Readmore</a>
+					<a class="wall" href="<?php echo $nextPager;?>" title="Readmore">Readmore</a>
 				<?php }?>
 			</div>
 		</div>

@@ -18,7 +18,7 @@ $criteria->params = array(
 	':parent'=>0,
 	':wall'=>$data->wall_id,
 ); 
-$criteria->order = 'creation_date DESC'; 
+$criteria->order = 'creation_date ASC'; 
 
 $dataProvider = new CActiveDataProvider('OmmuWallComment', array( 
 	'criteria'=>$criteria, 
@@ -35,15 +35,10 @@ if(!empty($comment)) {
 	}
 }
 $commentPager = OFunction::getDataProviderPager($dataProvider);
-$commentNextPager = $commentPager['nextPage'] != 0 ? Yii::app()->controller->createUrl('dashboard', array($commentPager['pageVar']=>$commentPager['nextPage'])) : 0;
-
-//echo '<pre>';
-//print_r($comment);
-//echo '</pre>';
-
+$commentNextPager = $commentPager['nextPage'] != 0 ? Yii::app()->createUrl('wallcomment/get', array('id'=>$data->wall_id, $commentPager['pageVar']=>$commentPager['nextPage'])) : 0;
 ?>
 
-<div class="sep" id="wall-<?php echo $data->wall_id;?>">
+<div class="sep comment-show" id="wall-<?php echo $data->wall_id;?>">
 	<div class="user">
 		<?php
 			if($data->user->photo_id == 0) {
@@ -70,19 +65,19 @@ $commentNextPager = $commentPager['nextPage'] != 0 ? Yii::app()->controller->cre
 		
 		<?php echo $data->wall_status;?>
 		<div class="meta">
-			<a href="javascript:void(0);" title="<?php echo $data->likes.' Like'?>"><?php echo $data->likes.' Like'?></a> | 
-			<a href="javascript:void(0);" title="<?php echo $data->comments.' Comment'?>"><?php echo $data->comments.' Comment'?></a>
+			<a class="likes" href="javascript:void(0);" title="<?php echo $data->likes.' Like'?>"><?php echo $data->likes.' Like'?></a> | 
+			<a class="comment" href="javascript:void(0);" title="<?php echo $data->comments.' Comment'?>"><?php echo $data->comments.' Comment'?></a>
 		</div>
 		<?php //begin.Comment ?>
 		<div class="list-view">
-			<?php if($commentPager[nextPage] != '0') {?>
-			<div class="paging clearfix">
-				<a href="<?php echo $commentNextPager;?>" title="Readmore Comment">Readmore Comment</a>
-			</div>
-			<?php }?>
-			<div class="items">
+			<div class="items comment">
 				<?php echo $val;?>
 			</div>
+			<?php if($commentPager[nextPage] != '0') {?>
+			<div class="paging clearfix">
+				<a class="comment" href="<?php echo $commentNextPager;?>" title="Readmore Comment">Readmore Comment</a>
+			</div>
+			<?php }?>
 			<div class="comment-post">
 				<?php $user = Users::model()->findByPk(Yii::app()->user->id, array(
 					'select' => 'photo_id',

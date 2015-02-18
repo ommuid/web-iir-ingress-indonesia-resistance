@@ -1126,6 +1126,30 @@ footer .powered {
 }
 
 /* Wall Post */
+#admin form#ommu-walls-form {
+	margin: 0 0 10px 0;
+}
+#admin #ommu-walls-form fieldset {
+	background: #f9f9f9;
+}
+#admin #ommu-walls-form fieldset div {
+	padding: 10px 10px 10px 10px;
+}
+#admin #ommu-walls-form fieldset div:last-child {
+	padding: 0 10px 10px 10px;
+}
+#admin #ommu-walls-form fieldset textarea {
+	width: 100%;
+	background: #fff;
+}
+#admin #ommu-walls-form fieldset div:last-child input,
+#admin #ommu-walls-form fieldset div:last-child div {
+	float: left;
+}
+#admin #ommu-walls-form fieldset div:last-child div {
+	padding: 8px 10px 0 15px;
+	color: #ff0000;
+}
 
 /* Wall List-View */
 #admin .wall .list-view {
@@ -1187,10 +1211,6 @@ footer .powered {
 }
 
 /* Wall Paging */
-#admin .wall .list-view .paging,
-#admin .wall .list-view .paging {
-	text-transform: uppercase;
-}
 #admin .wall .list-view .paging {
 	border-top: 1px dotted #ddd;
 	padding: 10px 10px;
@@ -1234,10 +1254,16 @@ footer .powered {
 	margin: 0 0 0 0;
 	display: none;
 }
+#admin .wall .sep.comment-show .status .list-view {
+	display: block;
+}
 #admin .wall .sep .status .list-view .sep,
 #admin .wall .sep .status .list-view .comment-post {
 	padding: 10px 10px 10px 50px;
 	min-height: 40px;	
+}
+#admin .wall .sep .status .list-view .sep:first-child {
+	border-top: 1px dotted #ddd;
 }
 #admin .wall .sep .status .list-view .sep .user,
 #admin .wall .sep .status .list-view .comment-post a {
@@ -1247,7 +1273,6 @@ footer .powered {
 /* Comment Paging */
 #admin .wall .sep .status .list-view .paging {
 	border-top: 1px dotted #ddd;
-	border-bottom: 1px dotted #ddd;
 	padding: 0 0 0 0;
 }
 #admin .wall .sep .status .list-view .paging a {

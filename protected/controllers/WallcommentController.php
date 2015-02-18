@@ -17,6 +17,7 @@
  *	RunAction
  *	Delete
  *	Publish
+ *	Get
  *
  *	LoadModel
  *	performAjaxValidation
@@ -49,7 +50,7 @@ class WallcommentController extends Controller
 				Yii::app()->theme = $arrThemes['folder'];
 				$this->layout = $arrThemes['layout'];
 			} else {
-				$this->redirect(Yii::app()->createUrl('site/login'));
+				throw new CHttpException(404, Phrase::trans(193,0));
 			}
 		} else {
 			$this->redirect(Yii::app()->createUrl('site/login'));
@@ -86,9 +87,14 @@ class WallcommentController extends Controller
 				//'expression'=>'isset(Yii::app()->user->level) && (Yii::app()->user->level != 1)',
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('manage','add','edit','view','runaction','delete','publish'),
+				'actions'=>array('get'),
 				'users'=>array('@'),
 				'expression'=>'isset(Yii::app()->user->level) && in_array(Yii::app()->user->level, array(1,2))',
+			),
+			array('allow', // allow authenticated user to perform 'create' and 'update' actions
+				'actions'=>array('manage','add','edit','view','runaction','delete','publish'),
+				'users'=>array('@'),
+				'expression'=>'isset(Yii::app()->user->level) && (Yii::app()->user->level == 1)',
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
 				'actions'=>array(),
@@ -370,6 +376,53 @@ class WallcommentController extends Controller
 				'title'=>$title,
 				'model'=>$model,
 			));
+		}
+	}
+	
+	/**
+	 * Creates a new model.
+	 * If creation is successful, the browser will be redirected to the 'view' page.
+	 */
+	public function actionGet($id) 
+	{
+		if(Yii::app()->request->isAjaxRequest) {
+			$criteria=new CDbCriteria; 
+			$criteria->condition = 'publish = :publish AND parent_id = :parent AND wall_id = :wall'; 
+			$criteria->params = array(
+				':publish'=>1,
+				':parent'=>0,
+				':wall'=>$id,
+			); 
+			$criteria->order = 'creation_date ASC'; 
+
+			$dataProvider = new CActiveDataProvider('OmmuWallComment', array( 
+				'criteria'=>$criteria, 
+				'pagination'=>array( 
+					'pageSize'=>5, 
+				), 
+			));  
+		
+			$data = '';
+			$comment = $dataProvider->getData();
+			if(!empty($comment)) {
+				foreach($comment as $key => $item) {
+					$data .= Utility::otherDecode($this->renderPartial('/wall_comment/_view', array('data'=>$item), true, false));
+				}
+			}
+			$pager = OFunction::getDataProviderPager($dataProvider);
+			$nextPager = $pager['nextPage'] != 0 ? Yii::app()->controller->createUrl('get', array('id'=>$id, $pager['pageVar']=>$pager['nextPage'])) : 0;
+			
+			$return = array(
+				'type'=>1,
+				'wallid'=>'wall-'.$id,
+				'data'=>$data,
+				'pager'=>$pager,
+				'nextpage'=>$nextPager,
+			);
+			echo CJSON::encode($return);
+			
+		} else {
+			throw new CHttpException(404, Phrase::trans(193,0));
 		}
 	}
 

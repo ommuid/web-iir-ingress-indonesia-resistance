@@ -208,17 +208,19 @@ $(document).ready(function() {
 	 *	0 [show message]
 	 *	1 [update grid-view]
 	 *	2 [replace spesific and galery upload]
+	 *	3 [append, prepand]
 	 *	5 [replace content or show dialog]
 	 *
-	 *	//3 [hide media-render]
 	 *	4 [hide parent div]
 	 *	//6 [replace header]
 	 *	7 [spesific replace]
 	 *
 	 *	id [2,7] => attribute id (html)
 	 *	msg [0,1,7] => message
-	 *	get [0,2,3,5,6,7] => url
-	 *	value [0] => 0,1
+	 *	get [0,2,3,5] => url
+	 *	value [0,3] => 0,1 (3"1=append,0=prepand")
+	 *	data [3] => [html sintag]
+	 *	idclass [3] => [selector]
 	 *
 	 */ 
 
@@ -306,7 +308,15 @@ $(document).ready(function() {
 									});
 
 								} else if(response.type == 3) {
-									//js condition
+									if (typeof(response.get) != 'undefined') {
+										
+									} else {
+										if (typeof(response.value) == 'undefined' || (typeof(response.value) != 'undefined' && response.value == 1)) {
+											$(response.idclass).append(response.data);
+										} else {
+											$(response.idclass).prepend(response.data);
+										}
+									}
 
 								} else if(response.type == 4) {
 									notifierClosed();

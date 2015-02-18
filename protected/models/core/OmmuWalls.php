@@ -75,7 +75,7 @@ class OmmuWalls extends CActiveRecord
 			array('user_id, wall_status', 'required'),
 			array('publish, comments, likes', 'numerical', 'integerOnly'=>true),
 			array('user_id', 'length', 'max'=>11),
-			array('modified_date', 'safe'),
+			array('wall_media', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('wall_id, publish, user_id, wall_media, wall_status, comments, likes, creation_date, modified_date,
