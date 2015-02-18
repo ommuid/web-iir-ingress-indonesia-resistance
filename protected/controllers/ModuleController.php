@@ -50,7 +50,7 @@ class ModuleController extends Controller
 				
 				$this->moduleHandle = Yii::app()->moduleHandle;
 			} else {
-				$this->redirect(Yii::app()->createUrl('site/login'));
+				throw new CHttpException(404, Phrase::trans(193,0));
 			}
 		} else {
 			$this->redirect(Yii::app()->createUrl('site/login'));

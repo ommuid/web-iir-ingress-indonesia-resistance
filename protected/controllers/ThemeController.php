@@ -45,7 +45,7 @@ class ThemeController extends Controller
 				Yii::app()->theme = $arrThemes['folder'];
 				$this->layout = $arrThemes['layout'];
 			} else {
-				$this->redirect(Yii::app()->createUrl('site/login'));
+				throw new CHttpException(404, Phrase::trans(193,0));
 			}
 		} else {
 			$this->redirect(Yii::app()->createUrl('site/login'));

@@ -41,7 +41,7 @@ class AdminController extends Controller
 				Yii::app()->theme = $arrThemes['folder'];
 				$this->layout = $arrThemes['layout'];
 			} else {
-				$this->redirect(Yii::app()->createUrl('site/login'));
+				throw new CHttpException(404, Phrase::trans(193,0));
 			}
 		} else {
 			$this->redirect(Yii::app()->createUrl('site/login'));
@@ -77,14 +77,14 @@ class AdminController extends Controller
 				'expression'=>'isset(Yii::app()->user->level)',
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array(),
-				'users'=>array('@'),
-				'expression'=>'isset(Yii::app()->user->level) && (Yii::app()->user->level == 1)',
-			),
-			array('allow', // allow authenticated user to perform 'create' and 'update' actions
 				'actions'=>array('dashboard'),
 				'users'=>array('@'),
 				'expression'=>'isset(Yii::app()->user->level) && in_array(Yii::app()->user->level, array(1,2))',
+			),
+			array('allow', // allow authenticated user to perform 'create' and 'update' actions
+				'actions'=>array(),
+				'users'=>array('@'),
+				'expression'=>'isset(Yii::app()->user->level) && (Yii::app()->user->level == 1)',
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
 				'actions'=>array(),
@@ -138,7 +138,7 @@ class AdminController extends Controller
 		} else {
 			$summaryPager = 'Displaying 1-'.$pager[itemCount].' of '.$pager[itemCount].' results.';
 		}
-		$nextPager = $pager['nextPage'] != 0 ? Yii::app()->controller->createUrl('dashboard', array($pager['pageVar']=>$pager['nextPage'])) : 0;
+		$nextPager = $pager['nextPage'] != 0 ? Yii::app()->createUrl('wall/get', array($pager['pageVar']=>$pager['nextPage'])) : 0;
 		
 		$this->pageTitle = Phrase::trans(248,0).', '.Yii::app()->user->displayname.'!';
 		$this->pageDescription = Phrase::trans(247,0);
