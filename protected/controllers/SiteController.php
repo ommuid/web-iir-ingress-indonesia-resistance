@@ -88,7 +88,7 @@ class SiteController extends Controller
 		));
 		//$this->redirect(Yii::app()->createUrl('project/site/index'));
 
-		if($setting->online == 0 && date('Y-m-d', strtotime($setting->construction_date)) > date('Y-m-d')) {
+		if(($setting->online == 0 && date('Y-m-d', strtotime($setting->construction_date)) > date('Y-m-d')) && (Yii::app()->user->isGuest || (!Yii::app()->user->isGuest && in_array(!Yii::app()->user->level, array(1,2))))) {
 			$this->redirect(Yii::app()->createUrl('maintenance/index'));
 
 		} else {
