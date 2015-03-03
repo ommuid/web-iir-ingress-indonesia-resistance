@@ -24,4 +24,5 @@ store
 support
 users
 video
+wall
 ___employment
