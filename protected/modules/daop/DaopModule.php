@@ -2,7 +2,7 @@
 
 class DaopModule extends CWebModule
 {
-	public $defaultController = 'site';
+	public $defaultController = 'member';
 
 	public function init() 
 	{
