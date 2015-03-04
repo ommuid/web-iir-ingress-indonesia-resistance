@@ -10,14 +10,13 @@
  *
  * TOC :
  *	Index
- *	View
+ *	Get
+ *	CitySuggest
+ *	CityPost
  *	Manage
  *	Add
  *	Edit
- *	RunAction
  *	Delete
- *	Publish
- *	Headline
  *
  *	LoadModel
  *	performAjaxValidation
@@ -45,21 +44,12 @@ class MemberController extends Controller
 	public function init() 
 	{
 		if(!Yii::app()->user->isGuest) {
-			if(Yii::app()->user->level == 1) {
-				$arrThemes = Utility::getCurrentTemplate('admin');
-				Yii::app()->theme = $arrThemes['folder'];
-				$this->layout = $arrThemes['layout'];
-			} else {
-				$this->redirect(Yii::app()->createUrl('site/login'));
-			}
+			$arrThemes = Utility::getCurrentTemplate('admin');
+			Yii::app()->theme = $arrThemes['folder'];
+			$this->layout = $arrThemes['layout'];
 		} else {
 			$this->redirect(Yii::app()->createUrl('site/login'));
 		}
-		/*
-		$arrThemes = Utility::getCurrentTemplate('public');
-		Yii::app()->theme = $arrThemes['folder'];
-		$this->layout = $arrThemes['layout'];
-		*/
 	}
 
 	/**
@@ -82,19 +72,20 @@ class MemberController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view'),
+				'actions'=>array(),
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array(),
+				'actions'=>array('index','get',
+					'citysuggest','citypost'
+				),
 				'users'=>array('@'),
 				'expression'=>'isset(Yii::app()->user->level)',
-				//'expression'=>'isset(Yii::app()->user->level) && (Yii::app()->user->level != 1)',
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('manage','add','edit','runaction','delete','publish','headline'),
+				'actions'=>array('manage','add','edit','runaction','delete'),
 				'users'=>array('@'),
-				'expression'=>'isset(Yii::app()->user->level) && (Yii::app()->user->level == 1)',
+				'expression'=>'isset(Yii::app()->user->level) && in_array(Yii::app()->user->level, array(1,2))',
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
 				'actions'=>array(),
@@ -111,65 +102,128 @@ class MemberController extends Controller
 	 */
 	public function actionIndex() 
 	{
+		$model=new DaopUsers;
+		
 		$arrThemes = Utility::getCurrentTemplate('public');
 		Yii::app()->theme = $arrThemes['folder'];
 		$this->layout = $arrThemes['layout'];
 		Utility::applyCurrentTheme($this->module);
-		
-		$setting = DaopUsers::model()->findByPk(1,array(
-			'select' => 'meta_description, meta_keyword',
-		));
 
-		$criteria=new CDbCriteria;
-		$criteria->condition = 'publish = :publish';
-		$criteria->params = array(':publish'=>1);
-		$criteria->order = 'creation_date DESC';
-
-		$dataProvider = new CActiveDataProvider('DaopUsers', array(
-			'criteria'=>$criteria,
-			'pagination'=>array(
-				'pageSize'=>10,
-			),
+		$this->pageTitle = 'Operation Area';
+		$this->pageDescription = '';
+		$this->pageMeta = '';
+		$this->render('front_index', array(
+			'model'=>$model,
 		));
-
-		$this->pageTitle = 'Daop Users';
-		$this->pageDescription = $setting->meta_description;
-		$this->pageMeta = $setting->meta_keyword;
-		$this->render('front_index',array(
-			'dataProvider'=>$dataProvider,
-		));
-		//$this->redirect(array('manage'));
 	}
 	
 	/**
-	 * Displays a particular model.
-	 * @param integer $id the ID of the model to be displayed
+	 * Lists all models.
 	 */
-	public function actionView($id) 
+	public function actionGet() 
 	{
-		$arrThemes = Utility::getCurrentTemplate('public');
-		Yii::app()->theme = $arrThemes['folder'];
-		$this->layout = $arrThemes['layout'];
-		Utility::applyCurrentTheme($this->module);
-		
-		$setting = VideoSetting::model()->findByPk(1,array(
-			'select' => 'meta_keyword',
-		));
+		if(Yii::app()->request->isAjaxRequest) {
+			$criteria=new CDbCriteria;
+			$criteria->condition = 'user_id = :id';
+			$criteria->params = array(
+				':id'=>Yii::app()->user->id,
+			);
+			$criteria->order = 'creation_date DESC';
 
-		$model=$this->loadModel($id);
+			$dataProvider = new CActiveDataProvider('DaopUsers', array(
+				'criteria'=>$criteria,
+				'pagination'=>array(
+					'pageSize'=>7,
+				),
+			));
+			
+			$data = '';
+			$daops = $dataProvider->getData();
+			if(!empty($daops)) {
+				foreach($daops as $key => $item) {
+					$data .= Utility::otherDecode($this->renderPartial('_view', array('data'=>$item), true, false));
+				}
+			}
+			$pager = OFunction::getDataProviderPager($dataProvider);
+			if($pager[nextPage] != '0') {
+				$summaryPager = '[1-'.($pager[currentPage]*$pager[pageSize]).' of '.$pager[itemCount].']';
+			} else {
+				$summaryPager = '[1-'.$pager[itemCount].' of '.$pager[itemCount].']';
+			}
+			$nextPager = $pager['nextPage'] != 0 ? Yii::app()->controller->createUrl('get', array($pager['pageVar']=>$pager['nextPage'])) : 0;	
+			
+			$return = array(
+				'type'=>1,
+				'data'=>$data,
+				'pager'=>$pager,
+				'renderType'=>4,
+				'renderSelector'=>'#daop-member .list-view.city .items a.pager',
+				'summaryPager'=>$summaryPager,
+				'summaryPagerSelector'=>'#daop-member .boxed h2.city span',
+				'nextPage'=>$nextPager,
+				'nextPageSelector'=>'#daop-member .list-view.city .items a.pager',
+			);
+			echo CJSON::encode($return);
+			
+		} else {
+			throw new CHttpException(404, Phrase::trans(193,0));
+		}
+	}
+	
+	/**
+	 * Updates a particular model.
+	 * If update is successful, the browser will be redirected to the 'view' page.
+	 * @param integer $id the ID of the model to be updated
+	 */
+	public function actionCitySuggest($limit=10) 
+	{
+		if(Yii::app()->request->isAjaxRequest && isset($_GET['term'])) {
+			$criteria = new CDbCriteria;
+			$criteria->join = 'LEFT JOIN `ommu_daop_users` `b` ON `t`.`city_id`=`b`.`city_id` AND `b`.`user_id`=:user';
+			$criteria->condition = '`t`.`city` LIKE :city AND b.`city_id` IS NULL';
+			//$criteria->select	= "city_id, city";
+			$criteria->limit = $limit;
+			$criteria->order = 'city_id ASC';
+			$criteria->params = array(
+				':user' => Yii::app()->user->id,
+				':city' => '%' . strtolower($_GET['term']) . '%'
+			);
+			$model = OmmuZoneCity::model()->findAll($criteria);
 
-		$this->pageTitle = 'View Daop Users';
-		$this->pageDescription = '';
-		$this->pageMeta = $setting->meta_keyword;
-		$this->render('front_view',array(
-			'model'=>$model,
-		));
-		/*
-		$this->render('admin_view',array(
-			'model'=>$model,
-		));
-		*/
-	}	
+			if($model) {
+				foreach($model as $items) {
+					$result[] = array('id' => $items->city_id, 'value' => $items->city);
+				}
+			}
+		} else {
+			throw new CHttpException(404, Phrase::trans(193,0));
+		}
+		echo CJSON::encode($result);
+		Yii::app()->end();
+	}
+
+	/**
+	 * Creates a new model.
+	 * If creation is successful, the browser will be redirected to the 'view' page.
+	 */
+	public function actionCityPost() 
+	{
+		$model=new DaopUsers;
+
+		// Uncomment the following line if AJAX validation is needed
+		$this->performAjaxValidation($model);
+
+		if(isset($_POST['user_id'], $_POST['city_id'])) {
+			$model->user_id = $_POST['user_id'];
+			$model->city_id = $_POST['city_id'];
+
+			if($model->save()) {
+				echo CJSON::encode(array(
+					'data' => Utility::otherDecode($this->renderPartial('_view', array('data'=>$model), true, false)),
+				));
+			}
+		}
+	}
 
 	/**
 	 * Manages all models.
@@ -214,23 +268,10 @@ class MemberController extends Controller
 
 		if(isset($_POST['DaopUsers'])) {
 			$model->attributes=$_POST['DaopUsers'];
-
-			/* 
+			
 			$jsonError = CActiveForm::validate($model);
 			if(strlen($jsonError) > 2) {
-				//echo $jsonError;
-				$errors = $model->getErrors();
-				$summary['msg'] = "<div class='errorSummary'><strong>Please fix the following input errors:</strong>";
-				$summary['msg'] .= "<ul>";
-				foreach($errors as $key => $value) {
-					$summary['msg'] .= "<li>{$value[0]}</li>";
-				}
-				$summary['msg'] .= "</ul></div>";
-
-				$message = json_decode($jsonError, true);
-				$merge = array_merge_recursive($summary, $message);
-				$encode = json_encode($merge);
-				echo $encode;
+				echo $jsonError;
 
 			} else {
 				if(isset($_GET['enablesave']) && $_GET['enablesave'] == 1) {
@@ -247,23 +288,19 @@ class MemberController extends Controller
 				}
 			}
 			Yii::app()->end();
-			*/
+			
+		} else {
+			$this->dialogDetail = true;
+			$this->dialogGroundUrl = Yii::app()->controller->createUrl('manage');
+			$this->dialogWidth = 550;
 
-			if(isset($_GET['enablesave']) && $_GET['enablesave'] == 1) {
-				if($model->save()) {
-					Yii::app()->user->setFlash('success', 'DaopUsers success created.');
-					//$this->redirect(array('view','id'=>$model->daop_id));
-					$this->redirect(array('manage'));
-				}
-			}
+			$this->pageTitle = 'Create Daop Users';
+			$this->pageDescription = '';
+			$this->pageMeta = '';
+			$this->render('admin_add',array(
+				'model'=>$model,
+			));
 		}
-
-		$this->pageTitle = 'Create Daop Users';
-		$this->pageDescription = '';
-		$this->pageMeta = '';
-		$this->render('admin_add',array(
-			'model'=>$model,
-		));
 	}
 
 	/**
@@ -280,23 +317,10 @@ class MemberController extends Controller
 
 		if(isset($_POST['DaopUsers'])) {
 			$model->attributes=$_POST['DaopUsers'];
-
-			/* 
+			
 			$jsonError = CActiveForm::validate($model);
 			if(strlen($jsonError) > 2) {
-				//echo $jsonError;
-				$errors = $model->getErrors();
-				$summary['msg'] = "<div class='errorSummary'><strong>Please fix the following input errors:</strong>";
-				$summary['msg'] .= "<ul>";
-				foreach($errors as $key => $value) {
-					$summary['msg'] .= "<li>{$value[0]}</li>";
-				}
-				$summary['msg'] .= "</ul></div>";
-
-				$message = json_decode($jsonError, true);
-				$merge = array_merge_recursive($summary, $message);
-				$encode = json_encode($merge);
-				echo $encode;
+				echo $jsonError;
 
 			} else {
 				if(isset($_GET['enablesave']) && $_GET['enablesave'] == 1) {
@@ -313,58 +337,18 @@ class MemberController extends Controller
 				}
 			}
 			Yii::app()->end();
-			*/
+			
+		} else {
+			$this->dialogDetail = true;
+			$this->dialogGroundUrl = Yii::app()->controller->createUrl('manage');
+			$this->dialogWidth = 550;
 
-			if(isset($_GET['enablesave']) && $_GET['enablesave'] == 1) {
-				if($model->save()) {
-					Yii::app()->user->setFlash('success', 'DaopUsers success updated.');
-					//$this->redirect(array('view','id'=>$model->daop_id));
-					$this->redirect(array('manage'));
-				}
-			}
-		}
-
-		$this->pageTitle = 'Update Daop Users';
-		$this->pageDescription = '';
-		$this->pageMeta = '';
-		$this->render('admin_edit',array(
-			'model'=>$model,
-		));
-	}
-
-	/**
-	 * Displays a particular model.
-	 * @param integer $id the ID of the model to be displayed
-	 */
-	public function actionRunAction() {
-		$id       = $_POST['trash_id'];
-		$criteria = null;
-		$actions  = $_GET['action'];
-
-		if(count($id) > 0) {
-			$criteria = new CDbCriteria;
-			$criteria->addInCondition('id', $id);
-
-			if($actions == 'publish') {
-				DaopUsers::model()->updateAll(array(
-					'publish' => 1,
-				),$criteria);
-			} elseif($actions == 'unpublish') {
-				DaopUsers::model()->updateAll(array(
-					'publish' => 0,
-				),$criteria);
-			} elseif($actions == 'trash') {
-				DaopUsers::model()->updateAll(array(
-					'publish' => 2,
-				),$criteria);
-			} elseif($actions == 'delete') {
-				DaopUsers::model()->deleteAll($criteria);
-			}
-		}
-
-		// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
-		if(!isset($_GET['ajax'])) {
-			$this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('manage'));
+			$this->pageTitle = 'Update Daop Users';
+			$this->pageDescription = '';
+			$this->pageMeta = '';
+			$this->render('admin_edit',array(
+				'model'=>$model,
+			));
 		}
 	}
 
@@ -399,104 +383,6 @@ class MemberController extends Controller
 			$this->pageDescription = '';
 			$this->pageMeta = '';
 			$this->render('admin_delete');
-		}
-	}
-
-	/**
-	 * Deletes a particular model.
-	 * If deletion is successful, the browser will be redirected to the 'admin' page.
-	 * @param integer $id the ID of the model to be deleted
-	 */
-	public function actionPublish($id) 
-	{
-		$model=$this->loadModel($id);
-		
-		if($model->publish == 1) {
-		//if($model->actived == 1) {
-		//if($model->enabled == 1) {
-		//if($model->status == 1) {
-			$title = Phrase::trans(276,0);
-			//$title = Phrase::trans(278,0);
-			//$title = Phrase::trans(284,0);
-			//$title = Phrase::trans(292,0);
-			$replace = 0;
-		} else {
-			$title = Phrase::trans(275,0);
-			//$title = Phrase::trans(277,0);
-			//$title = Phrase::trans(283,0);
-			//$title = Phrase::trans(291,0);
-			$replace = 1;
-		}
-
-		if(Yii::app()->request->isPostRequest) {
-			// we only allow deletion via POST request
-			if(isset($id)) {
-				//change value active or publish
-				$model->publish = $replace;
-				//$model->actived = $replace;
-				//$model->enabled = $replace;
-				//$model->status = $replace;
-
-				if($model->update()) {
-					echo CJSON::encode(array(
-						'type' => 5,
-						'get' => Yii::app()->controller->createUrl('manage'),
-						'id' => 'partial-daop-users',
-						'msg' => '<div class="errorSummary success"><strong>DaopUsers success published.</strong></div>',
-					));
-				}
-			}
-
-		} else {
-			$this->dialogDetail = true;
-			$this->dialogGroundUrl = Yii::app()->controller->createUrl('manage');
-			$this->dialogWidth = 350;
-
-			$this->pageTitle = $title;
-			$this->pageDescription = '';
-			$this->pageMeta = '';
-			$this->render('admin_publish',array(
-				'title'=>$title,
-				'model'=>$model,
-			));
-		}
-	}
-
-	/**
-	 * Deletes a particular model.
-	 * If deletion is successful, the browser will be redirected to the 'admin' page.
-	 * @param integer $id the ID of the model to be deleted
-	 */
-	public function actionHeadline($id) 
-	{
-		$model=$this->loadModel($id);
-
-		if(Yii::app()->request->isPostRequest) {
-			// we only allow deletion via POST request
-			if(isset($id)) {
-				//change value active or publish
-				$model->headline = 1;
-				$model->publish = 1;
-
-				if($model->update()) {
-					echo CJSON::encode(array(
-						'type' => 5,
-						'get' => Yii::app()->controller->createUrl('manage'),
-						'id' => 'partial-daop-users',
-						'msg' => '<div class="errorSummary success"><strong>DaopUsers success updated.</strong></div>',
-					));
-				}
-			}
-
-		} else {
-			$this->dialogDetail = true;
-			$this->dialogGroundUrl = Yii::app()->controller->createUrl('manage');
-			$this->dialogWidth = 350;
-
-			$this->pageTitle = Phrase::trans(338,0);
-			$this->pageDescription = '';
-			$this->pageMeta = '';
-			$this->render('admin_headline');
 		}
 	}
 

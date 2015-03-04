@@ -1,0 +1,183 @@
+
+
+/* =Operation Area
+ * #daop-member
+-------------------------------------------------------------- */
+#daop-member .boxed {
+	padding: 12px 15px 0 15px;
+}
+
+/* Title */
+#daop-member .boxed .title {
+	border-bottom: 2px solid #ddd;
+	padding: 0 0 12px 0;
+}
+#daop-member .boxed h2,
+#daop-member .boxed h2 * {
+	font-size: 24px;
+	line-height: 28px;
+	text-transform: uppercase;
+}
+#daop-member .boxed h2 {
+	float: left;
+	padding: 0 0 0 0;
+	margin: 0 0 0 0;
+}
+#daop-member .boxed h2 span {
+	font-weight: 300;
+}
+#daop-member .boxed .title a {
+	-webkit-border-radius: 13px;
+	-moz-border-radius: 13px;
+	border-radius: 13px;
+	float: right;
+	display: block;
+	padding: 6px 10px 6px 32px;
+	background: url('daop/images/plus.png') 10px 50% no-repeat;
+	font-weight: 600;
+	text-decoration: none;
+}
+#daop-member .boxed .title a:hover {
+	background: #444 url('daop/images/plus.png') 10px 50% no-repeat;
+	color: #fff;
+}
+#daop-member .boxed .title a.minus {
+	background: url('daop/images/error.png') 10px 50% no-repeat;
+}
+#daop-member .boxed .title a.minus:hover {
+	background: #444 url('daop/images/error.png') 10px 50% no-repeat;
+}
+
+/* Form */
+#daop-member .boxed form {
+	background: #efefef;
+	padding: 15px 20px 17px 20px;
+	text-align: center;
+	border: 2px solid #ddd;
+	border-top: 5px solid #ddd;
+	display: none;
+}
+#daop-member .boxed form input[type="text"] {
+	font-size: 15px;
+	line-height: 21px;
+}
+#daop-member .boxed form input[type="submit"] {
+	display: none;
+}
+
+/* List-View */
+#daop-member .list-view {
+	padding: 15px 10px 5px 20px;
+}
+#daop-member .list-view .items .sep,
+#daop-member .list-view .items a.pager {
+	position: relative;
+	float: left;
+	margin: 0 20px 15px 0;
+}
+#daop-member .list-view .items .sep {
+	position: relative;
+	cursor: move;
+}
+#daop-member .list-view .items .sep:before,
+#daop-member .list-view .items .sep:after,
+#daop-member .list-view .items a.pager:before,
+#daop-member .list-view .items a.pager:after {
+	content: "";
+	position: absolute;
+	left: 0;
+	width: 0;
+	height: 0;
+	border-left: 50px solid #fff;
+	border-right: 50px solid #fff;
+}
+#daop-member .list-view .items .sep:before,
+#daop-member .list-view .items a.pager:before {
+	top: 0;
+	border-bottom: 35px solid #4594dc;	
+}
+#daop-member .list-view .items .sep:after,
+#daop-member .list-view .items a.pager:after {
+	bottom: 0;
+	border-top: 35px solid #4594dc;	
+}
+#daop-member .list-view .items .sep div,
+#daop-member .list-view .items a.pager span {
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;	
+}
+#daop-member .list-view .items .sep div.city,
+#daop-member .list-view .items a.pager span {
+	display: table-cell;
+	vertical-align: middle;
+	overflow: hidden;
+	width: 100px;
+	height: 120px;
+	padding: 10px 10px 10px 10px;	
+	background: #4594dc;
+	text-align: center;
+	color: #fff;
+	text-shadow: 1px 1px 1px #777;
+	font-weight: 700;
+	font-size: 14px;
+	line-height: 18px;
+}
+#daop-member .list-view .items .sep:hover div.city,
+#daop-member .list-view .items a.pager:hover span {
+	background: #231f20;
+}
+#daop-member .list-view .items .sep:hover div.city {
+	color: transparent;
+	text-shadow: 1px 1px 1px #999;
+}
+#daop-member .list-view .items .sep:hover:before,
+#daop-member .list-view .items a.pager:hover:before {
+	border-bottom: 35px solid #231f20;	
+}
+#daop-member .list-view .items .sep:hover:after,
+#daop-member .list-view .items a.pager:hover:after {
+	border-top: 35px solid #231f20;		
+}
+#daop-member .list-view .items .sep span {
+	padding: 7px 0 0 0;
+	font-size: 11px;
+	line-height: 13px;
+	color: #808080;
+	text-align: center;
+	display: none;
+}
+#daop-member .list-view .items .sep div.more,
+#daop-member .list-view .items .sep div.more * {
+	font-size: 12px;
+	line-height: 14px;
+	color: transparent;
+	text-transform: uppercase;
+	text-decoration: none;
+	text-shadow: none;
+	font-weight: 700;
+}
+#daop-member .list-view .items .sep:hover div.more,
+#daop-member .list-view .items .sep:hover div.more * {
+	color: #fff;
+	text-shadow: none;
+}
+#daop-member .list-view .items .sep div.more {
+	position: absolute;
+	left: 0;
+	top: 50%;
+	width: 100%;
+	margin: -5px 0 0 0;
+	text-align: center;
+}
+#daop-member .list-view .items .sep div.more a {
+	margin: 0 7px 0 0;
+}
+#daop-member .list-view .items .sep div.more a:last-child {
+	margin: 0 0 0 0;
+}
+#daop-member .list-view .items .sep div.more a:hover {
+	color: #4594dc;
+}
+
+/* Pager */

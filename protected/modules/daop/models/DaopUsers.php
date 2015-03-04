@@ -30,6 +30,7 @@
 class DaopUsers extends CActiveRecord
 {
 	public $defaultColumns = array();
+	public $city_input;
 
 	/**
 	 * Returns the static model of the specified AR class.
@@ -58,9 +59,10 @@ class DaopUsers extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('user_id, country_id, province_id, city_id, creation_date', 'required'),
+			array('city_input', 'required', 'on'=>'add'),
 			array('country_id, province_id', 'numerical', 'integerOnly'=>true),
 			array('user_id, city_id', 'length', 'max'=>11),
+			array('user_id, city_id', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('daop_id, user_id, country_id, province_id, city_id, creation_date', 'safe', 'on'=>'search'),
@@ -75,6 +77,9 @@ class DaopUsers extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
+			'city_relation' => array(self::BELONGS_TO, 'OmmuZoneCity', 'city_id'),
+			'province_relation' => array(self::BELONGS_TO, 'OmmuZoneProvince', 'province_id'),
+			'country_relation' => array(self::BELONGS_TO, 'OmmuZoneCountry', 'country_id'),
 		);
 	}
 
@@ -90,6 +95,7 @@ class DaopUsers extends CActiveRecord
 			'province_id' => 'Province',
 			'city_id' => 'City',
 			'creation_date' => 'Creation Date',
+			'city_input' => 'City',
 		);
 	}
 
@@ -168,14 +174,6 @@ class DaopUsers extends CActiveRecord
 	 */
 	protected function afterConstruct() {
 		if(count($this->defaultColumns) == 0) {
-			/*
-			$this->defaultColumns[] = array(
-				'class' => 'CCheckBoxColumn',
-				'name' => 'id',
-				'selectableRows' => 2,
-				'checkBoxHtmlOptions' => array('name' => 'trash_id[]')
-			);
-			*/
 			$this->defaultColumns[] = array(
 				'header' => 'No',
 				'value' => '$this->grid->dataProvider->pagination->currentPage*$this->grid->dataProvider->pagination->pageSize + $row+1'
@@ -234,68 +232,13 @@ class DaopUsers extends CActiveRecord
 	/**
 	 * before validate attributes
 	 */
-	/*
 	protected function beforeValidate() {
 		if(parent::beforeValidate()) {
-			// Create action
+			if($this->isNewRecord) {
+				$this->user_id = Yii::app()->user->id;			
+			}
 		}
 		return true;
 	}
-	*/
-
-	/**
-	 * after validate attributes
-	 */
-	/*
-	protected function afterValidate()
-	{
-		parent::afterValidate();
-			// Create action
-		return true;
-	}
-	*/
-	
-	/**
-	 * before save attributes
-	 */
-	/*
-	protected function beforeSave() {
-		if(parent::beforeSave()) {
-		}
-		return true;	
-	}
-	*/
-	
-	/**
-	 * After save attributes
-	 */
-	/*
-	protected function afterSave() {
-		parent::afterSave();
-		// Create action
-	}
-	*/
-
-	/**
-	 * Before delete attributes
-	 */
-	/*
-	protected function beforeDelete() {
-		if(parent::beforeDelete()) {
-			// Create action
-		}
-		return true;
-	}
-	*/
-
-	/**
-	 * After delete attributes
-	 */
-	/*
-	protected function afterDelete() {
-		parent::afterDelete();
-		// Create action
-	}
-	*/
 
 }

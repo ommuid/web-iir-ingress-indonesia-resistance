@@ -10,31 +10,13 @@
  */
 ?>
 
-<div class="view">
-
-	<b><?php echo CHtml::encode($data->getAttributeLabel('daop_id')); ?>:</b>
-	<?php echo CHtml::link(CHtml::encode($data->daop_id), array('view', 'id'=>$data->daop_id)); ?>
-	<br />
-
-	<b><?php echo CHtml::encode($data->getAttributeLabel('user_id')); ?>:</b>
-	<?php echo CHtml::encode($data->user_id); ?>
-	<br />
-
-	<b><?php echo CHtml::encode($data->getAttributeLabel('country_id')); ?>:</b>
-	<?php echo CHtml::encode($data->country_id); ?>
-	<br />
-
-	<b><?php echo CHtml::encode($data->getAttributeLabel('province_id')); ?>:</b>
-	<?php echo CHtml::encode($data->province_id); ?>
-	<br />
-
-	<b><?php echo CHtml::encode($data->getAttributeLabel('city_id')); ?>:</b>
-	<?php echo CHtml::encode($data->city_id); ?>
-	<br />
-
-	<b><?php echo CHtml::encode($data->getAttributeLabel('creation_date')); ?>:</b>
-	<?php echo CHtml::encode($data->creation_date); ?>
-	<br />
-
-
+<div class="sep">
+	<div class="city" title="<?php echo $data->city_relation->city?>">
+		<?php echo $data->city_relation->city?>
+		<div class="more">
+			<a href="<?php echo Yii::app()->controller->createUrl('city/view',array('id'=>$data->city_id,'t'=>Utility::getUrlTitle($data->city_relation->city)))?>" title="Detail: <?php echo $data->city_relation->city?>">Detail</a>
+			<a href="<?php echo Yii::app()->controller->createUrl('delete',array('id'=>$data->daop_id))?>" title="Drop: <?php echo $data->city_relation->city?>">Drop</a>
+		</div>
+	</div>
+	<span><?php echo Utility::dateFormat($data->creation_date, true);?></span>
 </div>
