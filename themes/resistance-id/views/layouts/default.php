@@ -83,6 +83,7 @@ if(isset($_GET['protocol']) && $_GET['protocol'] == 'script') {
 				$render = $content;
 			}
 			$return = array(
+				'partial' => 'off',
 				'title' => $title,
 				'description' => $description,
 				'keywords' => $keywords,
@@ -107,7 +108,6 @@ if(isset($_GET['protocol']) && $_GET['protocol'] == 'script') {
 		$cs->registerCssFile(Yii::app()->theme->baseUrl.'/css/layout.css');
 		$cs->registerCssFile(Yii::app()->request->baseUrl.'/externals/content.css');
 		$cs->registerCoreScript('jquery', CClientScript::POS_END);
-		$cs->registerScriptFile(Yii::app()->theme->baseUrl.'/js/plugin/less-1.7.4.min.js', CClientScript::POS_END);
 		//$cs->registerScriptFile(Yii::app()->theme->baseUrl.'/js/plugin/jquery.scrollTo.1.4.3.1-min.js', CClientScript::POS_END);
 		$cs->registerScriptFile(Yii::app()->theme->baseUrl.'/js/plugin/jquery.ajaxuplaod-3.5.js', CClientScript::POS_END);
 		//if($slideDisplay != null) {
@@ -154,8 +154,12 @@ if(isset($_GET['protocol']) && $_GET['protocol'] == 'script') {
 
 	<?php //begin.Header ?>
 	<header>
-		<div class="container">
-			1
+		<div class="container clearfix">
+			<?php //begin.Username ?>
+			<div class="sep agent-text">
+				<a href="<?php echo Yii::app()->createUrl('site/index')?>" title="resistance.web.id"><h2>resistance.web.id</h2></a>				
+			</div>
+			<?php $this->widget('HeaderUsermenu'); ?>
 		</div>
 	</header>
 	<?php //end.Header ?>
@@ -209,19 +213,45 @@ if(isset($_GET['protocol']) && $_GET['protocol'] == 'script') {
 		*/?>
 		<?php //end.Slider ?>
 		
-		<div class="container">
+		<div class="container"><div class="ommu-wrap">
+			<?php //begin.Sidebar ?>
+			<div id="sidebar">
+				<div class="account-menu">
+					<ul>
+						<li class="account active"><a class="menu-groups" href="" title="My Resistance">My Resistance<span></span></a>
+							<ul>
+								<li <?php echo ($module == null && $currentAction == 'site/index') ? 'class="active"' : '';?>><a href="<?php echo Yii::app()->createUrl('site/index');?>" title="Activity Stream"><span>Activity Stream</span></a></li>
+								<li <?php echo ($module != null && $module == 'daop') ? 'class="active"' : '';?>><a href="<?php echo Yii::app()->createUrl('daop');?>" title="Operation Area"><span>Operation Area</span></a></li>
+							</ul>
+						</li>
+						<li class="support active"><a class="menu-groups" href="" title="Support">Support<span></span></a>
+							<ul>
+								<li><a href="" title=""><span>My Resistance</span></a></li>
+								<li><a href="" title=""><span>My Resistance</span></a></li>
+								<li><a href="" title=""><span>My Resistance</span></a></li>
+							</ul>
+						</li>
+					</ul>
+				</div>
+			</div>
+			<?php //end.Sidebar ?>
+		
 			<?php //begin.Content ?>
-			<div class="wrapper"><?php echo $this->dialogDetail == false ? $content : '';?></div>
+			<div id="content">
+				<?php //begin.Title Page ?>
+				<h1><?php echo CHtml::encode($this->pageTitle); ?></h1>
+				
+				<div class="wrapper"><?php echo $this->dialogDetail == false ? $content : '';?></div>
+
+				<?php //begin.Footer ?>
+				<footer class="clearfix">
+					<?php $this->widget('FrontFooterCopyright'); ?>
+				</footer>
+			</div>
 			<?php //end.Content ?>
-		</div>
+		</div></div>
 	</div>
 	<?php //end.BodyContent ?>
-
-	<?php //begin.Footer ?>
-	<footer class="clearfix">
-		<?php $this->widget('FrontFooterCopyright'); ?>
-	</footer>
-	<?php //end.Footer ?>
 
 	<?php $this->widget('FrontGoogleAnalytics'); ?>
 

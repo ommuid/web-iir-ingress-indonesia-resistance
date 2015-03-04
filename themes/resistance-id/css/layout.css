@@ -29,7 +29,6 @@ div.body {
 	position: relative;
 }
 body {
-	overflow-x: hidden;
 }
 .container {
 	box-sizing: border-box;
@@ -174,45 +173,294 @@ div[class^="open-dialog"] {
 /* =Header
 -------------------------------------------------------------- */
 header {
-	
+	-moz-box-shadow:    0 0 3px 3px rgba(0, 0, 0, 0.1);
+	-webkit-box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.1);
+	box-shadow:         0 0 3px 3px rgba(0, 0, 0, 0.1);
+	background: #176492;
+}
+header .container {}
+
+/* Agent Name */
+header .agent-text,
+header .agent-text a {
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	height: 56px;	
+}
+header .agent-text,
+header .agent-text * {
+	font-size: 24px;
+	line-height: 24px;
+	color: #fff;
+	font-weight: 600;
+	white-space: nowrap;
+	text-transform: lowercase;
+}
+header .agent-text {
+	float: left;
+}
+header .agent-text a {
+	display: block;
+	text-decoration: none;
+}
+header .agent-text h2 {
+	margin: 0 0 0 0;
+	padding: 15px 0 0 0;
+}
+
+/* Usermenu */
+header .usermenu {
+	float: right;
+}
+header .usermenu,
+header .usermenu * {
+	color: #fff;
+}
+header .usermenu ul {
+	display: block;
+	list-style: none;
+	padding: 0 0 0 0;
+	margin: 0 0 0 0;
+}
+header .usermenu ul li {
+	position: relative;
+	float: left;
+	margin: 0 1px 0 0;
+}
+header .usermenu ul li:last-child {
+	margin: 0 0 0 0;
+}
+header .usermenu ul li a {
+	display: block;
+	text-decoration: none;
+}
+header .usermenu ul li a.user-info {
+	padding: 10px 20px 10px 20px;
+}
+header .usermenu ul li a.user-info:hover,
+header .usermenu ul li.help a {
+	background: rgba(255, 255, 255, 0.3);
+}
+header .usermenu ul li.active a.user-info {
+	background: #0b486d;
+}
+header .usermenu ul li a.user-info img,
+header .usermenu ul li a.user-info h3 {
+	float: left;
+}
+header .usermenu ul li a.user-info img {
+	-webkit-border-radius: 20px;
+	-moz-border-radius: 20px;
+	border-radius: 20px;
+	margin: 0 15px 0 0;
+}
+header .usermenu ul li a.user-info h3 {
+	margin: 0 0 0 0;
+	padding: 5px 0 0 0;
+	font-size: 18px;
+	line-height: 22px;
+	white-space: nowrap;
+	font-weight: 300;
+}
+header .usermenu ul li.help a,
+header .usermenu ul li.help a:hover {
+	color: #fff;
+}
+header .usermenu ul li.help a {
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	height: 56px;
+	padding: 15px 15px 10px 15px;
+	font-size: 18px;
+	line-height: 22px;
+	white-space: nowrap;
+	font-weight: 300;
+}
+header .usermenu ul ul {
+	-moz-box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+	-webkit-box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+	position: absolute;
+	right: 0;
+	top: 100%;
+	z-index: 100;
+	border: 1px solid #eee;
+	background: #fff;
+	margin: 5px 0 0 0;
+	padding: 5px 5px 5px 5px;
+	width: 200px;
+	display: none;
+}
+header .usermenu ul li.active ul {
+	display: block;
+}
+header .usermenu ul ul li,
+header .usermenu ul ul li * {
+	font-size: 12px;
+	line-height: 16px;
+	color: #444;
+}
+header .usermenu ul ul li,
+header .usermenu ul ul li:last-child {
+	margin: 0 0 0 0;
+	float: none;
+}
+header .usermenu ul ul li a {
+	border: 1px solid #fff;
+	padding: 6px 10px;
+}
+header .usermenu ul ul li a:hover {
+	-moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.1);
+	-webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.1);
+	box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.1);
+	background: #f0f5f5;
+	border-color: #d6dadb #e3e7e8 #ecf0f1 #e3e7e8;
 }
 
 /* =Body
 -------------------------------------------------------------- */
 div.body,
 div.body .container,
-div.body .wrapper {
+div.body .ommu-wrap {
 	height: 100%;
 }
-div.body .wrapper {
+div.body {
+	padding: 15px 0 0 0;
+}
+div.body .ommu-wrap,
+div.body #content .ads-on {
 	display: table;
 	width: 100%;	
 }
 
 /* Sidebar */
 div.body #sidebar,
-div.body #content {
+div.body #content,
+div.body #content .content,
+div.body #content .sidebar {
 	box-sizing: border-box;
 	-moz-box-sizing: border-box;
 	-webkit-box-sizing: border-box;
 	display: table-cell;
 	vertical-align: top;
-	background: #fff;
 }
 div.body #sidebar {
-	width: 240px;
+	width: 220px;
+	padding: 55px 0 0 0;
+}
+
+/* Account Menu */
+div.body #sidebar .account-menu ul {
+	display: block;
+	margin: 0 0 0 0;
+	padding: 0 0 0 0;
+	list-style: none;
+}
+div.body #sidebar .account-menu ul li {
+	margin: 0 0 20px 0;
+}
+div.body #sidebar .account-menu ul li a {
+	display: block;
+	padding: 0 10px 10px 25px;
+	font-weight: 700;
+	text-transform: uppercase;
+	text-decoration: none;
+	color: #535c69;
+}
+div.body #sidebar .account-menu ul li.account a.menu-groups {
+	background: url('../images/icons/sd_account.png') 0 0 no-repeat;
+}
+div.body #sidebar .account-menu ul li.support a.menu-groups {
+	background: url('../images/icons/sd_support.png') 0 0 no-repeat;
+}
+div.body #sidebar .account-menu ul li a.menu-groups span {
+	float: right;
+	padding: 2px 5px;
+	text-transform: none;
+	font-size: 11px;
+	line-height: 11px;
+	display: none;
+}
+div.body #sidebar .account-menu ul li a.menu-groups:hover span {
+	display: block;
+}
+div.body #sidebar .account-menu ul li a.menu-groups span:after {
+	content: 'show';
+}
+div.body #sidebar .account-menu ul li.active a.menu-groups span:after {
+	content: 'hide';
+}
+div.body #sidebar .account-menu ul ul {
+	display: none;
+}
+div.body #sidebar .account-menu ul li.active ul {
+	display: block;
+}
+div.body #sidebar .account-menu ul ul li {
+	margin: 0 0 3px 0;
+}
+div.body #sidebar .account-menu ul ul li:hover {
+	background: #e3e8eb;
+}
+div.body #sidebar .account-menu ul ul li.active:hover {
+	background: none;
+}
+div.body #sidebar .account-menu ul ul li a {
+	padding: 0 10px 0 15px;
+	font-weight: 400;
+	text-transform: none;
+}
+div.body #sidebar .account-menu ul ul li a span {
+	-webkit-border-radius: 15px;
+	-moz-border-radius: 15px;
+	border-radius: 15px;
+	display: inline-block;
+	padding: 7px 10px 7px 10px;
+}
+div.body #sidebar .account-menu ul ul li.active a span {
+	background: #aeb6bd;
+	font-weight: 700;
+	color: #fff;
 }
 
 /* Content */
 div.body #content {
-	padding: 0 0 0 20px;
-	background: #f9f9f9;
+	padding: 0 0 0 0;
+}
+div.body #content h1,
+div.body #content h1 * {
+	font-size: 30px;
+	line-height: 35px;
+	font-weight: 300;
+}
+div.body #content h1 {
+	margin: 0 0 20px 0;
+}
+div.body #content .ads-on {}
+div.body #content .content {
+	padding: 0 20px 0 0;
+}
+div.body #content .sidebar {
+	width: 230px;
+}
+div.body #content .boxed {
+	margin: 0 0 15px 0;
+	background: #fff;
+}
+div.body #content .boxed.transparent {
+	background: transparent;
+}
+div.body #content .boxed:last-child,
+div.body #content .boxed:first-child:last-child {
+	margin: 0 0 0 0;
 }
 
 /* =Footer
 -------------------------------------------------------------- */
 footer {
-	
+	padding: 15px 0 15px 0;
 }
 
 /* =Responsive
@@ -221,7 +469,7 @@ footer {
 @media only screen and (max-width:1280px) {
 	/* CSS Reset */
 	.container {
-		width: 100%;
+		width: 1280px;
 		margin: 0 0 0 0;
 		padding: 0 20px 0 20px;
 	}

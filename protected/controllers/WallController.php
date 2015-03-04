@@ -10,14 +10,14 @@
  *
  * TOC :
  *	Index
+ *	Post
+ *	Get
  *	Manage
  *	Edit
  *	View
  *	RunAction
  *	Delete
  *	Publish
- *	Post
- *	Get
  *
  *	LoadModel
  *	performAjaxValidation
@@ -104,6 +104,93 @@ class WallController extends Controller
 				'users'=>array('*'),
 			),
 		);
+	}
+	
+	/**
+	 * Creates a new model.
+	 * If creation is successful, the browser will be redirected to the 'view' page.
+	 */
+	public function actionPost() 
+	{
+		$data=new OmmuWalls;
+
+		// Uncomment the following line if AJAX validation is needed
+		$this->performAjaxValidation($data);
+
+		if(isset($_POST['OmmuWalls'])) {
+			$data->attributes=$_POST['OmmuWalls'];
+			
+			$jsonError = CActiveForm::validate($data);
+			if(strlen($jsonError) > 2) {
+				echo $jsonError;
+
+			} else {
+				if(isset($_GET['enablesave']) && $_GET['enablesave'] == 1) {
+					if($data->save()) {
+						echo CJSON::encode(array(
+							'type' => 3,
+							'idclass' => '#admin .wall .list-view .items.wall',
+							'value' => 0,
+							'data' => Utility::otherDecode($this->renderPartial('_view', array('data'=>$data), true, false)),
+						));
+					} else {
+						print_r($data->getErrors());
+					}
+				}
+			}
+			Yii::app()->end();
+			
+		} else {
+			throw new CHttpException(404, Phrase::trans(193,0));
+		}
+	}
+	
+	/**
+	 * Creates a new model.
+	 * If creation is successful, the browser will be redirected to the 'view' page.
+	 */
+	public function actionGet() 
+	{
+		if(Yii::app()->request->isAjaxRequest) {
+			$criteria=new CDbCriteria; 
+			$criteria->condition = 'publish = :publish'; 
+			$criteria->params = array(':publish'=>1); 
+			$criteria->order = 'creation_date DESC'; 
+
+			$dataProvider = new CActiveDataProvider('OmmuWalls', array( 
+				'criteria'=>$criteria, 
+				'pagination'=>array( 
+					'pageSize'=>5, 
+				), 
+			));
+			
+			$data = '';
+			$wall = $dataProvider->getData();
+			if(!empty($wall)) {
+				foreach($wall as $key => $item) {
+					$data .= Utility::otherDecode($this->renderPartial('_view', array('data'=>$item), true, false));
+				}
+			}
+			$pager = OFunction::getDataProviderPager($dataProvider);
+			if($pager[nextPage] != '0') {
+				$summaryPager = 'Displaying 1-'.($pager[currentPage]*$pager[pageSize]).' of '.$pager[itemCount].' results.';
+			} else {
+				$summaryPager = 'Displaying 1-'.$pager[itemCount].' of '.$pager[itemCount].' results.';
+			}
+			$nextPager = $pager['nextPage'] != 0 ? Yii::app()->controller->createUrl('get', array($pager['pageVar']=>$pager['nextPage'])) : 0;
+			
+			$return = array(
+				'type'=>0,
+				'data'=>$data,
+				'pager'=>$pager,
+				'summarypager'=>$summaryPager,
+				'nextpage'=>$nextPager,
+			);
+			echo CJSON::encode($return);
+			
+		} else {
+			throw new CHttpException(404, Phrase::trans(193,0));
+		}
 	}
 	
 	/**
@@ -329,93 +416,6 @@ class WallController extends Controller
 				'model'=>$model, 
 			)); 
 		} 
-	}
-	
-	/**
-	 * Creates a new model.
-	 * If creation is successful, the browser will be redirected to the 'view' page.
-	 */
-	public function actionPost() 
-	{
-		$data=new OmmuWalls;
-
-		// Uncomment the following line if AJAX validation is needed
-		$this->performAjaxValidation($data);
-
-		if(isset($_POST['OmmuWalls'])) {
-			$data->attributes=$_POST['OmmuWalls'];
-			
-			$jsonError = CActiveForm::validate($data);
-			if(strlen($jsonError) > 2) {
-				echo $jsonError;
-
-			} else {
-				if(isset($_GET['enablesave']) && $_GET['enablesave'] == 1) {
-					if($data->save()) {
-						echo CJSON::encode(array(
-							'type' => 3,
-							'idclass' => '#admin .wall .list-view .items.wall',
-							'value' => 0,
-							'data' => Utility::otherDecode($this->renderPartial('_view', array('data'=>$data), true, false)),
-						));
-					} else {
-						print_r($data->getErrors());
-					}
-				}
-			}
-			Yii::app()->end();
-			
-		} else {
-			throw new CHttpException(404, Phrase::trans(193,0));
-		}
-	}
-	
-	/**
-	 * Creates a new model.
-	 * If creation is successful, the browser will be redirected to the 'view' page.
-	 */
-	public function actionGet() 
-	{
-		if(Yii::app()->request->isAjaxRequest) {
-			$criteria=new CDbCriteria; 
-			$criteria->condition = 'publish = :publish'; 
-			$criteria->params = array(':publish'=>1); 
-			$criteria->order = 'creation_date DESC'; 
-
-			$dataProvider = new CActiveDataProvider('OmmuWalls', array( 
-				'criteria'=>$criteria, 
-				'pagination'=>array( 
-					'pageSize'=>5, 
-				), 
-			));
-			
-			$data = '';
-			$wall = $dataProvider->getData();
-			if(!empty($wall)) {
-				foreach($wall as $key => $item) {
-					$data .= Utility::otherDecode($this->renderPartial('_view', array('data'=>$item), true, false));
-				}
-			}
-			$pager = OFunction::getDataProviderPager($dataProvider);
-			if($pager[nextPage] != '0') {
-				$summaryPager = 'Displaying 1-'.($pager[currentPage]*$pager[pageSize]).' of '.$pager[itemCount].' results.';
-			} else {
-				$summaryPager = 'Displaying 1-'.$pager[itemCount].' of '.$pager[itemCount].' results.';
-			}
-			$nextPager = $pager['nextPage'] != 0 ? Yii::app()->controller->createUrl('get', array($pager['pageVar']=>$pager['nextPage'])) : 0;
-			
-			$return = array(
-				'type'=>0,
-				'data'=>$data,
-				'pager'=>$pager,
-				'summarypager'=>$summaryPager,
-				'nextpage'=>$nextPager,
-			);
-			echo CJSON::encode($return);
-			
-		} else {
-			throw new CHttpException(404, Phrase::trans(193,0));
-		}
 	}
 
 	/**

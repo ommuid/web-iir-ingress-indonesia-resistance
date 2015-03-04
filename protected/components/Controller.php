@@ -59,6 +59,8 @@ class Controller extends CController
 	public $dialogFixed = false;
 	public $dialogFixedClosed = array();
 	public $ownerId = '';
+	
+	public $adsSidebar = true;
 
 	/**
 	 * @var array the breadcrumbs of the current page. The value of this property will
@@ -224,6 +226,7 @@ class Controller extends CController
 			$this->pageDescription = $this->pageDescription != '' ? $this->pageDescription : $model->site_description;
 			$this->pageMeta = $this->pageMeta != '' ? $model->site_keywords.', '.$this->pageMeta : $model->site_keywords;
 		}
+		$this->pageTitle = $this->pageTitle != '' ? $this->pageTitle : 'Titlenya Lupa..';
 		return true;
 	}
 	

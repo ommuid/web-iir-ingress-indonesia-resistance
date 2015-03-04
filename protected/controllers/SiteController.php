@@ -97,8 +97,8 @@ class SiteController extends Controller
 			} else {
 				$render = 'front_index';
 			} */
-
-			$this->pageTitle = '';
+			
+			$this->pageTitle = 'Activity Stream';
 			$this->pageDescription = '';
 			$this->pageMeta = '';
 			$this->render('front_index', array(

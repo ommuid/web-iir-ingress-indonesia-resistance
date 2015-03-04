@@ -5,7 +5,6 @@ return array(
 		'daop',
 		'report',
 		'support',
-		'users',
-		'wall'
+		'users'
 	),
 );

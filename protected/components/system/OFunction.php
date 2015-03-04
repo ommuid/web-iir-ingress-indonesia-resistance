@@ -19,7 +19,7 @@ class OFunction
 	public static function getDataProviderPager($dataProvider)
 	{
 		$data = $dataProvider->getPagination();
-		$pageCount = (int)($data->itemCount/$data->pageSize)+1;
+		$pageCount = $data->itemCount % $data->pageSize === 0 ? (int)($data->itemCount/$data->pageSize) : (int)($data->itemCount/$data->pageSize)+1;		
 		$currentPage = $data->currentPage+1;
 		$nextPage = $pageCount != $currentPage ? $currentPage+1 : 0;
 		$return = array(

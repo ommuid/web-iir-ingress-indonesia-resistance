@@ -52,7 +52,8 @@ class UserIdentity extends CUserIdentity
 			$this->setState('fname', $record->first_name);
 			$this->setState('lname', $record->last_name);
 			$this->setState('displayname', $record->displayname);
-			$this->setState('photo', $record->photo);
+			$this->setState('username', $record->username);
+			$this->setState('photo', $record->photo_id != 0 ? $record->photo->photo : 0);
 			$this->setState('status', $record->status_id);
 			$this->setState('enabled', $record->enabled);
 			$this->setState('verified', $record->verified);

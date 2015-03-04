@@ -19,10 +19,7 @@
  *
  */
 
-/*
-@import url(http://fonts.googleapis.com/css?family=Raleway:300,400,500,600,700);
 @import url(http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,300,400,600,700);
-*/
 
 /* =CSS Reset : reset default browser style
 -------------------------------------------------------------*/
@@ -39,7 +36,7 @@ hgroup, nav, section {
 	font-size: 13px; 
 	line-height: 17px;
 	font-weight: 400;
-	font-family: 'Raleway', 'Open Sans', Helvetica, Arial, sans-serif;
+	font-family: 'Open Sans', Helvetica, Arial, sans-serif;
 }
 
 
@@ -48,7 +45,7 @@ hgroup, nav, section {
 h1, h2, h3, h4, h5, h6 {
 	margin: 10px 0;
 	font-family: inherit;
-	font-family: 'Raleway', 'Open Sans', Helvetica, Arial, sans-serif;
+	font-family: 'Open Sans', Helvetica, Arial, sans-serif;
 	font-weight: 700;
 	line-height: 1;
 	color: inherit;
