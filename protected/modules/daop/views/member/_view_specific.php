@@ -14,7 +14,7 @@
 	<div class="city" title="<?php echo $data->another_relation->another_name?>">
 		<?php echo $data->another_relation->another_name?>
 		<div class="more">
-			<a href="<?php echo Yii::app()->controller->createUrl('city/view',array('id'=>$data->another_id,'t'=>Utility::getUrlTitle($data->another_relation->another_name)))?>" title="Detail: <?php echo $data->another_relation->another_name?>">Detail</a>
+			<a href="<?php echo Yii::app()->controller->createUrl('another/view',array('id'=>$data->another_id,'t'=>Utility::getUrlTitle($data->another_relation->another_name)))?>" title="Detail: <?php echo $data->another_relation->another_name?>">Detail</a>
 			<a href="<?php echo Yii::app()->controller->createUrl('delete',array('id'=>$data->id))?>" title="Drop: <?php echo $data->another_relation->another_name?>">Drop</a>
 		</div>
 	</div>

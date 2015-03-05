@@ -14,10 +14,7 @@
  *	Manage
  *	Add
  *	Edit
- *	RunAction
  *	Delete
- *	Publish
- *	Headline
  *
  *	LoadModel
  *	performAjaxValidation
@@ -45,21 +42,12 @@ class AnotherController extends Controller
 	public function init() 
 	{
 		if(!Yii::app()->user->isGuest) {
-			if(Yii::app()->user->level == 1) {
-				$arrThemes = Utility::getCurrentTemplate('admin');
-				Yii::app()->theme = $arrThemes['folder'];
-				$this->layout = $arrThemes['layout'];
-			} else {
-				$this->redirect(Yii::app()->createUrl('site/login'));
-			}
+			$arrThemes = Utility::getCurrentTemplate('admin');
+			Yii::app()->theme = $arrThemes['folder'];
+			$this->layout = $arrThemes['layout'];
 		} else {
 			$this->redirect(Yii::app()->createUrl('site/login'));
 		}
-		/*
-		$arrThemes = Utility::getCurrentTemplate('public');
-		Yii::app()->theme = $arrThemes['folder'];
-		$this->layout = $arrThemes['layout'];
-		*/
 	}
 
 	/**
@@ -82,17 +70,17 @@ class AnotherController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view'),
+				'actions'=>array(),
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array(),
+				'actions'=>array('index','view'),
 				'users'=>array('@'),
 				'expression'=>'isset(Yii::app()->user->level)',
 				//'expression'=>'isset(Yii::app()->user->level) && (Yii::app()->user->level != 1)',
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('manage','add','edit','runaction','delete','publish','headline'),
+				'actions'=>array('manage','add','edit','delete'),
 				'users'=>array('@'),
 				'expression'=>'isset(Yii::app()->user->level) && (Yii::app()->user->level == 1)',
 			),
@@ -115,14 +103,8 @@ class AnotherController extends Controller
 		Yii::app()->theme = $arrThemes['folder'];
 		$this->layout = $arrThemes['layout'];
 		Utility::applyCurrentTheme($this->module);
-		
-		$setting = DaopAnothers::model()->findByPk(1,array(
-			'select' => 'meta_description, meta_keyword',
-		));
 
 		$criteria=new CDbCriteria;
-		$criteria->condition = 'publish = :publish';
-		$criteria->params = array(':publish'=>1);
 		$criteria->order = 'creation_date DESC';
 
 		$dataProvider = new CActiveDataProvider('DaopAnothers', array(
@@ -133,12 +115,11 @@ class AnotherController extends Controller
 		));
 
 		$this->pageTitle = 'Daop Anothers';
-		$this->pageDescription = $setting->meta_description;
-		$this->pageMeta = $setting->meta_keyword;
+		$this->pageDescription = '';
+		$this->pageMeta = '';
 		$this->render('front_index',array(
 			'dataProvider'=>$dataProvider,
 		));
-		//$this->redirect(array('manage'));
 	}
 	
 	/**
@@ -152,23 +133,14 @@ class AnotherController extends Controller
 		$this->layout = $arrThemes['layout'];
 		Utility::applyCurrentTheme($this->module);
 		
-		$setting = VideoSetting::model()->findByPk(1,array(
-			'select' => 'meta_keyword',
-		));
-
 		$model=$this->loadModel($id);
 
-		$this->pageTitle = 'View Daop Anothers';
-		$this->pageDescription = '';
-		$this->pageMeta = $setting->meta_keyword;
+		$this->pageTitle = $model->another_name;
+		$this->pageDescription = Utility::shortText(Utility::hardDecode($model->another_desc),300);
+		$this->pageMeta = '';
 		$this->render('front_view',array(
 			'model'=>$model,
 		));
-		/*
-		$this->render('admin_view',array(
-			'model'=>$model,
-		));
-		*/
 	}	
 
 	/**
@@ -333,42 +305,6 @@ class AnotherController extends Controller
 	}
 
 	/**
-	 * Displays a particular model.
-	 * @param integer $id the ID of the model to be displayed
-	 */
-	public function actionRunAction() {
-		$id       = $_POST['trash_id'];
-		$criteria = null;
-		$actions  = $_GET['action'];
-
-		if(count($id) > 0) {
-			$criteria = new CDbCriteria;
-			$criteria->addInCondition('id', $id);
-
-			if($actions == 'publish') {
-				DaopAnothers::model()->updateAll(array(
-					'publish' => 1,
-				),$criteria);
-			} elseif($actions == 'unpublish') {
-				DaopAnothers::model()->updateAll(array(
-					'publish' => 0,
-				),$criteria);
-			} elseif($actions == 'trash') {
-				DaopAnothers::model()->updateAll(array(
-					'publish' => 2,
-				),$criteria);
-			} elseif($actions == 'delete') {
-				DaopAnothers::model()->deleteAll($criteria);
-			}
-		}
-
-		// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
-		if(!isset($_GET['ajax'])) {
-			$this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('manage'));
-		}
-	}
-
-	/**
 	 * Deletes a particular model.
 	 * If deletion is successful, the browser will be redirected to the 'admin' page.
 	 * @param integer $id the ID of the model to be deleted
@@ -399,104 +335,6 @@ class AnotherController extends Controller
 			$this->pageDescription = '';
 			$this->pageMeta = '';
 			$this->render('admin_delete');
-		}
-	}
-
-	/**
-	 * Deletes a particular model.
-	 * If deletion is successful, the browser will be redirected to the 'admin' page.
-	 * @param integer $id the ID of the model to be deleted
-	 */
-	public function actionPublish($id) 
-	{
-		$model=$this->loadModel($id);
-		
-		if($model->publish == 1) {
-		//if($model->actived == 1) {
-		//if($model->enabled == 1) {
-		//if($model->status == 1) {
-			$title = Phrase::trans(276,0);
-			//$title = Phrase::trans(278,0);
-			//$title = Phrase::trans(284,0);
-			//$title = Phrase::trans(292,0);
-			$replace = 0;
-		} else {
-			$title = Phrase::trans(275,0);
-			//$title = Phrase::trans(277,0);
-			//$title = Phrase::trans(283,0);
-			//$title = Phrase::trans(291,0);
-			$replace = 1;
-		}
-
-		if(Yii::app()->request->isPostRequest) {
-			// we only allow deletion via POST request
-			if(isset($id)) {
-				//change value active or publish
-				$model->publish = $replace;
-				//$model->actived = $replace;
-				//$model->enabled = $replace;
-				//$model->status = $replace;
-
-				if($model->update()) {
-					echo CJSON::encode(array(
-						'type' => 5,
-						'get' => Yii::app()->controller->createUrl('manage'),
-						'id' => 'partial-daop-anothers',
-						'msg' => '<div class="errorSummary success"><strong>DaopAnothers success published.</strong></div>',
-					));
-				}
-			}
-
-		} else {
-			$this->dialogDetail = true;
-			$this->dialogGroundUrl = Yii::app()->controller->createUrl('manage');
-			$this->dialogWidth = 350;
-
-			$this->pageTitle = $title;
-			$this->pageDescription = '';
-			$this->pageMeta = '';
-			$this->render('admin_publish',array(
-				'title'=>$title,
-				'model'=>$model,
-			));
-		}
-	}
-
-	/**
-	 * Deletes a particular model.
-	 * If deletion is successful, the browser will be redirected to the 'admin' page.
-	 * @param integer $id the ID of the model to be deleted
-	 */
-	public function actionHeadline($id) 
-	{
-		$model=$this->loadModel($id);
-
-		if(Yii::app()->request->isPostRequest) {
-			// we only allow deletion via POST request
-			if(isset($id)) {
-				//change value active or publish
-				$model->headline = 1;
-				$model->publish = 1;
-
-				if($model->update()) {
-					echo CJSON::encode(array(
-						'type' => 5,
-						'get' => Yii::app()->controller->createUrl('manage'),
-						'id' => 'partial-daop-anothers',
-						'msg' => '<div class="errorSummary success"><strong>DaopAnothers success updated.</strong></div>',
-					));
-				}
-			}
-
-		} else {
-			$this->dialogDetail = true;
-			$this->dialogGroundUrl = Yii::app()->controller->createUrl('manage');
-			$this->dialogWidth = 350;
-
-			$this->pageTitle = Phrase::trans(338,0);
-			$this->pageDescription = '';
-			$this->pageMeta = '';
-			$this->render('admin_headline');
 		}
 	}
 
