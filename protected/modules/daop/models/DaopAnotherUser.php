@@ -31,6 +31,11 @@
 class DaopAnotherUser extends CActiveRecord
 {
 	public $defaultColumns = array();
+	public $another_input;
+	
+	// Variable Search
+	public $another_search;
+	public $user_search;
 
 	/**
 	 * Returns the static model of the specified AR class.
@@ -59,11 +64,15 @@ class DaopAnotherUser extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('another_id, user_id, creation_date', 'required'),
+			array('
+				another_input', 'required'),
+			array('another_id, user_id', 'required'),
 			array('another_id, user_id', 'length', 'max'=>11),
+			array('another_id, user_id', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, another_id, user_id, creation_date', 'safe', 'on'=>'search'),
+			array('id, another_id, user_id, creation_date,
+				another_search, user_search', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -75,7 +84,8 @@ class DaopAnotherUser extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'another' => array(self::BELONGS_TO, 'OmmuDaopAnothers', 'another_id'),
+			'another_relation' => array(self::BELONGS_TO, 'DaopAnothers', 'another_id'),
+			'user_relation' => array(self::BELONGS_TO, 'Users', 'user_id'),
 		);
 	}
 
@@ -89,6 +99,8 @@ class DaopAnotherUser extends CActiveRecord
 			'another_id' => 'Another',
 			'user_id' => 'User',
 			'creation_date' => 'Creation Date',
+			'another_input' => 'Another',
+			'user_search' => 'User',
 		);
 	}
 
@@ -123,6 +135,20 @@ class DaopAnotherUser extends CActiveRecord
 		}
 		if($this->creation_date != null && !in_array($this->creation_date, array('0000-00-00 00:00:00', '0000-00-00')))
 			$criteria->compare('date(t.creation_date)',date('Y-m-d', strtotime($this->creation_date)));
+		
+		// Custom Search
+		$criteria->with = array(
+			'another_relation' => array(
+				'alias'=>'another_relation',
+				'select'=>'another_name',
+			),
+			'user_relation' => array(
+				'alias'=>'user_relation',
+				'select'=>'displayname',
+			),
+		);
+		$criteria->compare('another_relation.another_name',strtolower($this->another_search), true);
+		$criteria->compare('user_relation.displayname',strtolower($this->user_search), true);
 
 		if(!isset($_GET['DaopAnotherUser_sort']))
 			$criteria->order = 'id DESC';
@@ -167,25 +193,23 @@ class DaopAnotherUser extends CActiveRecord
 	 */
 	protected function afterConstruct() {
 		if(count($this->defaultColumns) == 0) {
-			/*
-			$this->defaultColumns[] = array(
-				'class' => 'CCheckBoxColumn',
-				'name' => 'id',
-				'selectableRows' => 2,
-				'checkBoxHtmlOptions' => array('name' => 'trash_id[]')
-			);
-			*/
 			$this->defaultColumns[] = array(
 				'header' => 'No',
 				'value' => '$this->grid->dataProvider->pagination->currentPage*$this->grid->dataProvider->pagination->pageSize + $row+1'
 			);
-			$this->defaultColumns[] = 'another_id';
-			$this->defaultColumns[] = 'user_id';
+			$this->defaultColumns[] = array(
+				'name' => 'another_search',
+				'value' => '$data->another_relation->another_name',
+			);
+			$this->defaultColumns[] = array(
+				'name' => 'user_search',
+				'value' => '$data->user_relation->displayname',
+			);
 			$this->defaultColumns[] = array(
 				'name' => 'creation_date',
 				'value' => 'Utility::dateFormat($data->creation_date)',
 				'htmlOptions' => array(
-					'class' => 'center',
+					//'class' => 'center',
 				),
 				'filter' => Yii::app()->controller->widget('zii.widgets.jui.CJuiDatePicker', array(
 					'model'=>$this,
@@ -227,72 +251,34 @@ class DaopAnotherUser extends CActiveRecord
 			return $model;			
 		}
 	}
-
-	/**
-	 * before validate attributes
-	 */
-	/*
-	protected function beforeValidate() {
-		if(parent::beforeValidate()) {
-			// Create action
-		}
-		return true;
-	}
-	*/
-
-	/**
-	 * after validate attributes
-	 */
-	/*
-	protected function afterValidate()
-	{
-		parent::afterValidate();
-			// Create action
-		return true;
-	}
-	*/
 	
 	/**
 	 * before save attributes
 	 */
-	/*
 	protected function beforeSave() {
 		if(parent::beforeSave()) {
-		}
-		return true;	
-	}
-	*/
-	
-	/**
-	 * After save attributes
-	 */
-	/*
-	protected function afterSave() {
-		parent::afterSave();
-		// Create action
-	}
-	*/
-
-	/**
-	 * Before delete attributes
-	 */
-	/*
-	protected function beforeDelete() {
-		if(parent::beforeDelete()) {
-			// Create action
+			if($this->isNewRecord) {
+				if($this->another_id == 0) {
+					$another = DaopAnothers::model()->find(array(
+						'select' => 'another_id, another_name',
+						'condition' => 'another_name = :another',
+						'params' => array(
+							':another' => $this->another_input,
+						),
+					));
+					if($another != null) {
+						$this->another_id = $another->another_id;
+					} else {
+						$data = new DaopAnothers;
+						$data->another_name = $this->another_input;
+						if($data->save()) {
+							$this->another_id = $data->another_id;
+						}
+					}					
+				}
+			}
 		}
 		return true;
 	}
-	*/
-
-	/**
-	 * After delete attributes
-	 */
-	/*
-	protected function afterDelete() {
-		parent::afterDelete();
-		// Create action
-	}
-	*/
 
 }

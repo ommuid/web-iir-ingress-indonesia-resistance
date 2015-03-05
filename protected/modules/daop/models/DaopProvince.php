@@ -22,13 +22,23 @@
  * The followings are the available columns in table 'ommu_daop_province':
  * @property string $id
  * @property integer $province_id
+ * @property string $province_desc
+ * @property string $province_cover
+ * @property string $province_photo
  * @property integer $users
  * @property string $creation_date
+ * @property string $creation_id
  * @property string $modified_date
+ * @property string $modified_id
  */
 class DaopProvince extends CActiveRecord
 {
 	public $defaultColumns = array();
+	
+	// Variable Search
+	public $province_search;
+	public $creation_search;
+	public $modified_search;
 
 	/**
 	 * Returns the static model of the specified AR class.
@@ -57,12 +67,15 @@ class DaopProvince extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('province_id, users, creation_date', 'required'),
+			array('province_desc', 'required', 'on'=>'form'),
 			array('province_id, users', 'numerical', 'integerOnly'=>true),
-			array('modified_date', 'safe'),
+			array('province_cover, province_photo', 'length', 'max'=>64),
+			array('creation_id, modified_id', 'length', 'max'=>11),
+			array('province_id, province_cover, province_photo, creation_id, modified_id', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, province_id, users, creation_date, modified_date', 'safe', 'on'=>'search'),
+			array('id, province_id, province_desc, province_cover, province_photo, users, creation_date, creation_id, modified_date, modified_id,
+				province_search, creation_search, modified_search', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -74,6 +87,9 @@ class DaopProvince extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
+			'province_relation' => array(self::BELONGS_TO, 'OmmuZoneProvince', 'province_id'),
+			'creation_relation' => array(self::BELONGS_TO, 'Users', 'creation_id'),
+			'modified_relation' => array(self::BELONGS_TO, 'Users', 'modified_id'),
 		);
 	}
 
@@ -85,9 +101,17 @@ class DaopProvince extends CActiveRecord
 		return array(
 			'id' => 'ID',
 			'province_id' => 'Province',
+			'province_desc' => 'Province Desc',
+			'province_cover' => 'Province Cover',
+			'province_photo' => 'Province Photo',
 			'users' => 'Users',
 			'creation_date' => 'Creation Date',
+			'creation_id' => 'Creation',
 			'modified_date' => 'Modified Date',
+			'modified_id' => 'Modified',
+			'province_search' => 'Province',
+			'creation_search' => 'Creation',
+			'modified_search' => 'Modified',
 		);
 	}
 
@@ -110,12 +134,48 @@ class DaopProvince extends CActiveRecord
 		$criteria=new CDbCriteria;
 
 		$criteria->compare('t.id',$this->id,true);
-		$criteria->compare('t.province_id',$this->province_id);
+		if(isset($_GET['province'])) {
+			$criteria->compare('t.province_id',$_GET['province']);
+		} else {
+			$criteria->compare('t.province_id',$this->province_id);
+		}
+		$criteria->compare('t.province_desc',$this->province_desc,true);
+		$criteria->compare('t.province_cover',$this->province_cover,true);
+		$criteria->compare('t.province_photo',$this->province_photo,true);
 		$criteria->compare('t.users',$this->users);
 		if($this->creation_date != null && !in_array($this->creation_date, array('0000-00-00 00:00:00', '0000-00-00')))
 			$criteria->compare('date(t.creation_date)',date('Y-m-d', strtotime($this->creation_date)));
+		if(isset($_GET['creation'])) {
+			$criteria->compare('t.creation_id',$_GET['creation']);
+		} else {
+			$criteria->compare('t.creation_id',$this->creation_id);
+		}
 		if($this->modified_date != null && !in_array($this->modified_date, array('0000-00-00 00:00:00', '0000-00-00')))
 			$criteria->compare('date(t.modified_date)',date('Y-m-d', strtotime($this->modified_date)));
+		if(isset($_GET['modified'])) {
+			$criteria->compare('t.modified_id',$_GET['modified']);
+		} else {
+			$criteria->compare('t.modified_id',$this->modified_id);
+		}
+		
+		// Custom Search
+		$criteria->with = array(
+			'province_relation' => array(
+				'alias'=>'province_relation',
+				'select'=>'province',
+			),
+			'creation_relation' => array(
+				'alias'=>'creation_relation',
+				'select'=>'displayname',
+			),
+			'modified_relation' => array(
+				'alias'=>'modified_relation',
+				'select'=>'displayname',
+			),
+		);
+		$criteria->compare('province_relation.province',strtolower($this->province_search), true);
+		$criteria->compare('creation_relation.displayname',strtolower($this->creation_search), true);
+		$criteria->compare('modified_relation.displayname',strtolower($this->modified_search), true);
 
 		if(!isset($_GET['DaopProvince_sort']))
 			$criteria->order = 'id DESC';
@@ -148,9 +208,14 @@ class DaopProvince extends CActiveRecord
 		} else {
 			//$this->defaultColumns[] = 'id';
 			$this->defaultColumns[] = 'province_id';
+			$this->defaultColumns[] = 'province_desc';
+			$this->defaultColumns[] = 'province_cover';
+			$this->defaultColumns[] = 'province_photo';
 			$this->defaultColumns[] = 'users';
 			$this->defaultColumns[] = 'creation_date';
+			$this->defaultColumns[] = 'creation_id';
 			$this->defaultColumns[] = 'modified_date';
+			$this->defaultColumns[] = 'modified_id';
 		}
 
 		return $this->defaultColumns;
@@ -161,19 +226,15 @@ class DaopProvince extends CActiveRecord
 	 */
 	protected function afterConstruct() {
 		if(count($this->defaultColumns) == 0) {
-			/*
-			$this->defaultColumns[] = array(
-				'class' => 'CCheckBoxColumn',
-				'name' => 'id',
-				'selectableRows' => 2,
-				'checkBoxHtmlOptions' => array('name' => 'trash_id[]')
-			);
-			*/
 			$this->defaultColumns[] = array(
 				'header' => 'No',
 				'value' => '$this->grid->dataProvider->pagination->currentPage*$this->grid->dataProvider->pagination->pageSize + $row+1'
 			);
-			$this->defaultColumns[] = 'province_id';
+			$this->defaultColumns[] = array(
+				'name' => 'province_search',
+				'value' => '$data->province_relation->province',
+			);
+			$this->defaultColumns[] = 'province_desc';
 			$this->defaultColumns[] = 'users';
 			$this->defaultColumns[] = array(
 				'name' => 'creation_date',
@@ -202,6 +263,11 @@ class DaopProvince extends CActiveRecord
 				), true),
 			);
 			$this->defaultColumns[] = array(
+				'name' => 'creation_search',
+				'value' => '$data->creation_relation->displayname',
+			);
+			/*
+			$this->defaultColumns[] = array(
 				'name' => 'modified_date',
 				'value' => 'Utility::dateFormat($data->modified_date)',
 				'htmlOptions' => array(
@@ -227,6 +293,11 @@ class DaopProvince extends CActiveRecord
 					),
 				), true),
 			);
+			$this->defaultColumns[] = array(
+				'name' => 'modified_search',
+				'value' => '$data->modified_relation->displayname',
+			);
+			*/
 		}
 		parent::afterConstruct();
 	}
@@ -247,72 +318,19 @@ class DaopProvince extends CActiveRecord
 			return $model;			
 		}
 	}
-
-	/**
-	 * before validate attributes
-	 */
-	/*
-	protected function beforeValidate() {
-		if(parent::beforeValidate()) {
-			// Create action
-		}
-		return true;
-	}
-	*/
-
-	/**
-	 * after validate attributes
-	 */
-	/*
-	protected function afterValidate()
-	{
-		parent::afterValidate();
-			// Create action
-		return true;
-	}
-	*/
 	
 	/**
 	 * before save attributes
 	 */
-	/*
 	protected function beforeSave() {
 		if(parent::beforeSave()) {
+			if($this->isNewRecord) {
+				$this->creation_id = Yii::app()->user->id;
+			} else {
+				$this->modified_id = Yii::app()->user->id;
+			}
 		}
 		return true;	
 	}
-	*/
-	
-	/**
-	 * After save attributes
-	 */
-	/*
-	protected function afterSave() {
-		parent::afterSave();
-		// Create action
-	}
-	*/
-
-	/**
-	 * Before delete attributes
-	 */
-	/*
-	protected function beforeDelete() {
-		if(parent::beforeDelete()) {
-			// Create action
-		}
-		return true;
-	}
-	*/
-
-	/**
-	 * After delete attributes
-	 */
-	/*
-	protected function afterDelete() {
-		parent::afterDelete();
-		// Create action
-	}
-	*/
 
 }

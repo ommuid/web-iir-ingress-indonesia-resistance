@@ -18,36 +18,6 @@
 ?>
 
 <?php //begin.City DaOps ?>
-<?php 
-	$criteria=new CDbCriteria;
-	$criteria->condition = 'user_id = :id';
-	$criteria->params = array(
-		':id'=>Yii::app()->user->id,
-	);
-	$criteria->order = 'creation_date DESC';
-
-	$dataProvider = new CActiveDataProvider('DaopUsers', array(
-		'criteria'=>$criteria,
-		'pagination'=>array(
-			'pageSize'=>7,
-		),
-	));
-	
-	$data = '';
-	$daops = $dataProvider->getData();
-	if(!empty($daops)) {
-		foreach($daops as $key => $item) {
-			$data .= Utility::otherDecode($this->renderPartial('_view', array('data'=>$item), true, false));
-		}
-	}
-	$pager = OFunction::getDataProviderPager($dataProvider);
-	if($pager[nextPage] != '0') {
-		$summaryPager = '[1-'.($pager[currentPage]*$pager[pageSize]).' of '.$pager[itemCount].']';
-	} else {
-		$summaryPager = '[1-'.$pager[itemCount].' of '.$pager[itemCount].']';
-	}
-	$nextPager = $pager['nextPage'] != 0 ? Yii::app()->controller->createUrl('get', array($pager['pageVar']=>$pager['nextPage'])) : 0;
-?>
 <div class="boxed">
 	<div class="title clearfix">
 		<h2 class="city">Citys</h2>
@@ -56,7 +26,7 @@
 	
 	<?php $form=$this->beginWidget('application.components.system.OActiveForm', array(
 		'id'=>'daop-users-form',
-		'action'=>Yii::app()->controller->createUrl('post'),
+		//'action'=>Yii::app()->controller->createUrl('citypost'),
 		'enableAjaxValidation'=>true,
 		//'htmlOptions' => array('enctype' => 'multipart/form-data')
 	)); ?>
@@ -100,8 +70,7 @@
 	
 	<div class="list-view city">
 		<div class="items clearfix">
-			<?php echo $data;?>
-			<a class="pager <?php echo ($pager['itemCount'] == '0' || $pager['nextPage'] == '0') ? 'hide' : '' ?>" href="<?php echo $nextPager;?>" title="Readmore.."><span>Readmore..</span></a>
+			<div class="loader"></div>
 		</div>
 	</div>
 </div>
@@ -112,9 +81,54 @@
 		<h2 class="specific">Specific in City</h2>
 		<a class="plus" href="javascript:void(0);" title="Add Specific Operation Area">Add Specific City Operation</a>
 	</div>
-	<form></form>
+	
+	<?php $form=$this->beginWidget('application.components.system.OActiveForm', array(
+		'id'=>'daop-users-form',
+		//'action'=>Yii::app()->controller->createUrl('anotherpost'),
+		'enableAjaxValidation'=>true,
+		//'htmlOptions' => array('enctype' => 'multipart/form-data')
+	)); ?>
+	<fieldset>
+		<?php 
+		//echo $form->textField($another,'another_input',array('class'=>'span-5','placeholder'=>'Kelurahan, Kecamatan atau Nama Jalan'));
+		$url = Yii::app()->controller->createUrl('anotherpost');
+		$userID = Yii::app()->user->id;
+		$anotherID = 'DaopAnotherUser_another_input';
+		$this->widget('zii.widgets.jui.CJuiAutoComplete', array(
+			'model' => $another,
+			'attribute' => 'another_input',
+			'source' => Yii::app()->controller->createUrl('anothersuggest'),
+			'options' => array(
+				//'delay '=> 50,
+				'minLength' => 1,
+				'showAnim' => 'fold',
+				'select' => "js:function(event, ui) {
+					$.ajax({
+						type: 'post',
+						url: '$url',
+						data: { user_id: '$userID', another_id: ui.item.id, another: ui.item.value },
+						dataType: 'json',
+						success: function(response) {
+							$('form #$anotherID').val('');
+							$('#daop-member .list-view.specific .items').prepend(response.data);
+						}
+					});
+
+				}"
+			),
+			'htmlOptions' => array(
+				'class'	=> 'span-5',
+				'placeholder' => 'Kelurahan, Kecamatan atau Nama Jalan'
+			),
+		));	?>
+		<?php echo $form->error($model,'another_input'); ?>
+		<?php echo CHtml::submitButton($model->isNewRecord ? Phrase::trans(1,0) : Phrase::trans(2,0), array('onclick' => 'setEnableSave()')); ?>
+	</fieldset>
+	<?php $this->endWidget(); ?>	
+	
 	<div class="list-view specific">
 		<div class="items clearfix">
+			<div class="loader"></div>
 		</div>
 	</div>
 </div>

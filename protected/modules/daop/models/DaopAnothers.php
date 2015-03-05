@@ -21,19 +21,35 @@
  *
  * The followings are the available columns in table 'ommu_daop_anothers':
  * @property string $another_id
+ * @property integer $status
  * @property string $another_name
  * @property string $another_desc
+ * @property string $another_cover
+ * @property string $another_photo
+ * @property integer $country_id
+ * @property integer $province_id
+ * @property string $city_id
  * @property integer $users
  * @property string $creation_date
+ * @property string $creation_id
  * @property string $modified_date
+ * @property string $modified_id
  *
  * The followings are the available model relations:
+ * @property OmmuDaopAnotherHistory[] $ommuDaopAnotherHistories
  * @property OmmuDaopAnotherUser[] $ommuDaopAnotherUsers
  */
 class DaopAnothers extends CActiveRecord
 {
 	public $defaultColumns = array();
-
+	public $city_input;
+	
+	// Variable Search
+	public $province_search;
+	public $city_search;
+	public $creation_search;
+	public $modified_search;
+	
 	/**
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
@@ -61,13 +77,17 @@ class DaopAnothers extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('another_name, another_desc, users, creation_date', 'required'),
-			array('users', 'numerical', 'integerOnly'=>true),
-			array('another_name', 'length', 'max'=>64),
-			array('modified_date', 'safe'),
+			array('another_name,
+				city_input', 'required', 'on'=>'form'),
+			array('status, country_id, province_id, users', 'numerical', 'integerOnly'=>true),
+			array('another_name, another_cover, another_photo', 'length', 'max'=>64),
+			array('city_id, creation_id, modified_id', 'length', 'max'=>11),
+			array('status, another_desc, another_cover, another_photo, city_id,
+				creation_id, modified_id', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('another_id, another_name, another_desc, users, creation_date, modified_date', 'safe', 'on'=>'search'),
+			array('another_id, status, another_name, another_desc, another_cover, another_photo, country_id, province_id, city_id, users, creation_date, creation_id, modified_date, modified_id,
+				province_search, city_search, creation_search, modified_search', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -79,6 +99,13 @@ class DaopAnothers extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
+			'city_relation' => array(self::BELONGS_TO, 'OmmuZoneCity', 'city_id'),
+			'province_relation' => array(self::BELONGS_TO, 'OmmuZoneProvince', 'province_id'),
+			'country_relation' => array(self::BELONGS_TO, 'OmmuZoneCountry', 'country_id'),
+			'creation_relation' => array(self::BELONGS_TO, 'Users', 'creation_id'),
+			'modified_relation' => array(self::BELONGS_TO, 'Users', 'modified_id'),
+			
+			'ommuDaopAnotherHistories' => array(self::HAS_MANY, 'OmmuDaopAnotherHistory', 'another_id'),
 			'ommuDaopAnotherUsers' => array(self::HAS_MANY, 'OmmuDaopAnotherUser', 'another_id'),
 		);
 	}
@@ -90,11 +117,24 @@ class DaopAnothers extends CActiveRecord
 	{
 		return array(
 			'another_id' => 'Another',
+			'status' => 'Status',
 			'another_name' => 'Another Name',
 			'another_desc' => 'Another Desc',
+			'another_cover' => 'Another Cover',
+			'another_photo' => 'Another Photo',
+			'country_id' => 'Country',
+			'province_id' => 'Province',
+			'city_id' => 'City',
 			'users' => 'Users',
 			'creation_date' => 'Creation Date',
+			'creation_id' => 'Creation',
 			'modified_date' => 'Modified Date',
+			'modified_id' => 'Modified',
+			'city_input' => 'City',
+			'province_search' => 'Province',
+			'city_search' => 'City',
+			'creation_search' => 'Creation',
+			'modified_search' => 'Modified',
 		);
 	}
 
@@ -117,13 +157,65 @@ class DaopAnothers extends CActiveRecord
 		$criteria=new CDbCriteria;
 
 		$criteria->compare('t.another_id',$this->another_id,true);
+		$criteria->compare('t.status',$this->status);
 		$criteria->compare('t.another_name',$this->another_name,true);
 		$criteria->compare('t.another_desc',$this->another_desc,true);
+		$criteria->compare('t.another_cover',$this->another_cover,true);
+		$criteria->compare('t.another_photo',$this->another_photo,true);
+		if(isset($_GET['country'])) {
+			$criteria->compare('t.country_id',$_GET['province']);
+		} else {
+			$criteria->compare('t.country_id',$this->country_id);
+		}
+		if(isset($_GET['province'])) {
+			$criteria->compare('t.province_id',$_GET['province']);
+		} else {
+			$criteria->compare('t.province_id',$this->province_id);
+		}
+		if(isset($_GET['city'])) {
+			$criteria->compare('t.city_id',$_GET['city']);
+		} else {
+			$criteria->compare('t.city_id',$this->city_id);
+		}
 		$criteria->compare('t.users',$this->users);
 		if($this->creation_date != null && !in_array($this->creation_date, array('0000-00-00 00:00:00', '0000-00-00')))
 			$criteria->compare('date(t.creation_date)',date('Y-m-d', strtotime($this->creation_date)));
+		if(isset($_GET['creation'])) {
+			$criteria->compare('t.creation_id',$_GET['creation']);
+		} else {
+			$criteria->compare('t.creation_id',$this->creation_id);
+		}
 		if($this->modified_date != null && !in_array($this->modified_date, array('0000-00-00 00:00:00', '0000-00-00')))
 			$criteria->compare('date(t.modified_date)',date('Y-m-d', strtotime($this->modified_date)));
+		if(isset($_GET['modified'])) {
+			$criteria->compare('t.modified_id',$_GET['modified']);
+		} else {
+			$criteria->compare('t.modified_id',$this->modified_id);
+		}
+		
+		// Custom Search
+		$criteria->with = array(
+			'province_relation' => array(
+				'alias'=>'province_relation',
+				'select'=>'province',
+			),
+			'city_relation' => array(
+				'alias'=>'city_relation',
+				'select'=>'city',
+			),
+			'creation_relation' => array(
+				'alias'=>'creation_relation',
+				'select'=>'displayname',
+			),
+			'modified_relation' => array(
+				'alias'=>'modified_relation',
+				'select'=>'displayname',
+			),
+		);
+		$criteria->compare('province_relation.province',strtolower($this->province_search), true);
+		$criteria->compare('city_relation.city',strtolower($this->city_search), true);
+		$criteria->compare('creation_relation.displayname',strtolower($this->creation_search), true);
+		$criteria->compare('modified_relation.displayname',strtolower($this->modified_search), true);
 
 		if(!isset($_GET['DaopAnothers_sort']))
 			$criteria->order = 'another_id DESC';
@@ -155,11 +247,19 @@ class DaopAnothers extends CActiveRecord
 			}
 		} else {
 			//$this->defaultColumns[] = 'another_id';
+			$this->defaultColumns[] = 'status';
 			$this->defaultColumns[] = 'another_name';
 			$this->defaultColumns[] = 'another_desc';
+			$this->defaultColumns[] = 'another_cover';
+			$this->defaultColumns[] = 'another_photo';
+			$this->defaultColumns[] = 'country_id';
+			$this->defaultColumns[] = 'province_id';
+			$this->defaultColumns[] = 'city_id';
 			$this->defaultColumns[] = 'users';
 			$this->defaultColumns[] = 'creation_date';
+			$this->defaultColumns[] = 'creation_id';
 			$this->defaultColumns[] = 'modified_date';
+			$this->defaultColumns[] = 'modified_id';
 		}
 
 		return $this->defaultColumns;
@@ -170,20 +270,21 @@ class DaopAnothers extends CActiveRecord
 	 */
 	protected function afterConstruct() {
 		if(count($this->defaultColumns) == 0) {
-			/*
-			$this->defaultColumns[] = array(
-				'class' => 'CCheckBoxColumn',
-				'name' => 'id',
-				'selectableRows' => 2,
-				'checkBoxHtmlOptions' => array('name' => 'trash_id[]')
-			);
-			*/
 			$this->defaultColumns[] = array(
 				'header' => 'No',
 				'value' => '$this->grid->dataProvider->pagination->currentPage*$this->grid->dataProvider->pagination->pageSize + $row+1'
 			);
 			$this->defaultColumns[] = 'another_name';
-			$this->defaultColumns[] = 'another_desc';
+			$this->defaultColumns[] = array(
+				'name' => 'city_search',
+				'value' => '$data->city_relation->city',
+			);
+			/*
+			$this->defaultColumns[] = array(
+				'name' => 'province_search',
+				'value' => '$data->province_relation->province',
+			);
+			*/
 			$this->defaultColumns[] = 'users';
 			$this->defaultColumns[] = array(
 				'name' => 'creation_date',
@@ -212,6 +313,11 @@ class DaopAnothers extends CActiveRecord
 				), true),
 			);
 			$this->defaultColumns[] = array(
+				'name' => 'creation_search',
+				'value' => '$data->creation_relation->displayname',
+			);
+			/*
+			$this->defaultColumns[] = array(
 				'name' => 'modified_date',
 				'value' => 'Utility::dateFormat($data->modified_date)',
 				'htmlOptions' => array(
@@ -237,6 +343,24 @@ class DaopAnothers extends CActiveRecord
 					),
 				), true),
 			);
+			$this->defaultColumns[] = array(
+				'name' => 'modified_search',
+				'value' => '$data->modified_relation->displayname',
+			);
+			*/
+			$this->defaultColumns[] = array(
+				'name' => 'status',
+				'value' => '$data->status',
+				'htmlOptions' => array(
+					'class' => 'center',
+				),
+				'filter'=>array(
+					0=>'Request',
+					1=>'Approve',
+					2=>'Blocked',
+				),
+				'type' => 'raw',
+			);
 		}
 		parent::afterConstruct();
 	}
@@ -257,72 +381,19 @@ class DaopAnothers extends CActiveRecord
 			return $model;			
 		}
 	}
-
-	/**
-	 * before validate attributes
-	 */
-	/*
-	protected function beforeValidate() {
-		if(parent::beforeValidate()) {
-			// Create action
-		}
-		return true;
-	}
-	*/
-
-	/**
-	 * after validate attributes
-	 */
-	/*
-	protected function afterValidate()
-	{
-		parent::afterValidate();
-			// Create action
-		return true;
-	}
-	*/
 	
 	/**
 	 * before save attributes
 	 */
-	/*
 	protected function beforeSave() {
 		if(parent::beforeSave()) {
+			if($this->isNewRecord) {
+				$this->creation_id = Yii::app()->user->id;
+			} else {
+				$this->modified_id = Yii::app()->user->id;
+			}
 		}
 		return true;	
 	}
-	*/
-	
-	/**
-	 * After save attributes
-	 */
-	/*
-	protected function afterSave() {
-		parent::afterSave();
-		// Create action
-	}
-	*/
-
-	/**
-	 * Before delete attributes
-	 */
-	/*
-	protected function beforeDelete() {
-		if(parent::beforeDelete()) {
-			// Create action
-		}
-		return true;
-	}
-	*/
-
-	/**
-	 * After delete attributes
-	 */
-	/*
-	protected function afterDelete() {
-		parent::afterDelete();
-		// Create action
-	}
-	*/
 
 }

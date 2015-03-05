@@ -176,7 +176,7 @@ function ajaxFunction() {
 	});
 
 	// Default url push
-	$('a:not("[off_address]")').click(function(){
+	$(document).on('click', 'a:not("[off_address]")', function() {
 		var url = $(this).attr('href');
 		if (typeof(url) != 'undefined') {
 			if(url != '#') {
@@ -194,7 +194,7 @@ function ajaxFunction() {
 	});
 	
 	// Custom show dialog
-	$('a.link-dialog').click(function() {
+	$(document).on('click', 'a.link-dialog', function() {
 		var id = $(this).attr('id');
 		var width = $(this).attr('rel');
 		var url = $(this).attr('href');
@@ -226,11 +226,11 @@ $(document).ready(function() {
 					url: val.url,
 					//dataType: 'json',
 					success: function(response) {
-						$('#'+val.id).html(response);
+						$(val.id).html(response);
 					}
 				});
 			} else {
-				$('#'+val.id).html(val.data);
+				$(val.id).html(val.data);
 			}
 		});
 	}
@@ -529,11 +529,11 @@ if(o.dialogGroundUrl != '') {
 								url: val.url,
 								//dataType: 'json',
 								success: function(response) {
-									$('#'+val.id).html(response);
+									$(val.id).html(response);
 								}
 							});
 						} else {
-							$('#'+val.id).html(val.data);
+							$(val.id).html(val.data);
 						}
 					});
 				}
@@ -601,11 +601,11 @@ function replaceContent(data, type) {
 							url: val.url,
 							//dataType: 'json',
 							success: function(response) {
-								$('#'+val.id).html(response);
+								$(val.id).html(response);
 							}
 						});
 					} else {
-						$('#'+val.id).html(val.data);
+						$(val.id).html(val.data);
 					}
 				});
 			}

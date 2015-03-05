@@ -22,13 +22,23 @@
  * The followings are the available columns in table 'ommu_daop_city':
  * @property string $id
  * @property string $city_id
+ * @property string $city_desc
+ * @property string $city_cover
+ * @property string $city_photo
  * @property integer $users
  * @property string $creation_date
+ * @property string $creation_id
  * @property string $modified_date
+ * @property string $modified_id
  */
 class DaopCity extends CActiveRecord
 {
 	public $defaultColumns = array();
+	
+	// Variable Search
+	public $city_search;
+	public $creation_search;
+	public $modified_search;
 
 	/**
 	 * Returns the static model of the specified AR class.
@@ -57,13 +67,15 @@ class DaopCity extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('city_id, users, creation_date', 'required'),
+			array('city_desc', 'required', 'on'=>'form'),
 			array('users', 'numerical', 'integerOnly'=>true),
-			array('city_id', 'length', 'max'=>11),
-			array('modified_date', 'safe'),
+			array('city_id, creation_id, modified_id', 'length', 'max'=>11),
+			array('city_cover, city_photo', 'length', 'max'=>64),
+			array('city_id, city_cover, city_photo, creation_id, modified_id', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, city_id, users, creation_date, modified_date', 'safe', 'on'=>'search'),
+			array('id, city_id, city_desc, city_cover, city_photo, users, creation_date, creation_id, modified_date, modified_id,
+				city_search, creation_search, modified_search', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -75,6 +87,9 @@ class DaopCity extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
+			'city_relation' => array(self::BELONGS_TO, 'OmmuZoneCity', 'city_id'),
+			'creation_relation' => array(self::BELONGS_TO, 'Users', 'creation_id'),
+			'modified_relation' => array(self::BELONGS_TO, 'Users', 'modified_id'),
 		);
 	}
 
@@ -86,9 +101,17 @@ class DaopCity extends CActiveRecord
 		return array(
 			'id' => 'ID',
 			'city_id' => 'City',
+			'city_desc' => 'City Desc',
+			'city_cover' => 'City Cover',
+			'city_photo' => 'City Photo',
 			'users' => 'Users',
 			'creation_date' => 'Creation Date',
+			'creation_id' => 'Creation',
 			'modified_date' => 'Modified Date',
+			'modified_id' => 'Modified',
+			'city_search' => 'City',
+			'creation_search' => 'Creation',
+			'modified_search' => 'Modified',
 		);
 	}
 
@@ -111,12 +134,48 @@ class DaopCity extends CActiveRecord
 		$criteria=new CDbCriteria;
 
 		$criteria->compare('t.id',$this->id,true);
-		$criteria->compare('t.city_id',$this->city_id,true);
+		if(isset($_GET['city'])) {
+			$criteria->compare('t.city_id',$_GET['city']);
+		} else {
+			$criteria->compare('t.city_id',$this->city_id);
+		}
+		$criteria->compare('t.city_desc',$this->city_desc,true);
+		$criteria->compare('t.city_cover',$this->city_cover,true);
+		$criteria->compare('t.city_photo',$this->city_photo,true);
 		$criteria->compare('t.users',$this->users);
 		if($this->creation_date != null && !in_array($this->creation_date, array('0000-00-00 00:00:00', '0000-00-00')))
 			$criteria->compare('date(t.creation_date)',date('Y-m-d', strtotime($this->creation_date)));
+		if(isset($_GET['creation'])) {
+			$criteria->compare('t.creation_id',$_GET['creation']);
+		} else {
+			$criteria->compare('t.creation_id',$this->creation_id);
+		}
 		if($this->modified_date != null && !in_array($this->modified_date, array('0000-00-00 00:00:00', '0000-00-00')))
 			$criteria->compare('date(t.modified_date)',date('Y-m-d', strtotime($this->modified_date)));
+		if(isset($_GET['modified'])) {
+			$criteria->compare('t.modified_id',$_GET['modified']);
+		} else {
+			$criteria->compare('t.modified_id',$this->modified_id);
+		}
+		
+		// Custom Search
+		$criteria->with = array(
+			'city_relation' => array(
+				'alias'=>'city_relation',
+				'select'=>'city',
+			),
+			'creation_relation' => array(
+				'alias'=>'creation_relation',
+				'select'=>'displayname',
+			),
+			'modified_relation' => array(
+				'alias'=>'modified_relation',
+				'select'=>'displayname',
+			),
+		);
+		$criteria->compare('city_relation.city',strtolower($this->city_search), true);
+		$criteria->compare('creation_relation.displayname',strtolower($this->creation_search), true);
+		$criteria->compare('modified_relation.displayname',strtolower($this->modified_search), true);
 
 		if(!isset($_GET['DaopCity_sort']))
 			$criteria->order = 'id DESC';
@@ -149,9 +208,14 @@ class DaopCity extends CActiveRecord
 		} else {
 			//$this->defaultColumns[] = 'id';
 			$this->defaultColumns[] = 'city_id';
+			$this->defaultColumns[] = 'city_desc';
+			$this->defaultColumns[] = 'city_cover';
+			$this->defaultColumns[] = 'city_photo';
 			$this->defaultColumns[] = 'users';
 			$this->defaultColumns[] = 'creation_date';
+			$this->defaultColumns[] = 'creation_id';
 			$this->defaultColumns[] = 'modified_date';
+			$this->defaultColumns[] = 'modified_id';
 		}
 
 		return $this->defaultColumns;
@@ -162,19 +226,14 @@ class DaopCity extends CActiveRecord
 	 */
 	protected function afterConstruct() {
 		if(count($this->defaultColumns) == 0) {
-			/*
-			$this->defaultColumns[] = array(
-				'class' => 'CCheckBoxColumn',
-				'name' => 'id',
-				'selectableRows' => 2,
-				'checkBoxHtmlOptions' => array('name' => 'trash_id[]')
-			);
-			*/
 			$this->defaultColumns[] = array(
 				'header' => 'No',
 				'value' => '$this->grid->dataProvider->pagination->currentPage*$this->grid->dataProvider->pagination->pageSize + $row+1'
 			);
-			$this->defaultColumns[] = 'city_id';
+			$this->defaultColumns[] = array(
+				'name' => 'city_search',
+				'value' => '$data->city_relation->city',
+			);
 			$this->defaultColumns[] = 'users';
 			$this->defaultColumns[] = array(
 				'name' => 'creation_date',
@@ -203,6 +262,11 @@ class DaopCity extends CActiveRecord
 				), true),
 			);
 			$this->defaultColumns[] = array(
+				'name' => 'creation_search',
+				'value' => '$data->creation_relation->displayname',
+			);
+			/*
+			$this->defaultColumns[] = array(
 				'name' => 'modified_date',
 				'value' => 'Utility::dateFormat($data->modified_date)',
 				'htmlOptions' => array(
@@ -228,6 +292,11 @@ class DaopCity extends CActiveRecord
 					),
 				), true),
 			);
+			$this->defaultColumns[] = array(
+				'name' => 'modified_search',
+				'value' => '$data->modified_relation->displayname',
+			);
+			*/
 		}
 		parent::afterConstruct();
 	}
@@ -248,72 +317,19 @@ class DaopCity extends CActiveRecord
 			return $model;			
 		}
 	}
-
-	/**
-	 * before validate attributes
-	 */
-	/*
-	protected function beforeValidate() {
-		if(parent::beforeValidate()) {
-			// Create action
-		}
-		return true;
-	}
-	*/
-
-	/**
-	 * after validate attributes
-	 */
-	/*
-	protected function afterValidate()
-	{
-		parent::afterValidate();
-			// Create action
-		return true;
-	}
-	*/
 	
 	/**
 	 * before save attributes
 	 */
-	/*
 	protected function beforeSave() {
 		if(parent::beforeSave()) {
+			if($this->isNewRecord) {
+				$this->creation_id = Yii::app()->user->id;
+			} else {
+				$this->modified_id = Yii::app()->user->id;
+			}
 		}
 		return true;	
 	}
-	*/
-	
-	/**
-	 * After save attributes
-	 */
-	/*
-	protected function afterSave() {
-		parent::afterSave();
-		// Create action
-	}
-	*/
-
-	/**
-	 * Before delete attributes
-	 */
-	/*
-	protected function beforeDelete() {
-		if(parent::beforeDelete()) {
-			// Create action
-		}
-		return true;
-	}
-	*/
-
-	/**
-	 * After delete attributes
-	 */
-	/*
-	protected function afterDelete() {
-		parent::afterDelete();
-		// Create action
-	}
-	*/
 
 }

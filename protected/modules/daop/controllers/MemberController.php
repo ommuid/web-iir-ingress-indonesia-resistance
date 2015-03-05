@@ -10,9 +10,12 @@
  *
  * TOC :
  *	Index
- *	Get
+ *	CityGet
  *	CitySuggest
  *	CityPost
+ *	AnotherGet
+ *	AnotherSuggest
+ *	AnotherPost
  *	Manage
  *	Add
  *	Edit
@@ -76,8 +79,9 @@ class MemberController extends Controller
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('index','get',
-					'citysuggest','citypost'
+				'actions'=>array('index',
+					'cityget','citysuggest','citypost',
+					'anotherget','anothersuggest','anotherpost',
 				),
 				'users'=>array('@'),
 				'expression'=>'isset(Yii::app()->user->level)',
@@ -103,24 +107,40 @@ class MemberController extends Controller
 	public function actionIndex() 
 	{
 		$model=new DaopUsers;
+		$another=new DaopAnotherUser;
 		
 		$arrThemes = Utility::getCurrentTemplate('public');
 		Yii::app()->theme = $arrThemes['folder'];
 		$this->layout = $arrThemes['layout'];
 		Utility::applyCurrentTheme($this->module);
+		
+		$this->contentOther = true;
+		$this->contentAttribute=array(
+			array(
+				'type' => 1, 
+				'id' => '#daop-member .list-view.city .items', 
+				'url' => Yii::app()->controller->createUrl('cityget')
+			),
+			array(
+				'type' => 1, 
+				'id' => '#daop-member .list-view.specific .items', 
+				'url' => Yii::app()->controller->createUrl('anotherget')
+			),
+		);
 
 		$this->pageTitle = 'Operation Area';
 		$this->pageDescription = '';
 		$this->pageMeta = '';
 		$this->render('front_index', array(
 			'model'=>$model,
+			'another'=>$another,
 		));
 	}
 	
 	/**
 	 * Lists all models.
 	 */
-	public function actionGet() 
+	public function actionCityGet() 
 	{
 		if(Yii::app()->request->isAjaxRequest) {
 			$criteria=new CDbCriteria;
@@ -133,7 +153,7 @@ class MemberController extends Controller
 			$dataProvider = new CActiveDataProvider('DaopUsers', array(
 				'criteria'=>$criteria,
 				'pagination'=>array(
-					'pageSize'=>7,
+					'pageSize'=>10,
 				),
 			));
 			
@@ -141,7 +161,7 @@ class MemberController extends Controller
 			$daops = $dataProvider->getData();
 			if(!empty($daops)) {
 				foreach($daops as $key => $item) {
-					$data .= Utility::otherDecode($this->renderPartial('_view', array('data'=>$item), true, false));
+					$data .= Utility::otherDecode($this->renderPartial('_view_city', array('data'=>$item), true, false));
 				}
 			}
 			$pager = OFunction::getDataProviderPager($dataProvider);
@@ -150,20 +170,27 @@ class MemberController extends Controller
 			} else {
 				$summaryPager = '[1-'.$pager[itemCount].' of '.$pager[itemCount].']';
 			}
-			$nextPager = $pager['nextPage'] != 0 ? Yii::app()->controller->createUrl('get', array($pager['pageVar']=>$pager['nextPage'])) : 0;	
+			$nextPager = $pager['nextPage'] != 0 ? Yii::app()->controller->createUrl('cityget', array($pager['pageVar']=>$pager['nextPage'])) : 0;	
 			
-			$return = array(
-				'type'=>1,
-				'data'=>$data,
-				'pager'=>$pager,
-				'renderType'=>4,
-				'renderSelector'=>'#daop-member .list-view.city .items a.pager',
-				'summaryPager'=>$summaryPager,
-				'summaryPagerSelector'=>'#daop-member .boxed h2.city span',
-				'nextPage'=>$nextPager,
-				'nextPageSelector'=>'#daop-member .list-view.city .items a.pager',
-			);
-			echo CJSON::encode($return);
+			if(empty($_GET)) {
+				$class = ($pager['itemCount'] == '0' || $pager['nextPage'] == '0') ? 'hide' : '';
+				$data .= '<a class="pager '.$class.'" href="'.$nextPager.'" title="Readmore.."><span>Readmore..</span></a>';
+				echo $data;
+				
+			} else {			
+				$return = array(
+					'type'=>1,
+					'data'=>$data,
+					'pager'=>$pager,
+					'renderType'=>4,
+					'renderSelector'=>'#daop-member .list-view.city .items a.pager',
+					'summaryPager'=>$summaryPager,
+					'summaryPagerSelector'=>'#daop-member .boxed h2.city span',
+					'nextPage'=>$nextPager,
+					'nextPageSelector'=>'#daop-member .list-view.city .items a.pager',
+				);
+				echo CJSON::encode($return);				
+			}
 			
 		} else {
 			throw new CHttpException(404, Phrase::trans(193,0));
@@ -195,11 +222,12 @@ class MemberController extends Controller
 					$result[] = array('id' => $items->city_id, 'value' => $items->city);
 				}
 			}
+			echo CJSON::encode($result);
+			Yii::app()->end();
+			
 		} else {
 			throw new CHttpException(404, Phrase::trans(193,0));
 		}
-		echo CJSON::encode($result);
-		Yii::app()->end();
 	}
 
 	/**
@@ -219,7 +247,126 @@ class MemberController extends Controller
 
 			if($model->save()) {
 				echo CJSON::encode(array(
-					'data' => Utility::otherDecode($this->renderPartial('_view', array('data'=>$model), true, false)),
+					'data' => Utility::otherDecode($this->renderPartial('_view_city', array('data'=>$model), true, false)),
+				));
+			}
+		}
+	}
+	
+	/**
+	 * Lists all models.
+	 */
+	public function actionAnotherGet() 
+	{
+		if(Yii::app()->request->isAjaxRequest) {
+			$criteria=new CDbCriteria;
+			$criteria->condition = 'user_id = :id';
+			$criteria->params = array(
+				':id'=>Yii::app()->user->id,
+			);
+			$criteria->order = 'creation_date DESC';
+
+			$dataProvider = new CActiveDataProvider('DaopAnotherUser', array(
+				'criteria'=>$criteria,
+				'pagination'=>array(
+					'pageSize'=>10,
+				),
+			));
+			
+			$data = '';
+			$daops = $dataProvider->getData();
+			if(!empty($daops)) {
+				foreach($daops as $key => $item) {
+					$data .= Utility::otherDecode($this->renderPartial('_view_specific', array('data'=>$item), true, false));
+				}
+			}
+			$pager = OFunction::getDataProviderPager($dataProvider);
+			if($pager[nextPage] != '0') {
+				$summaryPager = '[1-'.($pager[currentPage]*$pager[pageSize]).' of '.$pager[itemCount].']';
+			} else {
+				$summaryPager = '[1-'.$pager[itemCount].' of '.$pager[itemCount].']';
+			}
+			$nextPager = $pager['nextPage'] != 0 ? Yii::app()->controller->createUrl('anotherget', array($pager['pageVar']=>$pager['nextPage'])) : 0;	
+			
+			if(empty($_GET)) {
+				$class = ($pager['itemCount'] == '0' || $pager['nextPage'] == '0') ? 'hide' : '';
+				$data .= '<a class="pager '.$class.'" href="'.$nextPager.'" title="Readmore.."><span>Readmore..</span></a>';
+				echo $data;
+				
+			} else {			
+				$return = array(
+					'type'=>1,
+					'data'=>$data,
+					'pager'=>$pager,
+					'renderType'=>4,
+					'renderSelector'=>'#daop-member .list-view.specific .items a.pager',
+					'summaryPager'=>$summaryPager,
+					'summaryPagerSelector'=>'#daop-member .boxed h2.specific span',
+					'nextPage'=>$nextPager,
+					'nextPageSelector'=>'#daop-member .list-view.specific .items a.pager',
+				);
+				echo CJSON::encode($return);				
+			}
+			
+		} else {
+			throw new CHttpException(404, Phrase::trans(193,0));
+		}
+	}
+	
+	/**
+	 * Updates a particular model.
+	 * If update is successful, the browser will be redirected to the 'view' page.
+	 * @param integer $id the ID of the model to be updated
+	 */
+	public function actionAnotherSuggest($limit=10) 
+	{
+		if(Yii::app()->request->isAjaxRequest && isset($_GET['term'])) {
+			$criteria = new CDbCriteria;
+			$criteria->join = 'LEFT JOIN `ommu_daop_another_user` `b` ON `t`.`another_id`=`b`.`another_id` AND `b`.`user_id`=:user';
+			$criteria->condition = '`t`.`another_name` LIKE :another AND b.`another_id` IS NULL';
+			//$criteria->select	= "city_id, city";
+			$criteria->limit = $limit;
+			$criteria->order = 'another_name ASC';
+			$criteria->params = array(
+				':user' => Yii::app()->user->id,
+				':another' => '%' . strtolower($_GET['term']) . '%'
+			);
+			$model = DaopAnothers::model()->findAll($criteria);
+
+			if($model) {
+				foreach($model as $items) {
+					$result[] = array('id' => $items->another_id, 'value' => $items->another_name);
+				}
+			} else {
+				$result[] = array('id' => 0, 'value' => $_GET['term']);
+			}
+			echo CJSON::encode($result);
+			Yii::app()->end();
+			
+		} else {
+			throw new CHttpException(404, Phrase::trans(193,0));
+		}
+	}
+
+	/**
+	 * Creates a new model.
+	 * If creation is successful, the browser will be redirected to the 'view' page.
+	 */
+	public function actionAnotherPost() 
+	{
+		$model=new DaopAnotherUser;
+
+		// Uncomment the following line if AJAX validation is needed
+		$this->performAjaxValidation($model);
+
+		if(isset($_POST['another_id'], $_POST['user_id'], $_POST['another'])) {
+			$model->another_id = $_POST['another_id'];
+			$model->user_id = $_POST['user_id'];
+			$model->another_input = $_POST['another'];
+
+			if($model->save()) {
+				echo CJSON::encode(array(
+					'data' => Utility::otherDecode($this->renderPartial('_view_specific', array('data'=>$model), true, false)),
 				));
 			}
 		}
