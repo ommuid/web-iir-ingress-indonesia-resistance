@@ -8,51 +8,26 @@
  * @contect (+62)856-299-4114
  *
  */
+ 
+
+	if($data->province_photo == '')
+		$images = Utility::getTimThumb(Yii::app()->request->baseUrl.'/public/daop/daop_default.png', 80, 80, 1);
+	else
+		$images = Utility::getTimThumb(Yii::app()->request->baseUrl.'/public/daop/city/'.$data->province_photo, 80, 80, 1);
+	$city = DaopUsers::model()->count(array(
+		//'select'=>'folder, layout',
+		'condition' => 'province_id = :id',
+		'params' => array(
+			':id' => $data->province_id,
+		),		
+	)); 
 ?>
 
-<div class="view">
-
-	<b><?php echo CHtml::encode($data->getAttributeLabel('id')); ?>:</b>
-	<?php echo CHtml::link(CHtml::encode($data->id), array('view', 'id'=>$data->id)); ?>
-	<br />
-
-	<b><?php echo CHtml::encode($data->getAttributeLabel('province_id')); ?>:</b>
-	<?php echo CHtml::encode($data->province_id); ?>
-	<br />
-
-	<b><?php echo CHtml::encode($data->getAttributeLabel('province_desc')); ?>:</b>
-	<?php echo CHtml::encode($data->province_desc); ?>
-	<br />
-
-	<b><?php echo CHtml::encode($data->getAttributeLabel('province_cover')); ?>:</b>
-	<?php echo CHtml::encode($data->province_cover); ?>
-	<br />
-
-	<b><?php echo CHtml::encode($data->getAttributeLabel('province_photo')); ?>:</b>
-	<?php echo CHtml::encode($data->province_photo); ?>
-	<br />
-
-	<b><?php echo CHtml::encode($data->getAttributeLabel('users')); ?>:</b>
-	<?php echo CHtml::encode($data->users); ?>
-	<br />
-
-	<b><?php echo CHtml::encode($data->getAttributeLabel('creation_date')); ?>:</b>
-	<?php echo CHtml::encode($data->creation_date); ?>
-	<br />
-
-	<?php /*
-	<b><?php echo CHtml::encode($data->getAttributeLabel('creation_id')); ?>:</b>
-	<?php echo CHtml::encode($data->creation_id); ?>
-	<br />
-
-	<b><?php echo CHtml::encode($data->getAttributeLabel('modified_date')); ?>:</b>
-	<?php echo CHtml::encode($data->modified_date); ?>
-	<br />
-
-	<b><?php echo CHtml::encode($data->getAttributeLabel('modified_id')); ?>:</b>
-	<?php echo CHtml::encode($data->modified_id); ?>
-	<br />
-
-	*/ ?>
-
+<div class="sep clearfix">
+	<a class="photo" href="<?php echo Yii::app()->controller->createUrl('view',array('id'=>$data->province_id,'t'=>Utility::getUrlTitle($data->province_relation->province)))?>" title="<?php echo $data->province_relation->province;?>"><img src="<?php echo $images;?>" alt="<?php echo $data->province_relation->province;?>"/></a>	
+	<a class="title" href="<?php echo Yii::app()->controller->createUrl('view',array('id'=>$data->province_id,'t'=>Utility::getUrlTitle($data->province_relation->province)))?>" title="<?php echo $data->province_relation->province;?>"><?php echo $data->province_relation->province;?></a>
+	<div>
+		<a href="" title="<?php echo $city;?> City"><?php echo $city;?> City</a> / 
+		<a href="" title="<?php echo $data->users;?> Agent"><?php echo $data->users;?> Agent</a>
+	</div>
 </div>

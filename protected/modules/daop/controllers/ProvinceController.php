@@ -102,14 +102,8 @@ class ProvinceController extends Controller
 		Yii::app()->theme = $arrThemes['folder'];
 		$this->layout = $arrThemes['layout'];
 		Utility::applyCurrentTheme($this->module);
-		
-		$setting = DaopProvince::model()->findByPk(1,array(
-			'select' => 'meta_description, meta_keyword',
-		));
 
 		$criteria=new CDbCriteria;
-		$criteria->condition = 'publish = :publish';
-		$criteria->params = array(':publish'=>1);
 		$criteria->order = 'creation_date DESC';
 
 		$dataProvider = new CActiveDataProvider('DaopProvince', array(
@@ -118,13 +112,47 @@ class ProvinceController extends Controller
 				'pageSize'=>10,
 			),
 		));
-
-		$this->pageTitle = 'Daop Provinces';
-		$this->pageDescription = '';
-		$this->pageMeta = '';
-		$this->render('front_index',array(
-			'dataProvider'=>$dataProvider,
-		));
+			
+		$data = '';
+		$province = $dataProvider->getData();
+		if(!empty($province)) {
+			foreach($province as $key => $item) {
+				$data .= Utility::otherDecode($this->renderPartial('_view', array('data'=>$item), true, false));
+			}
+		}
+		$pager = OFunction::getDataProviderPager($dataProvider);
+		if($pager[nextPage] != '0') {
+			$summaryPager = '[1-'.($pager[currentPage]*$pager[pageSize]).' of '.$pager[itemCount].']';
+		} else {
+			$summaryPager = '[1-'.$pager[itemCount].' of '.$pager[itemCount].']';
+		}
+		$nextPager = $pager['nextPage'] != 0 ? Yii::app()->controller->createUrl('index', array($pager['pageVar']=>$pager['nextPage'])) : 0;	
+		
+		if(Yii::app()->request->isAjaxRequest && isset($_GET[$pager['pageVar']])) {
+			$return = array(
+				'type'=>1,
+				'data'=>$data,
+				'pager'=>$pager,
+				'renderType'=>1,
+				'renderSelector'=>'#daop-province .boxed.province .list-view .items',
+				'summaryPager'=>$summaryPager,
+				'summaryPagerSelector'=>'#daop-member .boxed h2.specific span',
+				'nextPage'=>$nextPager,
+				'nextPageSelector'=>'#daop-province .boxed.province .list-view a.pager',
+			);
+			echo CJSON::encode($return);
+				
+		} else {
+			$this->pageTitle = 'Operation Provinces';
+			$this->pageDescription = '';
+			$this->pageMeta = '';
+			$this->render('front_index',array(
+				'data'=>$data,
+				'pager'=>$pager,
+				'summaryPager'=>$summaryPager,
+				'nextPage'=>$nextPager,
+			));			
+		}
 	}
 	
 	/**
@@ -138,10 +166,16 @@ class ProvinceController extends Controller
 		$this->layout = $arrThemes['layout'];
 		Utility::applyCurrentTheme($this->module);
 		
-		$model=$this->loadModel($id);
+		$model = DaopProvince::model()->find(array(
+			//'select'=>'folder, layout',
+			'condition' => 'province_id = :id',
+			'params' => array(
+				':id' => $id,
+			),
+		));
 
-		$this->pageTitle = 'View Daop Provinces';
-		$this->pageDescription = '';
+		$this->pageTitle = $model->province_relation->province;
+		$this->pageDescription = Utility::shortText(Utility::hardDecode($model->province_desc),300);
 		$this->pageMeta = '';
 		$this->render('front_view',array(
 			'model'=>$model,

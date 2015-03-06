@@ -15,13 +15,11 @@
 	);
 ?>
 
-<?php $this->widget('application.components.system.FListView', array(
-	'dataProvider'=>$dataProvider,
-	'itemView'=>'_view',
-	'pager' => array(
-		'header' => '',
-	), 
-	'summaryText' => '',
-	'itemsCssClass' => 'items clearfix',
-	'pagerCssClass'=>'pager clearfix',
-)); ?>
+<div class="boxed province">
+	<div class="list-view">
+		<div class="items clearfix">
+			<?php echo $data;?>			
+		</div>
+		<a class="pager <?php echo ($pager['itemCount'] == '0' || $pager['nextPage'] == '0') ? 'hide' : '';?>" href="<?php echo $nextPage;?>" title="Next..">Next..</a>
+	</div>
+</div>
