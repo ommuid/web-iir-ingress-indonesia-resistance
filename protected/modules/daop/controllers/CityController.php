@@ -11,8 +11,10 @@
  * TOC :
  *	Index
  *	View
+ *	Member
+ *	Another
+ *	Update
  *	Manage
- *	Add
  *	Edit
  *	Delete
  *
@@ -74,7 +76,10 @@ class CityController extends Controller
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('index','view'),
+				'actions'=>array('index','view',
+					'member','another',
+					'update',
+				),
 				'users'=>array('@'),
 				'expression'=>'isset(Yii::app()->user->level)',
 				//'expression'=>'isset(Yii::app()->user->level) && (Yii::app()->user->level != 1)',
@@ -114,7 +119,7 @@ class CityController extends Controller
 			),
 		));
 
-		$this->pageTitle = 'Daop Cities';
+		$this->pageTitle = 'City Operation';
 		$this->pageDescription = '';
 		$this->pageMeta = '';
 		$this->render('front_index',array(
@@ -140,6 +145,20 @@ class CityController extends Controller
 				':id' => $id,
 			),
 		));
+		
+		$this->contentOther = true;
+		$this->contentAttribute=array(
+			array(
+				'type' => 1, 
+				'id' => '#daop-city .boxed #agents .list-view', 
+				'url' => Yii::app()->controller->createUrl('member',array('id'=>$model->city_id,'t'=>Utility::getUrlTitle($model->city_relation->city))),
+			),
+			array(
+				'type' => 1, 
+				'id' => '#daop-city .boxed #anothers .list-view', 
+				'url' => Yii::app()->controller->createUrl('another',array('id'=>$model->city_id,'t'=>Utility::getUrlTitle($model->city_relation->city))),
+			),
+		);
 
 		$this->pageTitle = $model->city_relation->city;
 		$this->pageDescription = Utility::shortText(Utility::hardDecode($model->city_desc),300);
@@ -147,7 +166,246 @@ class CityController extends Controller
 		$this->render('front_view',array(
 			'model'=>$model,
 		));
-	}	
+	}
+	
+	/**
+	 * Displays a particular model.
+	 * @param integer $id the ID of the model to be displayed
+	 */
+	public function actionMember($id) 
+	{
+		$arrThemes = Utility::getCurrentTemplate('public');
+		Yii::app()->theme = $arrThemes['folder'];
+		$this->layout = $arrThemes['layout'];
+		Utility::applyCurrentTheme($this->module);
+		
+		$model = DaopCity::model()->find(array(
+			//'select'=>'folder, layout',
+			'condition' => 'city_id = :id',
+			'params' => array(
+				':id' => $id,
+			),
+		));
+		
+		$criteria=new CDbCriteria;
+		$criteria->condition = 'city_id = :city';
+		$criteria->params = array(
+			':city'=>$id,
+		);
+		$criteria->order = 'creation_date DESC';
+
+		$dataProvider = new CActiveDataProvider('DaopUsers', array(
+			'criteria'=>$criteria,
+			'pagination'=>array(
+				'pageSize'=>15,
+			),
+		));
+			
+		$data = '';
+		$agent = $dataProvider->getData();
+		if(!empty($agent)) {
+			foreach($agent as $key => $item) {
+				$data .= Utility::otherDecode($this->renderPartial('_view_member', array('data'=>$item), true, false));
+			}
+		}
+		$pager = OFunction::getDataProviderPager($dataProvider);
+		if($pager[nextPage] != '0') {
+			$summaryPager = '[1-'.($pager[currentPage]*$pager[pageSize]).' of '.$pager[itemCount].']';
+		} else {
+			$summaryPager = '[1-'.$pager[itemCount].' of '.$pager[itemCount].']';
+		}
+		$nextPager = $pager['nextPage'] != 0 ? Yii::app()->controller->createUrl('member', array($pager['pageVar']=>$pager['nextPage'])) : 0;	
+		
+		if(Yii::app()->request->isAjaxRequest) {
+			if(!isset($_GET[$pager['pageVar']])) {
+				echo '<div class="items">';
+				echo $data;
+				echo '</div>';
+				$class = ($pager['itemCount'] == '0' || $pager['nextPage'] == '0') ? 'hide' : '';
+				echo '<a class="pager '.$class.'" href="'.$nextPager.'" title="Readmore..">Readmore..</a>';
+				
+			} else {			
+				$return = array(
+					'type'=>1,
+					'data'=>$data,
+					'pager'=>$pager,
+					'renderType'=>4,
+					'renderSelector'=>'#daop-member .list-view.specific .items a.pager',
+					'summaryPager'=>$summaryPager,
+					'summaryPagerSelector'=>'#daop-member .boxed h2.specific span',
+					'nextPage'=>$nextPager,
+					'nextPageSelector'=>'#daop-member .list-view.specific .items a.pager',
+				);
+				echo CJSON::encode($return);
+			}
+		
+		} else {		
+			$this->contentOther = true;
+			$this->contentAttribute=array(
+				array(
+					'type' => 1, 
+					'id' => '#daop-city .boxed #anothers .list-view', 
+					'url' => Yii::app()->controller->createUrl('another',array('id'=>$model->city_id,'t'=>Utility::getUrlTitle($model->city_relation->city))),
+				),
+			);
+		
+			$this->pageTitle = 'Agent of '.$model->city_relation->city;
+			$this->pageDescription = Utility::shortText(Utility::hardDecode($model->city_desc),300);
+			$this->pageMeta = '';
+			$this->render('front_view',array(
+				'model'=>$model,
+				'data'=>$data,
+				'pager'=>$pager,
+				'summaryPager'=>$summaryPager,
+				'nextPage'=>$nextPager,
+			));
+		}
+	}
+	
+	/**
+	 * Displays a particular model.
+	 * @param integer $id the ID of the model to be displayed
+	 */
+	public function actionAnother($id) 
+	{
+		$arrThemes = Utility::getCurrentTemplate('public');
+		Yii::app()->theme = $arrThemes['folder'];
+		$this->layout = $arrThemes['layout'];
+		Utility::applyCurrentTheme($this->module);
+		
+		$model = DaopCity::model()->find(array(
+			//'select'=>'folder, layout',
+			'condition' => 'city_id = :id',
+			'params' => array(
+				':id' => $id,
+			),
+		));
+		
+		$criteria=new CDbCriteria;
+		$criteria->condition = 'city_id = :city';
+		$criteria->params = array(
+			':city'=>$id,
+		);
+		$criteria->order = 'creation_date DESC';
+
+		$dataProvider = new CActiveDataProvider('DaopAnothers', array(
+			'criteria'=>$criteria,
+			'pagination'=>array(
+				'pageSize'=>15,
+			),
+		));
+			
+		$data = '';
+		$another = $dataProvider->getData();
+		if(!empty($another)) {
+			foreach($another as $key => $item) {
+				$data .= Utility::otherDecode($this->renderPartial('_view_another', array('data'=>$item), true, false));
+			}
+		}
+		$pager = OFunction::getDataProviderPager($dataProvider);
+		if($pager[nextPage] != '0') {
+			$summaryPager = '[1-'.($pager[currentPage]*$pager[pageSize]).' of '.$pager[itemCount].']';
+		} else {
+			$summaryPager = '[1-'.$pager[itemCount].' of '.$pager[itemCount].']';
+		}
+		$nextPager = $pager['nextPage'] != 0 ? Yii::app()->controller->createUrl('another', array($pager['pageVar']=>$pager['nextPage'])) : 0;
+		
+		if(Yii::app()->request->isAjaxRequest) {
+			if(!isset($_GET[$pager['pageVar']])) {
+				echo '<div class="items clearfix">';
+				echo $data;
+				echo '</div>';
+				$class = ($pager['itemCount'] == '0' || $pager['nextPage'] == '0') ? 'hide' : '';
+				echo '<a class="pager '.$class.'" href="'.$nextPager.'" title="Readmore..">Readmore..</a>';
+				
+			} else {			
+				$return = array(
+					'type'=>1,
+					'data'=>$data,
+					'pager'=>$pager,
+					'renderType'=>4,
+					'renderSelector'=>'#daop-member .list-view.specific .items a.pager',
+					'summaryPager'=>$summaryPager,
+					'summaryPagerSelector'=>'#daop-member .boxed h2.specific span',
+					'nextPage'=>$nextPager,
+					'nextPageSelector'=>'#daop-member .list-view.specific .items a.pager',
+				);
+				echo CJSON::encode($return);
+			}
+		
+		} else {	
+			$this->contentOther = true;
+			$this->contentAttribute=array(
+				array(
+					'type' => 1, 
+					'id' => '#daop-city .boxed #agents .list-view', 
+					'url' => Yii::app()->controller->createUrl('member',array('id'=>$model->city_id,'t'=>Utility::getUrlTitle($model->city_relation->city))),
+				),
+			);
+			$this->pageTitle = 'Specific Area in '.$model->city_relation->city;
+			$this->pageDescription = Utility::shortText(Utility::hardDecode($model->city_desc),300);
+			$this->pageMeta = '';
+			$this->render('front_view',array(
+				'model'=>$model,
+				'data'=>$data,
+				'pager'=>$pager,
+				'summaryPager'=>$summaryPager,
+				'nextPage'=>$nextPager,
+			));
+		}
+	}
+
+	/**
+	 * Updates a particular model.
+	 * If update is successful, the browser will be redirected to the 'view' page.
+	 * @param integer $id the ID of the model to be updated
+	 */
+	public function actionUpdate($id) 
+	{
+		$arrThemes = Utility::getCurrentTemplate('public');
+		Yii::app()->theme = $arrThemes['folder'];
+		$this->layout = $arrThemes['layout'];
+		Utility::applyCurrentTheme($this->module);
+		
+		$model=$this->loadModel($id);
+
+		// Uncomment the following line if AJAX validation is needed
+		$this->performAjaxValidation($model);
+
+		if(isset($_POST['DaopCity'])) {
+			$model->attributes=$_POST['DaopCity'];
+			$model->scenario = 'form';
+			
+			$jsonError = CActiveForm::validate($model);
+			if(strlen($jsonError) > 2) {
+				echo $jsonError;
+
+			} else {
+				if(isset($_GET['enablesave']) && $_GET['enablesave'] == 1) {
+					if($model->save()) {
+						echo CJSON::encode(array(
+							'type' => 5,
+							'get' => Yii::app()->controller->createUrl('view',array('id'=>$model->city_id,'t'=>Utility::getUrlTitle($model->city_relation->city))),
+						));
+					} else {
+						print_r($model->getErrors());
+					}
+				}
+			}
+			Yii::app()->end();
+			
+		} else {
+			$this->dialogDetail = true;
+			$this->dialogGroundUrl = Yii::app()->controller->createUrl('view',array('id'=>$model->city_id,'t'=>Utility::getUrlTitle($model->city_relation->city)));
+
+			$this->pageTitle = 'Update City Information';
+			$this->pageDescription = '';
+			$this->pageMeta = '';
+			$this->render('front_update',array(
+				'model'=>$model,
+			));
+		}
+	}
 
 	/**
 	 * Manages all models.
@@ -193,47 +451,11 @@ class CityController extends Controller
 
 		if(isset($_POST['DaopCity'])) {
 			$model->attributes=$_POST['DaopCity'];
-
-			/* 
-			$jsonError = CActiveForm::validate($model);
-			if(strlen($jsonError) > 2) {
-				//echo $jsonError;
-				$errors = $model->getErrors();
-				$summary['msg'] = "<div class='errorSummary'><strong>Please fix the following input errors:</strong>";
-				$summary['msg'] .= "<ul>";
-				foreach($errors as $key => $value) {
-					$summary['msg'] .= "<li>{$value[0]}</li>";
-				}
-				$summary['msg'] .= "</ul></div>";
-
-				$message = json_decode($jsonError, true);
-				$merge = array_merge_recursive($summary, $message);
-				$encode = json_encode($merge);
-				echo $encode;
-
-			} else {
-				if(isset($_GET['enablesave']) && $_GET['enablesave'] == 1) {
-					if($model->save()) {
-						echo CJSON::encode(array(
-							'type' => 5,
-							'get' => Yii::app()->controller->createUrl('manage'),
-							'id' => 'partial-daop-city',
-							'msg' => '<div class="errorSummary success"><strong>DaopCity success updated.</strong></div>',
-						));
-					} else {
-						print_r($model->getErrors());
-					}
-				}
-			}
-			Yii::app()->end();
-			*/
-
-			if(isset($_GET['enablesave']) && $_GET['enablesave'] == 1) {
-				if($model->save()) {
-					Yii::app()->user->setFlash('success', 'DaopCity success updated.');
-					//$this->redirect(array('view','id'=>$model->id));
-					$this->redirect(array('manage'));
-				}
+			$model->scenario = 'form';
+			
+			if($model->save()) {
+				Yii::app()->user->setFlash('success', 'DaopCity success updated.');
+				$this->redirect(array('manage'));
 			}
 		}
 

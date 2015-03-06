@@ -126,7 +126,7 @@ class MemberController extends Controller
 			),
 		);
 
-		$this->pageTitle = 'Operation Area';
+		$this->pageTitle = 'My Area';
 		$this->pageDescription = '';
 		$this->pageMeta = '';
 		$this->render('front_index', array(

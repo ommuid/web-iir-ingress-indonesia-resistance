@@ -2,6 +2,7 @@
 
 /* =Operation Area
  * #daop-member
+ * #daop-city
 -------------------------------------------------------------- */
 #daop-member .boxed {
 	padding: 12px 15px 0 15px;
@@ -127,6 +128,7 @@
 	font-weight: 700;
 	font-size: 14px;
 	line-height: 18px;
+	word-wrap: break-word;
 }
 #daop-member .list-view.city .items .sep div.city,
 #daop-member .list-view.city .items a.pager span {
@@ -195,4 +197,257 @@
 	color: #4594dc;
 }
 
-/* Pager */
+/* ====================== */
+/* Index */
+
+/* Detail */
+#daop-city .boxed {
+	-webkit-border-bottom-right-radius: 10px;
+	-webkit-border-bottom-left-radius: 10px;
+	-moz-border-radius-bottomright: 10px;
+	-moz-border-radius-bottomleft: 10px;
+	border-bottom-right-radius: 10px;
+	border-bottom-left-radius: 10px;
+	padding: 15px 20px 20px 20px;
+	border-top: 3px solid #75d3f6;
+}
+#content #daop-city .boxed.box-info {
+	-webkit-border-bottom-right-radius: 0;
+	-webkit-border-bottom-left-radius: 0;
+	-moz-border-radius-bottomright: 0;
+	-moz-border-radius-bottomleft: 0;
+	border-bottom-right-radius: 0;
+	border-bottom-left-radius: 0;
+	margin: 0 0 2px 0;
+	padding: 0 0 0 0;
+	border: none;
+}
+#daop-city .boxed.box-info .info,
+#daop-city .boxed.box-info .info * {
+	font-size: 15px;
+	line-height: 20px;
+	font-weight: 300;
+	color: #333;
+}
+#daop-city .boxed.box-info .info {
+	position: relative;
+}
+#daop-city .boxed.box-info .info img.cover {
+	display: block;
+	background: #75d3f6;
+	width: 100%;
+}
+#daop-city .boxed.box-info .info div,
+#daop-city .boxed.box-info .area-info,
+#daop-city .boxed.box-info .info a.photo img {
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+}
+#daop-city .boxed.box-info .info div {
+	position: absolute;	
+	bottom: 0;
+	left: 0;
+	width: 100%;
+	padding: 0 0 12px 170px;
+}
+#daop-city .boxed.box-info .info h3 {
+	display: inline-block;
+	margin: 0 0 0 0;
+	font-size: 22px;
+	line-height: 27px;
+	font-weight: 700;
+}
+#daop-city .boxed.box-info .info a.photo,
+#daop-city .boxed.box-info .info a.photo img {
+	-webkit-border-radius: 60px;
+	-moz-border-radius: 60px;
+	border-radius: 60px;
+	width: 120px;
+	height: 120px;
+}
+#daop-city .boxed.box-info .info a.photo img {
+	border: 3px solid #75d3f6;
+}
+#daop-city .boxed.box-info .info a.photo:hover img {
+	border: 3px solid #0480ae;
+}
+#daop-city .boxed.box-info .info a.photo {
+	-webkit-box-shadow: 0 3px 3px rgba(0,0,0,0.4);
+	-moz-box-shadow: 0 3px 3px rgba(0,0,0,0.4);
+	box-shadow: 0 3px 3px rgba(0,0,0,0.4);
+	position: absolute;	
+	bottom: -60px;
+	left: 30px;
+	display: block;
+}
+#daop-city .boxed.box-info .area-info,
+#daop-city .boxed.box-info .area-info * {
+	font-size: 15px;
+	line-height: 18px;
+	font-weight: 300;
+}
+#daop-city .boxed.box-info .area-info {
+	padding: 10px 0 0 170px;
+	background: #00aeef;
+	border-bottom: 3px solid #0480ae;
+}
+#daop-city .boxed.box-info .area-info ul {
+	display: block;
+	list-style: none;
+	padding: 0 0 0 0;
+	margin: 0 0 0 0;
+}
+#daop-city .boxed.box-info .area-info ul li {
+	-webkit-border-top-left-radius: 6px;
+	-webkit-border-top-right-radius: 6px;
+	-moz-border-radius-topleft: 6px;
+	-moz-border-radius-topright: 6px;
+	border-top-left-radius: 6px;
+	border-top-right-radius: 6px;
+	float: left;
+	border: 3px solid transparent;
+	border-bottom: none;
+}
+#daop-city .boxed.box-info .area-info ul li.active {
+	border: 3px solid #0480ae;
+	border-bottom: none;
+	background: #fff;
+}
+#daop-city .boxed.box-info .area-info ul li.last,
+#daop-city .boxed.box-info .area-info ul li.last * {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 13px;
+	line-height: 17px;
+}
+#daop-city .boxed.box-info .area-info ul li.last {
+	float: right;
+	padding: 3px 15px 0 0;
+}
+#daop-city .boxed.box-info .area-info ul li.last a {
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+	padding: 6px 10px;
+}
+#daop-city .boxed.box-info .area-info ul li a {
+	-webkit-border-top-left-radius: 5px;
+	-webkit-border-top-right-radius: 5px;
+	-moz-border-radius-topleft: 5px;
+	-moz-border-radius-topright: 5px;
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+	position: relative;
+	display: block;
+	padding: 10px 20px;
+	text-decoration: none;
+	color: #fff;
+}
+#daop-city .boxed.box-info .area-info ul li a:hover {
+	background: #0393c8;
+}
+#daop-city .boxed.box-info .area-info ul li.active a {
+	padding: 10px 25px;
+	font-weight: 700;
+	color: #333;
+}
+#daop-city .boxed.box-info .area-info ul li.active a,
+#daop-city .boxed.box-info .area-info ul li.active a:hover {
+	-webkit-border-top-left-radius: 3px;
+	-webkit-border-top-right-radius: 3px;
+	-moz-border-radius-topleft: 3px;
+	-moz-border-radius-topright: 3px;
+	border-top-left-radius: 3px;
+	border-top-right-radius: 3px;
+	background: #eef2f4;
+}
+#daop-city .boxed.box-info .area-info ul li.active a:after {
+	content: '';
+	position: absolute;
+	top: 100%;
+	left: 0;
+	width: 100%;
+	border-bottom: 3px solid #eef2f4;
+}
+
+#daop-city .boxed .box-contant {
+	display: none;
+}
+#daop-city .boxed .box-contant .loader {
+	background: url('daop/images/ajax_loader.gif') 50% 50% no-repeat;
+	height: 100px;	
+}
+
+#daop-city .boxed #profile {
+	padding: 10px 10px 10px 10px;
+	font-size: 15px;
+	line-height: 20px;
+	text-align: center;
+	font-weight: 300;
+}
+#daop-city .view .boxed #profile,
+#daop-city .member .boxed #agents,
+#daop-city .another .boxed #anothers {
+	display: block;
+}
+
+#daop-city .boxed #agents .list-view,
+#daop-city .boxed #anothers .list-view {
+	margin: 0 0 0 0;
+}
+#daop-city .boxed #agents .list-view .items {
+	display: table;
+	width: 100%;
+}
+#daop-city .boxed #agents .list-view .sep,
+#daop-city .boxed #agents .list-view .sep * {
+	font-size: 14px;
+	line-height: 19px;
+	font-weight: 300;
+}
+#daop-city .boxed #agents .list-view .sep {
+	display: table-row;
+	background: #f5f5f5;
+}
+#daop-city .boxed #agents .list-view .sep:nth-child(2n) {
+	background: #fff;	
+}
+#daop-city .boxed #agents .list-view .sep a.users,
+#daop-city .boxed #agents .list-view .sep div {
+	display: table-cell;
+	vertical-align: middle;
+	padding: 10px 15px;
+}
+#daop-city .boxed #agents .list-view .sep a.users {
+	font-size: 20px;
+	line-height: 26px;
+	font-weight: 600;
+}
+
+#daop-city .boxed #anothers .list-view .sep {
+	-webkit-border-radius: 15px;
+	-moz-border-radius: 15px;
+	border-radius: 15px;
+	float: left;
+	background: #f5f5f5;
+	margin: 0 10px 10px 0;
+}
+#daop-city .boxed #anothers .list-view .sep:hover {
+	background: #0480ae;	
+}
+#daop-city .boxed #anothers .list-view .sep a {
+	display: inline-block;
+	padding: 10px 5px 10px 15px;
+	font-size: 15px;
+	line-height: 20px;
+	font-weight: 700;
+	text-decoration: none;
+}
+#daop-city .boxed #anothers .list-view .sep a:last-child {
+	padding: 10px 15px 10px 5px;
+}
+#daop-city .boxed #anothers .list-view .sep:hover a {
+	color: #fff;
+}

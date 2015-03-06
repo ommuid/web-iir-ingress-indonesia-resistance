@@ -8,51 +8,20 @@
  * @contect (+62)856-299-4114
  *
  */
+	if($data->city_photo == '') {
+		$images = Utility::getTimThumb(Yii::app()->request->baseUrl.'/public/daop/daop_default.png', 100, 100, 1);
+	} else {
+		$images = Utility::getTimThumb(Yii::app()->request->baseUrl.'/public/users/'.Yii::app()->user->id.'/'.Yii::app()->user->photo, 100, 100, 1);
+	}
 ?>
 
-<div class="view">
+<div class="sep"><div class="invers">
+	<div class="photo">
+		<a href="<?php echo Yii::app()->controller->createUrl('view',array('id'=>$data->city_id,'t'=>Utility::getUrlTitle($data->city_relation->city)))?>" title=""><img src="<?php echo $images;?>" alt=""></a>
+	</div>
+	<?php echo $data->users;?>,
+	<?php echo $data->city_relation->city;?>,
+	<?php echo $data->city_relation->province->province;?>,
+	<?php echo $data->city_relation->province->country->country;?>
 
-	<b><?php echo CHtml::encode($data->getAttributeLabel('id')); ?>:</b>
-	<?php echo CHtml::link(CHtml::encode($data->id), array('view', 'id'=>$data->id)); ?>
-	<br />
-
-	<b><?php echo CHtml::encode($data->getAttributeLabel('city_id')); ?>:</b>
-	<?php echo CHtml::encode($data->city_id); ?>
-	<br />
-
-	<b><?php echo CHtml::encode($data->getAttributeLabel('city_desc')); ?>:</b>
-	<?php echo CHtml::encode($data->city_desc); ?>
-	<br />
-
-	<b><?php echo CHtml::encode($data->getAttributeLabel('city_cover')); ?>:</b>
-	<?php echo CHtml::encode($data->city_cover); ?>
-	<br />
-
-	<b><?php echo CHtml::encode($data->getAttributeLabel('city_photo')); ?>:</b>
-	<?php echo CHtml::encode($data->city_photo); ?>
-	<br />
-
-	<b><?php echo CHtml::encode($data->getAttributeLabel('users')); ?>:</b>
-	<?php echo CHtml::encode($data->users); ?>
-	<br />
-
-	<b><?php echo CHtml::encode($data->getAttributeLabel('creation_date')); ?>:</b>
-	<?php echo CHtml::encode($data->creation_date); ?>
-	<br />
-
-	<?php /*
-	<b><?php echo CHtml::encode($data->getAttributeLabel('creation_id')); ?>:</b>
-	<?php echo CHtml::encode($data->creation_id); ?>
-	<br />
-
-	<b><?php echo CHtml::encode($data->getAttributeLabel('modified_date')); ?>:</b>
-	<?php echo CHtml::encode($data->modified_date); ?>
-	<br />
-
-	<b><?php echo CHtml::encode($data->getAttributeLabel('modified_id')); ?>:</b>
-	<?php echo CHtml::encode($data->modified_id); ?>
-	<br />
-
-	*/ ?>
-
-</div>
+</div></div>

@@ -41,7 +41,7 @@ if(isset($_GET['protocol']) && $_GET['protocol'] == 'script') {
 			}
 		}
 		if($this->dialogDetail == true) {
-			$dialogWidth = !empty($this->dialogWidth) ? ($this->dialogFixed == false ? $this->dialogWidth.'px' : '600px') : '900px';
+			$dialogWidth = !empty($this->dialogWidth) ? ($this->dialogFixed == false ? $this->dialogWidth.'px' : '600px') : '700px';
 		} else {
 			$dialogWidth = '';
 		}

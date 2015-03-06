@@ -30,7 +30,7 @@
 
 <div id="<?php echo $class;?>" <?php echo $this->adsSidebar == true ? 'class="ads-on"' : '';?>>
 	<?php if($this->adsSidebar == true) {?>
-		<div class="content">
+		<div class="content <?php echo $action;?>">
 			<?php echo $content;?>
 		</div>
 		<div class="sidebar">

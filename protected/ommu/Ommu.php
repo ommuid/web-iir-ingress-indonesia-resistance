@@ -47,8 +47,11 @@ class Ommu extends CApplicationComponent
 			//'<controller:\w+>/<action:\w+>'							=> '<controller>/<action>',
 			
 			//module condition
-			'<module:\w+>-<controller:\w+>/<t:[\w\-]+>-<id:\d+>-<photo:\d+>'	=> '<module>/<controller>/view',
-			'<module:\w+>-<controller:\w+>/<t:[\w\-]+>-<id:\d+>'	=> '<module>/<controller>/view',
+			'<module:\w+>-<controller:\w+>/<t:[\w\-]+>-<id:\d+>-<photo:\d+>' => '<module>/<controller>/view',
+			'<module:\w+>-<controller:\w+>/<t:[\w\-]+>-<id:\d+>' => '<module>/<controller>/view',
+			'<module:\w+>-<controller:\w+>-<action:\w+>/<t:[\w\-]+>-<id:\d+>' => '<module>/<controller>/<action>',
+			'<module:\w+>-<controller:\w+>-<action:\w+>/<id:\d+>' => '<module>/<controller>/<action>',
+			'<module:\w+>-<controller:\w+>-<action:\w+>' => '<module>/<controller>/<action>',
 			//'<module:\w+>/<controller:\w+>/<action:\w+>'				=> '<module>/<controller>/<action>',
 		);
 
