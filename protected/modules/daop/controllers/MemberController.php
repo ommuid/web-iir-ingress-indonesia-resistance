@@ -170,7 +170,7 @@ class MemberController extends Controller
 			}
 			$nextPager = $pager['nextPage'] != 0 ? Yii::app()->controller->createUrl('cityget', array($pager['pageVar']=>$pager['nextPage'])) : 0;	
 			
-			if(empty($_GET)) {
+			if(!isset($_GET[$pager['pageVar']])) {
 				$class = ($pager['itemCount'] == '0' || $pager['nextPage'] == '0') ? 'hide' : '';
 				$data .= '<a class="pager '.$class.'" href="'.$nextPager.'" title="Readmore.."><span>Readmore..</span></a>';
 				echo $data;
@@ -286,7 +286,7 @@ class MemberController extends Controller
 			}
 			$nextPager = $pager['nextPage'] != 0 ? Yii::app()->controller->createUrl('anotherget', array($pager['pageVar']=>$pager['nextPage'])) : 0;	
 			
-			if(empty($_GET)) {
+			if(!isset($_GET[$pager['pageVar']])) {
 				$class = ($pager['itemCount'] == '0' || $pager['nextPage'] == '0') ? 'hide' : '';
 				$data .= '<a class="pager '.$class.'" href="'.$nextPager.'" title="Readmore.."><span>Readmore..</span></a>';
 				echo $data;
@@ -391,7 +391,7 @@ class MemberController extends Controller
 		}
 		$columns = $model->getGridColumn($columnTemp);
 
-		$this->pageTitle = 'Daop Users Manage';
+		$this->pageTitle = 'User Operation Area Manage';
 		$this->pageDescription = '';
 		$this->pageMeta = '';
 		$this->render('admin_manage',array(
@@ -427,7 +427,7 @@ class MemberController extends Controller
 			$this->dialogGroundUrl = Yii::app()->controller->createUrl('manage');
 			$this->dialogWidth = 350;
 
-			$this->pageTitle = 'DaopUsers Delete.';
+			$this->pageTitle = 'User Operation Area Delete';
 			$this->pageDescription = '';
 			$this->pageMeta = '';
 			$this->render('admin_delete');

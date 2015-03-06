@@ -114,7 +114,7 @@ class AnotherController extends Controller
 			),
 		));
 
-		$this->pageTitle = 'Daop Anothers';
+		$this->pageTitle = 'Specific Area in City';
 		$this->pageDescription = '';
 		$this->pageMeta = '';
 		$this->render('front_index',array(
@@ -186,51 +186,19 @@ class AnotherController extends Controller
 
 		if(isset($_POST['DaopAnothers'])) {
 			$model->attributes=$_POST['DaopAnothers'];
-
-			/* 
-			$jsonError = CActiveForm::validate($model);
-			if(strlen($jsonError) > 2) {
-				//echo $jsonError;
-				$errors = $model->getErrors();
-				$summary['msg'] = "<div class='errorSummary'><strong>Please fix the following input errors:</strong>";
-				$summary['msg'] .= "<ul>";
-				foreach($errors as $key => $value) {
-					$summary['msg'] .= "<li>{$value[0]}</li>";
-				}
-				$summary['msg'] .= "</ul></div>";
-
-				$message = json_decode($jsonError, true);
-				$merge = array_merge_recursive($summary, $message);
-				$encode = json_encode($merge);
-				echo $encode;
-
-			} else {
-				if(isset($_GET['enablesave']) && $_GET['enablesave'] == 1) {
-					if($model->save()) {
-						echo CJSON::encode(array(
-							'type' => 5,
-							'get' => Yii::app()->controller->createUrl('manage'),
-							'id' => 'partial-daop-anothers',
-							'msg' => '<div class="errorSummary success"><strong>DaopAnothers success created.</strong></div>',
-						));
-					} else {
-						print_r($model->getErrors());
-					}
-				}
-			}
-			Yii::app()->end();
-			*/
-
-			if(isset($_GET['enablesave']) && $_GET['enablesave'] == 1) {
-				if($model->save()) {
-					Yii::app()->user->setFlash('success', 'DaopAnothers success created.');
-					//$this->redirect(array('view','id'=>$model->another_id));
-					$this->redirect(array('manage'));
-				}
+			$model->scenario = 'form';
+			
+			if($model->save()) {
+				Yii::app()->user->setFlash('success', 'DaopAnothers success created.');
+				$this->redirect(array('manage'));
 			}
 		}
+		
+		$this->dialogDetail = true;
+		$this->dialogGroundUrl = Yii::app()->controller->createUrl('manage');
+		$this->dialogWidth = 600;
 
-		$this->pageTitle = 'Create Daop Anothers';
+		$this->pageTitle = 'Specific City Create';
 		$this->pageDescription = '';
 		$this->pageMeta = '';
 		$this->render('admin_add',array(
@@ -252,51 +220,19 @@ class AnotherController extends Controller
 
 		if(isset($_POST['DaopAnothers'])) {
 			$model->attributes=$_POST['DaopAnothers'];
-
-			/* 
-			$jsonError = CActiveForm::validate($model);
-			if(strlen($jsonError) > 2) {
-				//echo $jsonError;
-				$errors = $model->getErrors();
-				$summary['msg'] = "<div class='errorSummary'><strong>Please fix the following input errors:</strong>";
-				$summary['msg'] .= "<ul>";
-				foreach($errors as $key => $value) {
-					$summary['msg'] .= "<li>{$value[0]}</li>";
-				}
-				$summary['msg'] .= "</ul></div>";
-
-				$message = json_decode($jsonError, true);
-				$merge = array_merge_recursive($summary, $message);
-				$encode = json_encode($merge);
-				echo $encode;
-
-			} else {
-				if(isset($_GET['enablesave']) && $_GET['enablesave'] == 1) {
-					if($model->save()) {
-						echo CJSON::encode(array(
-							'type' => 5,
-							'get' => Yii::app()->controller->createUrl('manage'),
-							'id' => 'partial-daop-anothers',
-							'msg' => '<div class="errorSummary success"><strong>DaopAnothers success updated.</strong></div>',
-						));
-					} else {
-						print_r($model->getErrors());
-					}
-				}
-			}
-			Yii::app()->end();
-			*/
-
-			if(isset($_GET['enablesave']) && $_GET['enablesave'] == 1) {
-				if($model->save()) {
-					Yii::app()->user->setFlash('success', 'DaopAnothers success updated.');
-					//$this->redirect(array('view','id'=>$model->another_id));
-					$this->redirect(array('manage'));
-				}
+			$model->scenario = 'form';
+			
+			if($model->save()) {
+				Yii::app()->user->setFlash('success', 'DaopAnothers success created.');
+				$this->redirect(array('manage'));
 			}
 		}
+		
+		$this->dialogDetail = true;
+		$this->dialogGroundUrl = Yii::app()->controller->createUrl('manage');
+		$this->dialogWidth = 600;
 
-		$this->pageTitle = 'Update Daop Anothers';
+		$this->pageTitle = 'Specific City Update';
 		$this->pageDescription = '';
 		$this->pageMeta = '';
 		$this->render('admin_edit',array(
@@ -331,7 +267,7 @@ class AnotherController extends Controller
 			$this->dialogGroundUrl = Yii::app()->controller->createUrl('manage');
 			$this->dialogWidth = 350;
 
-			$this->pageTitle = 'DaopAnothers Delete.';
+			$this->pageTitle = 'Specific City Delete';
 			$this->pageDescription = '';
 			$this->pageMeta = '';
 			$this->render('admin_delete');

@@ -32,9 +32,9 @@
 	<div class="info">
 		<img class="cover" src="<?php echo $imageCover;?>" alt="<?php echo $model->city_relation->city?>" />
 		<div>
-			<a class="photo" href="" title=""><img src="<?php echo $images;?>" alt="<?php echo $model->city_relation->city?>" /></a>
+			<a off_address="" class="photo" href="javascript:void(0);" title="Change Photo: <?php echo $model->city_relation->city?>"><img src="<?php echo $images;?>" alt="<?php echo $model->city_relation->city?>" /></a>
 			<h3><?php echo $model->city_relation->city?></h3>,
-			<a href="" title="<?php echo $model->city_relation->province->province;?>"><?php echo $model->city_relation->province->province;?></a>, <?php echo $model->city_relation->province->country->country;?>
+			<a href="<?php echo Yii::app()->controller->createUrl('province/view',array('id'=>$model->city_relation->province->province_id,'t'=>Utility::getUrlTitle($model->city_relation->province->province)))?>" title="<?php echo $model->city_relation->province->province;?>"><?php echo $model->city_relation->province->province;?></a>, <?php echo $model->city_relation->province->country->country;?>
 		</div>
 	</div>
 	<div class="area-info">
@@ -59,7 +59,7 @@
 				echo $data;
 				echo '</div>';
 				$class = ($pager['itemCount'] == '0' || $pager['nextPage'] == '0') ? 'hide' : '';
-				echo '<a class="pager '.$class.'" href="'.$nextPager.'" title="Readmore..">Readmore..</a>';
+				echo '<a class="pager '.$class.'" href="'.$nextPage.'" title="Readmore..">Readmore..</a>';
 			} else {
 				echo '<div class="items">';
 				echo '<div class="loader"></div>';
@@ -74,7 +74,7 @@
 				echo $data;
 				echo '</div>';
 				$class = ($pager['itemCount'] == '0' || $pager['nextPage'] == '0') ? 'hide' : '';
-				echo '<a class="pager '.$class.'" href="'.$nextPager.'" title="Readmore..">Readmore..</a>';
+				echo '<a class="pager '.$class.'" href="'.$nextPage.'" title="Readmore..">Readmore..</a>';
 			} else {
 				echo '<div class="items clearfix">';
 				echo '<div class="loader"></div>';

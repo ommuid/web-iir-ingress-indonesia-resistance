@@ -35,24 +35,32 @@ class Ommu extends CApplicationComponent
 		 */
 		$rules = array(
 			//a standard rule mapping '/' to 'site/index' action
-			'' 															=> 'site/index',
+			'' 																	=> 'site/index',
 			
 			//a standard rule mapping '/login' to 'site/login', and so on
-			'<action:(login|logout)>' 									=> 'site/<action>',
-			
-			//controller condition
-			'<id:\d+>-<t:[\w\-]+>'										=> 'page/view',
-			'<id:\d+>-<t:[\w\-]+>'										=> 'maintenance/page',
-			'<controller:\w+>/view/<id:\d+>-<t:[\w\-]+>'				=> '<controller>/view',
-			//'<controller:\w+>/<action:\w+>'							=> '<controller>/<action>',
+			'<action:(login|logout)>' 											=> 'site/<action>',
+			'<id:\d+>-<t:[\w\-]+>'												=> 'page/view',
+			//'<id:\d+>-<t:[\w\-]+>'											=> 'maintenance/page',
 			
 			//module condition
-			'<module:\w+>-<controller:\w+>/<t:[\w\-]+>-<id:\d+>-<photo:\d+>' => '<module>/<controller>/view',
-			'<module:\w+>-<controller:\w+>/<t:[\w\-]+>-<id:\d+>' => '<module>/<controller>/view',
-			'<module:\w+>-<controller:\w+>-<action:\w+>/<t:[\w\-]+>-<id:\d+>' => '<module>/<controller>/<action>',
-			'<module:\w+>-<controller:\w+>-<action:\w+>/<id:\d+>' => '<module>/<controller>/<action>',
-			'<module:\w+>-<controller:\w+>-<action:\w+>' => '<module>/<controller>/<action>',
-			//'<module:\w+>/<controller:\w+>/<action:\w+>'				=> '<module>/<controller>/<action>',
+			'<module:\w+>-<controller:\w+>/<t:[\w\-]+>-<id:\d+>-<photo:\d+>'	=> '<module>/<controller>/view',
+			'<module:\w+>-<controller:\w+>/<t:[\w\-]+>-<id:\d+>'				=> '<module>/<controller>/view',
+			'<module:\w+>-<controller:\w+>'										=> '<module>/<controller>/index',
+			'<module:\w+>-<controller:\w+>-<action:\w+>/<t:[\w\-]+>-<id:\d+>'	=> '<module>/<controller>/<action>',
+			'<module:\w+>-<controller:\w+>-<action:\w+>/<id:\d+>'				=> '<module>/<controller>/<action>',
+			'<module:\w+>-<controller:\w+>-<action:\w+>'						=> '<module>/<controller>/<action>',
+			//'<module:\w+>/<controller:\w+>/<action:\w+>'						=> '<module>/<controller>/<action>',
+			'<module:\w+>-<controller:\w+>'										=> '<module>/<controller>',
+			
+			//controller condition
+			'<controller:\w+>/<t:[\w\-]+>-<id:\d+>-<photo:\d+>'					=> '<controller>/view',
+			'<controller:\w+>/<t:[\w\-]+>-<id:\d+>'								=> '<controller>/view',
+			'<controller:\w+>'													=> '<controller>/index',
+			'<controller:\w+>-<action:\w+>/<t:[\w\-]+>-<id:\d+>'				=> '<controller>/<action>',
+			'<controller:\w+>-<action:\w+>/<id:\d+>'							=> '<controller>/<action>',
+			'<controller:\w+>-<action:\w+>'										=> '<controller>/<action>',
+			//'<controller:\w+>/<action:\w+>'									=> '<controller>/<action>',
+			'<controller:\w+>'													=> '<controller>',
 		);
 
 		/**

@@ -85,7 +85,7 @@ class CityController extends Controller
 				//'expression'=>'isset(Yii::app()->user->level) && (Yii::app()->user->level != 1)',
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('manage','add','edit','delete'),
+				'actions'=>array('manage','edit','delete'),
 				'users'=>array('@'),
 				'expression'=>'isset(Yii::app()->user->level) && (Yii::app()->user->level == 1)',
 			),
@@ -119,7 +119,7 @@ class CityController extends Controller
 			),
 		));
 
-		$this->pageTitle = 'City Operation';
+		$this->pageTitle = 'Operation Citys';
 		$this->pageDescription = '';
 		$this->pageMeta = '';
 		$this->render('front_index',array(
@@ -214,7 +214,7 @@ class CityController extends Controller
 		} else {
 			$summaryPager = '[1-'.$pager[itemCount].' of '.$pager[itemCount].']';
 		}
-		$nextPager = $pager['nextPage'] != 0 ? Yii::app()->controller->createUrl('member', array($pager['pageVar']=>$pager['nextPage'])) : 0;	
+		$nextPager = $pager['nextPage'] != 0 ? Yii::app()->controller->createUrl('member', array('id'=>$model->city_id, 't'=>Utility::getUrlTitle($model->city_relation->city), $pager['pageVar']=>$pager['nextPage'])) : 0;	
 		
 		if(Yii::app()->request->isAjaxRequest) {
 			if(!isset($_GET[$pager['pageVar']])) {
@@ -229,12 +229,12 @@ class CityController extends Controller
 					'type'=>1,
 					'data'=>$data,
 					'pager'=>$pager,
-					'renderType'=>4,
-					'renderSelector'=>'#daop-member .list-view.specific .items a.pager',
+					'renderType'=>1,
+					'renderSelector'=>'#daop-city .boxed #agents .list-view .items',
 					'summaryPager'=>$summaryPager,
 					'summaryPagerSelector'=>'#daop-member .boxed h2.specific span',
 					'nextPage'=>$nextPager,
-					'nextPageSelector'=>'#daop-member .list-view.specific .items a.pager',
+					'nextPageSelector'=>'#daop-city .boxed #agents .list-view a.pager',
 				);
 				echo CJSON::encode($return);
 			}
@@ -245,11 +245,11 @@ class CityController extends Controller
 				array(
 					'type' => 1, 
 					'id' => '#daop-city .boxed #anothers .list-view', 
-					'url' => Yii::app()->controller->createUrl('another',array('id'=>$model->city_id,'t'=>Utility::getUrlTitle($model->city_relation->city))),
+					'url' => Yii::app()->controller->createUrl('another',array('id'=>$model->city_id, 't'=>Utility::getUrlTitle($model->city_relation->city))),
 				),
 			);
 		
-			$this->pageTitle = 'Agent of '.$model->city_relation->city;
+			$this->pageTitle = $model->city_relation->city.' Agent\'s';
 			$this->pageDescription = Utility::shortText(Utility::hardDecode($model->city_desc),300);
 			$this->pageMeta = '';
 			$this->render('front_view',array(
@@ -308,7 +308,7 @@ class CityController extends Controller
 		} else {
 			$summaryPager = '[1-'.$pager[itemCount].' of '.$pager[itemCount].']';
 		}
-		$nextPager = $pager['nextPage'] != 0 ? Yii::app()->controller->createUrl('another', array($pager['pageVar']=>$pager['nextPage'])) : 0;
+		$nextPager = $pager['nextPage'] != 0 ? Yii::app()->controller->createUrl('another', array('id'=>$model->city_id, 't'=>Utility::getUrlTitle($model->city_relation->city), $pager['pageVar']=>$pager['nextPage'])) : 0;
 		
 		if(Yii::app()->request->isAjaxRequest) {
 			if(!isset($_GET[$pager['pageVar']])) {
@@ -318,17 +318,17 @@ class CityController extends Controller
 				$class = ($pager['itemCount'] == '0' || $pager['nextPage'] == '0') ? 'hide' : '';
 				echo '<a class="pager '.$class.'" href="'.$nextPager.'" title="Readmore..">Readmore..</a>';
 				
-			} else {			
+			} else {
 				$return = array(
 					'type'=>1,
 					'data'=>$data,
 					'pager'=>$pager,
-					'renderType'=>4,
-					'renderSelector'=>'#daop-member .list-view.specific .items a.pager',
+					'renderType'=>1,
+					'renderSelector'=>'#daop-city .boxed #anothers .list-view .items',
 					'summaryPager'=>$summaryPager,
 					'summaryPagerSelector'=>'#daop-member .boxed h2.specific span',
 					'nextPage'=>$nextPager,
-					'nextPageSelector'=>'#daop-member .list-view.specific .items a.pager',
+					'nextPageSelector'=>'#daop-city .boxed #anothers .list-view a.pager',
 				);
 				echo CJSON::encode($return);
 			}
@@ -339,10 +339,10 @@ class CityController extends Controller
 				array(
 					'type' => 1, 
 					'id' => '#daop-city .boxed #agents .list-view', 
-					'url' => Yii::app()->controller->createUrl('member',array('id'=>$model->city_id,'t'=>Utility::getUrlTitle($model->city_relation->city))),
+					'url' => Yii::app()->controller->createUrl('member',array('id'=>$model->city_id, 't'=>Utility::getUrlTitle($model->city_relation->city))),
 				),
 			);
-			$this->pageTitle = 'Specific Area in '.$model->city_relation->city;
+			$this->pageTitle = $model->city_relation->city.' Specific Area\'s';
 			$this->pageDescription = Utility::shortText(Utility::hardDecode($model->city_desc),300);
 			$this->pageMeta = '';
 			$this->render('front_view',array(
@@ -398,7 +398,7 @@ class CityController extends Controller
 			$this->dialogDetail = true;
 			$this->dialogGroundUrl = Yii::app()->controller->createUrl('view',array('id'=>$model->city_id,'t'=>Utility::getUrlTitle($model->city_relation->city)));
 
-			$this->pageTitle = 'Update City Information';
+			$this->pageTitle = 'Update City Information: '.$model->city_relation->city;
 			$this->pageDescription = '';
 			$this->pageMeta = '';
 			$this->render('front_update',array(
@@ -428,7 +428,7 @@ class CityController extends Controller
 		}
 		$columns = $model->getGridColumn($columnTemp);
 
-		$this->pageTitle = 'Daop Cities Manage';
+		$this->pageTitle = 'Operation City\'s Manage';
 		$this->pageDescription = '';
 		$this->pageMeta = '';
 		$this->render('admin_manage',array(
@@ -458,8 +458,12 @@ class CityController extends Controller
 				$this->redirect(array('manage'));
 			}
 		}
+		
+		$this->dialogDetail = true;
+		$this->dialogGroundUrl = Yii::app()->controller->createUrl('manage');
+		$this->dialogWidth = 600;
 
-		$this->pageTitle = 'Update Daop Cities';
+		$this->pageTitle = 'Operation City\'s Update';
 		$this->pageDescription = '';
 		$this->pageMeta = '';
 		$this->render('admin_edit',array(
@@ -494,7 +498,7 @@ class CityController extends Controller
 			$this->dialogGroundUrl = Yii::app()->controller->createUrl('manage');
 			$this->dialogWidth = 350;
 
-			$this->pageTitle = 'DaopCity Delete.';
+			$this->pageTitle = 'Operation City\'s Delete';
 			$this->pageDescription = '';
 			$this->pageMeta = '';
 			$this->render('admin_delete');
