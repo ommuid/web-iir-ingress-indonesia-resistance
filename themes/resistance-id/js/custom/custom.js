@@ -511,7 +511,8 @@ if(o.dialogGroundUrl != '') {
 					lastKeywords = data.keywords;
 					lastUrl = data.address;
 					
-					$('header').html(data.header);
+					$('div.body #content h1').html(data.titledoc);
+					$('div.body #sidebar').html(data.header);
 					$('div.body div.wrapper').html(content);
 				} else {
 					$('body').attr('style', 'overflow-y: hidden');
@@ -580,7 +581,9 @@ function replaceContent(data, type) {
 				lastUrl = data.address;
 				dialogClosed();
 				notifierClosed();
-				$('header').html(data.header);
+				
+				$('div.body #content h1').html(data.titledoc);
+				$('div.body #sidebar').html(data.header);
 				$('div.body div.wrapper').html(content);
 
 			} else {
@@ -707,6 +710,13 @@ function utilityFunction() {
 	
 	//images ratio
 	processImages();
+	
+	/* Sidebar Menu */
+	$(document).on('click', '#sidebar .account-menu a.menu-groups', function() {
+		$(this).parent('li').toggleClass('active');
+		return false;
+	});
+	
 
 }
 utilityFunction();

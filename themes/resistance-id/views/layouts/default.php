@@ -72,7 +72,7 @@ if(isset($_GET['protocol']) && $_GET['protocol'] == 'script') {
 		} else {
 			$page = $this->contentOther == true ? 1 : 0;
 			$dialog = $this->dialogDetail == true ? (empty($this->dialogWidth) ? 1 : 2) : 0;		// 0 = static, 1 = dialog, 2 = notifier
-			$header = /*$this->widget('FrontTopmenu', array(), true)*/'';
+			$header = $this->widget('SidebarAccountMenu', array(), true);
 			
 			if($this->contentOther == true) {
 				$render = array(
@@ -84,6 +84,7 @@ if(isset($_GET['protocol']) && $_GET['protocol'] == 'script') {
 			}
 			$return = array(
 				'partial' => 'off',
+				'titledoc' => CHtml::encode($this->pageTitle),
 				'title' => $title,
 				'description' => $description,
 				'keywords' => $keywords,
@@ -216,23 +217,7 @@ if(isset($_GET['protocol']) && $_GET['protocol'] == 'script') {
 		<div class="container"><div class="ommu-wrap">
 			<?php //begin.Sidebar ?>
 			<div id="sidebar">
-				<div class="account-menu">
-					<ul>
-						<li class="account active"><a class="menu-groups" href="" title="My Resistance">My Resistance<span></span></a>
-							<ul>
-								<li <?php echo ($module == null && $currentAction == 'site/index') ? 'class="active"' : '';?>><a href="<?php echo Yii::app()->createUrl('site/index');?>" title="Activity Stream"><span>Activity Stream</span></a></li>
-								<li <?php echo ($module != null && $module == 'daop') ? 'class="active"' : '';?>><a href="<?php echo Yii::app()->createUrl('daop');?>" title="Operation Area"><span>Operation Area</span></a></li>
-							</ul>
-						</li>
-						<li class="support active"><a class="menu-groups" href="" title="Support">Support<span></span></a>
-							<ul>
-								<li><a href="" title=""><span>My Resistance</span></a></li>
-								<li><a href="" title=""><span>My Resistance</span></a></li>
-								<li><a href="" title=""><span>My Resistance</span></a></li>
-							</ul>
-						</li>
-					</ul>
-				</div>
+				<?php $this->widget('SidebarAccountMenu'); ?>
 			</div>
 			<?php //end.Sidebar ?>
 		
