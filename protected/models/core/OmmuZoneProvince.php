@@ -75,7 +75,7 @@ class OmmuZoneProvince extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'country' => array(self::BELONGS_TO, 'OmmuCoreZoneCountry', 'country_id'),
+			'country' => array(self::BELONGS_TO, 'OmmuZoneCountry', 'country_id'),
 		);
 	}
 
