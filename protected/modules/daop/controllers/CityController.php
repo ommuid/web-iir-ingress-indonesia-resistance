@@ -214,7 +214,8 @@ class CityController extends Controller
 		} else {
 			$summaryPager = '[1-'.$pager[itemCount].' of '.$pager[itemCount].']';
 		}
-		$nextPager = $pager['nextPage'] != 0 ? Yii::app()->controller->createUrl('member', array('id'=>$model->city_id, 't'=>Utility::getUrlTitle($model->city_relation->city), $pager['pageVar']=>$pager['nextPage'])) : 0;	
+		$get = array_merge($_GET, array($pager['pageVar']=>$pager['nextPage']));
+		$nextPager = $pager['nextPage'] != 0 ? Yii::app()->controller->createUrl('member', $get) : 0;
 		
 		if(Yii::app()->request->isAjaxRequest) {
 			if(!isset($_GET[$pager['pageVar']])) {
@@ -308,7 +309,8 @@ class CityController extends Controller
 		} else {
 			$summaryPager = '[1-'.$pager[itemCount].' of '.$pager[itemCount].']';
 		}
-		$nextPager = $pager['nextPage'] != 0 ? Yii::app()->controller->createUrl('another', array('id'=>$model->city_id, 't'=>Utility::getUrlTitle($model->city_relation->city), $pager['pageVar']=>$pager['nextPage'])) : 0;
+		$get = array_merge($_GET, array($pager['pageVar']=>$pager['nextPage']));
+		$nextPager = $pager['nextPage'] != 0 ? Yii::app()->controller->createUrl('another', $get) : 0;
 		
 		if(Yii::app()->request->isAjaxRequest) {
 			if(!isset($_GET[$pager['pageVar']])) {

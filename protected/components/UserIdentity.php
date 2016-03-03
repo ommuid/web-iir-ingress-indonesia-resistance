@@ -5,7 +5,7 @@
  * It contains the authentication method that checks if the provided
  * data can identity the user.
  */
-class UserIdentity extends CUserIdentity
+class UserIdentity extends OUserIdentity
 {
 	public $email;
 	private $_id;
@@ -20,46 +20,39 @@ class UserIdentity extends CUserIdentity
 	 */
 	public function authenticate()
 	{
-		$username = Users::model()->find(array(
-			//'select' => 'invite_id',
-			'condition' => 'username = :username',
-			'params' => array(
-				':username' => $this->username,
-			),
-		));
-		if(empty($username)) {
-			$record = Users::model()->find(array(
-				//'select' => 'invite_id',
-				'condition' => 'email = :email',
-				'params' => array(
-					':email' => $this->username,
-				),
-			));
-		} else {
-			$record = $username;
-		}
-
+        if($this->token != null)
+            $userToken = Users::model()->findByAttributes(array('salt'=>$this->token));   
+			
+		if(preg_match('/@/',$this->username)) //$this->username can filled by username or email
+			$record = Users::model()->findByAttributes(array('email' => $this->username));
+		else 
+			$record = Users::model()->findByAttributes(array('username' => $this->username));
+			
 		if($record === null) {
 			$this->errorCode = self::ERROR_USERNAME_INVALID;
-		} else if($record->password !== Users::hashPassword($record->salt,$this->password)) {
+		} else if($this->token == null && $record->password !== Users::hashPassword($record->salt,$this->password)) {
 			$this->errorCode = self::ERROR_PASSWORD_INVALID;
 		} else {
-			$this->_id = $record->user_id;
-			$this->setState('level', $record->level_id);
-			$this->setState('profile', $record->profile_id);
-			$this->setState('language', $record->language_id);
-			$this->email = $record->email;
-			$this->setState('fname', $record->first_name);
-			$this->setState('lname', $record->last_name);
-			$this->setState('displayname', $record->displayname);
-			$this->setState('username', $record->username);
-			$this->setState('photo', $record->photo_id != 0 ? $record->photo->photo : 0);
-			$this->setState('status', $record->status_id);
-			$this->setState('enabled', $record->enabled);
-			$this->setState('verified', $record->verified);
-			$this->setState('creation_date', $record->creation_date);
-			$this->setState('lastlogin_date', $record->lastlogin_date);
-			$this->errorCode = self::ERROR_NONE;
+			if($this->token !== null && $userToken == null) {
+				$this->errorCode = self::ERROR_PASSWORD_INVALID;
+			} else {
+				$this->_id = $record->user_id;
+				$this->setState('level', $record->level_id);
+				$this->setState('profile', $record->profile_id);
+				$this->setState('language', $record->language_id);
+				$this->email = $record->email;
+				$this->setState('fname', $record->first_name);
+				$this->setState('lname', $record->last_name);
+				$this->setState('displayname', $record->displayname);
+				$this->setState('username', $record->username);
+				$this->setState('photo', $record->photo_id != 0 ? $record->photo->photo : 0);
+				$this->setState('status', $record->status_id);
+				$this->setState('enabled', $record->enabled);
+				$this->setState('verified', $record->verified);
+				$this->setState('creation_date', $record->creation_date);
+				$this->setState('lastlogin_date', $record->lastlogin_date);
+				$this->errorCode = self::ERROR_NONE;
+			}
 		}
 		return !$this->errorCode;
 

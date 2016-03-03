@@ -17,7 +17,7 @@
 
 <div class="boxed province">
 	<div class="list-view">
-		<div class="items clearfix">
+		<div class="items">
 			<?php echo $data;?>			
 		</div>
 		<a class="pager <?php echo ($pager['itemCount'] == '0' || $pager['nextPage'] == '0') ? 'hide' : '';?>" href="<?php echo $nextPage;?>" title="Next..">Next..</a>

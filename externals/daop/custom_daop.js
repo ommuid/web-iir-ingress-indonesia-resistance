@@ -1,7 +1,7 @@
 /* Daops Member */
-$(document).on('click', '#daop-member .boxed .title a', function() {
-	$(this).toggleClass('minus');
-	$(this).parents('div.boxed').find('form').slideToggle();
+$(document).on('click', '#daop-member .title a', function() {
+	$(this).toggleClass('active');
+	$(this).parents('div.suggest').find('div.filter').slideToggle();
 	return false;
 });
 

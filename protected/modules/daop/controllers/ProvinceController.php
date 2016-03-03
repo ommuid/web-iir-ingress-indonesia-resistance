@@ -143,7 +143,7 @@ class ProvinceController extends Controller
 			echo CJSON::encode($return);
 				
 		} else {
-			$this->pageTitle = 'Operation Provinces';
+			$this->pageTitle = 'Operation Provincies';
 			$this->pageDescription = '';
 			$this->pageMeta = '';
 			$this->render('front_index',array(

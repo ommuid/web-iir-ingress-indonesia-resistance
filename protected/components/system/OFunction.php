@@ -19,9 +19,9 @@ class OFunction
 	public static function getDataProviderPager($dataProvider)
 	{
 		$data = $dataProvider->getPagination();
-		$pageCount = $data->itemCount % $data->pageSize === 0 ? (int)($data->itemCount/$data->pageSize) : (int)($data->itemCount/$data->pageSize)+1;		
-		$currentPage = $data->currentPage+1;
-		$nextPage = $pageCount != $currentPage ? $currentPage+1 : 0;
+		$pageCount = $data->itemCount >= $data->pageSize ? ($data->itemCount % $data->pageSize === 0 ? (int)($data->itemCount/$data->pageSize) : (int)($data->itemCount/$data->pageSize)+1) : 1;
+		$currentPage = $data->itemCount != 0 ? $data->currentPage+1 : 0;
+		$nextPage = (($pageCount != $currentPage) && ($pageCount > $currentPage)) ? $currentPage+1 : 0;
 		$return = array(
 			'pageVar'=>$data->pageVar,
 			'itemCount'=>$data->itemCount,
@@ -62,6 +62,28 @@ class OFunction
 	{
 		$return = OFunction::twitterParse($data);
 		return $return;
+	}
+
+	/**
+	 * Valid target api url, if application ecc3 datacenter is accessed from other place
+	 * Defined host url + target url
+	 */
+	public static function validHostURL($targetUrl) {
+		$req = Yii::app()->request;
+		$url = ($req->port == 80? 'http://': 'https://') . $req->serverName;
+		
+		if(substr($targetUrl, 0, 1) != '/')
+			$targetUrl = '/'.$targetUrl;
+				
+		return $url = $url.$targetUrl;
+	}
+
+	/**
+	 * Valid target api url, if application ecc3 datacenter is accessed from other place
+	 * Defined host url + target url
+	 */
+	public static function validFeedbackData($data) {
+		return $data != null ? $data : '-';
 	}
 	
 }

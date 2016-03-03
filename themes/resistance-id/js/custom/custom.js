@@ -153,15 +153,15 @@ function dialogActionClosed() {
  */
 function dialogAjax(url, type) {
 	//url = link ajax
-	loadingShow();
+	//loadingShow();
 	$.ajax({
 		type: 'get',
 		url: url,
 		dataType: 'json',
 		success: function(response) {
-			loadingHidden();
-			$('*[href="'+url+'"]').removeClass('active');
-			replaceContent(response, type);
+			//loadingHidden();
+			$('*[href="'+url+'"]').removeClass('loader');
+			replaceContent(response, type, url);
 		},
         error: function(jqXHR, textStatus, error) {
 			location.href = url;
@@ -181,6 +181,7 @@ function ajaxFunction() {
 		if (typeof(url) != 'undefined') {
 			if(url != '#') {
 				if(url != 'javascript:void(0);') {
+					$(this).addClass('loader');
 					dialogAjax(url, 1);				
 				} else {
 					return false;
@@ -224,9 +225,10 @@ $(document).ready(function() {
 				$.ajax({
 					type: 'get',
 					url: val.url,
-					//dataType: 'json',
+					dataType: 'json',
 					success: function(response) {
-						$(val.id).html(response);
+						formRenderResult(response, val.url);
+						//$(val.id).html(response);
 					}
 				});
 			} else {
@@ -264,25 +266,30 @@ $(document).ready(function() {
 	 */ 
 
 	// Dialog and General Function Form
-	$('div[name="post-on"] form, .dialog .dialog-box form:not("[on_post]"), .notifier .dialog-box form:not("[on_post]")').submit(function(event) {
+	$('div[name="post-on"] form, .dialog form:not("[on_post]"), .notifier form:not("[on_post]"), form[keyup]').submit(function(event) {
 		$(this).find('input[type="submit"]').addClass('active');
 		var attrSave = '?&enablesave=' + isEnableSave;
 		//var attrSave = '/enablesave/' + isEnableSave;
 		var method  = $(this).attr('method');
-		var url     = $(this).attr('action') + attrSave;
-		var link     = $(this).attr('action');
+		var link = $(this).attr('action');
+		if(method == 'post')
+			var url = $(this).attr('action') + attrSave;
+		else
+			var url = link;
 
 		//Show Loading
-		loadingShow();
+		if(method == 'post')
+			loadingShow();
 
-		if(method != 'get') {
+		//if(method != 'get') {
 			var options = {
-				type: 'GET',
+				type: method,
 				dataType: 'json',
-				//data: { enablesave: isEnableSave },
+				data:$(this).serialize(),
 				success: function(response) {
 					//Hide Loading
-					loadingHidden();
+					if(method == 'post')
+						loadingHidden();
 
 					var hasError = 0;
 					if(countProperties(response) > 0) {
@@ -317,101 +324,7 @@ $(document).ready(function() {
 								notifierClosed();
 								location.href = response.redirect;
 							} else {
-								if(response.type == 0) {
-									if(response.value == 1) {
-										//js condition
-									}
-									$('div.form form div#ajax-message').html('');
-									$('form[action="'+link+'"] div#ajax-message').html(response.msg);
-									//$.scrollTo("div.body", {duration: 800, axis:"y"});
-
-								} else if(response.type == 1) {
-									var grid = $('#'+response.id).find('.grid-view').attr('id');
-									$.fn.yiiGridView.update(grid);
-									$('#'+response.id+' div#ajax-message').html(response.msg);
-									clearInput('form[action="'+link+'"]');
-
-								} else if(response.type == 2) {
-									if (typeof(response.notifier) == 'undefined') {
-										notifierClosed();
-									}
-									if (typeof(response.dialog) == 'undefined') {
-										dialogClosed();									
-									}
-									if (typeof(response.get) != 'undefined') {
-										$.ajax({
-											type: 'get',
-											url: response.get,
-											dataType: 'json',
-											//data: { id: '$id' },
-											success: function(render) {
-												$('#'+response.id).html(render.data);
-												mediaRenderFunction();
-											}
-										});
-									
-									} else {
-										if (typeof(response.id) != 'undefined') {
-											$('#'+response.id).html(render.data);
-										} else {											
-											if (typeof(response.parent) != 'undefined') {
-												if (typeof(response.data) != 'undefined') {
-													if (typeof(response.element) != 'undefined') {
-														$('*[href="'+ link +'"]').parents(response.element).html(response.data);
-													} else {
-														$('*[href="'+ link +'"]').parent().html(response.data);
-													}													
-												} else {
-													if (typeof(response.element) != 'undefined') {
-														$('*[href="'+ link +'"]').parents(response.element).hide();
-													} else {
-														$('*[href="'+ link +'"]').parent().hide();
-													}
-												}
-											} else {
-												$(response.element).html(render.data);
-											}
-																										
-										}										
-									}
-
-								} else if(response.type == 3) {
-									//js condition
-
-								} else if(response.type == 4) {
-									notifierClosed();
-									dialogClosedPush();
-									$('*[href="'+ link +'"]').parent('div').hide();
-
-								} else if(response.type == 5) {
-									$.ajax({
-										type: 'get',
-										url: response.get,
-										dataType: 'json',
-										success: function(render) {
-											replaceContent(render, 1);
-											if (typeof(response.id) != 'undefined') {
-												$('#'+response.id+' div#ajax-message').html(response.msg);
-											}
-											if (typeof(response.clear) == 'undefined') {
-												clearInput('form[action="'+link+'"]');
-											}
-										}
-									});
-
-								} else if(response.type == 6) {
-									//js condition
-
-								} else if(response.type == 7) {
-									$.ajax({
-										type: 'get',
-										url: response.get,
-										success: function(data) {
-											$('#'+response.id).html(data);
-											$('#'+response.id).find('div#ajax-message').html(response.msg);
-										}
-									});
-								}
+								formRenderResult(response, link);
 							}
 							//$.scrollTo("body", {duration: 800, axis:"y"});
 						}
@@ -419,13 +332,13 @@ $(document).ready(function() {
 				}
 			}
 			
-			if(method == 'post') {
-				options.data = $(this).serialize();
-				options.type = 'POST';
-			}
+			//if(method == 'post') {
+				//options.data = $(this).serialize();
+				//options.type = 'POST';
+			//}
 			$.ajax(url, options);
 			event.preventDefault();
-		}
+		//}
 	});
 
 	// Administrator Upload Photo
@@ -450,6 +363,245 @@ $(document).ready(function() {
 		});
 	}
 });
+
+function replaceSpecificContent(data, link) {		
+	if (typeof(data.notifier) == 'undefined')
+		notifierClosed();
+		
+	if (typeof(data.dialog) == 'undefined')
+		dialogClosed();
+		
+	if (typeof(data.get) != 'undefined') {
+		$.ajax({
+			type: 'get',
+			url: data.get,
+			dataType: 'json',
+			//data: { id: '$id' },
+			success: function(render) {
+				$(data.id).html(render.data);
+				//$('#'+data.id).html(render.data);
+				mediaRenderFunction();
+			}
+		});
+	
+	} else {
+		if (typeof(data.id) != 'undefined') {
+			$(data.id).html(data.data);
+			//$('#'+data.id).html(render.data);
+			
+		} else {
+			if (typeof(data.parent) != 'undefined') {
+				if (typeof(data.replaceHtml) != 'undefined') {
+					if (typeof(data.replaceData) != 'undefined') {
+						if (typeof(data.element) != 'undefined') {
+							$('*[href="'+ link +'"]').parents(data.element).html(data.replaceData);
+						} else {
+							$('*[href="'+ link +'"]').parent().html(data.replaceData);
+						}
+					}
+					if (typeof(data.replaceClass) != 'undefined') {
+						if (typeof(data.element) != 'undefined') {
+							$('*[href="'+ link +'"]').parents(data.element).attr('class', data.replaceClass);
+						} else {
+							$('*[href="'+ link +'"]').parent().attr('class', data.replaceClass);
+						}
+					}
+					if (typeof(data.replaceUrl) != 'undefined') {
+						$('*[href="'+ link +'"]').attr('href', data.replaceUrl);
+					}
+				} else {
+					if (typeof(data.element) != 'undefined') {
+						$('*[href="'+ link +'"]').parents(data.element).hide();
+					} else {
+						$('*[href="'+ link +'"]').parent().hide();
+					}
+				}
+			} else {
+				$(data.element).html(data.data);
+			}																	
+		}
+		
+		if (typeof(data.summaryPagerSelector) != 'undefined' && typeof(data.summaryPager) != 'undefined') {
+			$(data.summaryPagerSelector).text(data.summaryPager);
+		}
+	}
+}
+
+function formRenderResult(response, link) {
+	if(response.type == 0) {
+		if(response.value == 1) {
+			//js condition
+		}
+		$('div.form form div#ajax-message').html('');
+		$('form[action="'+link+'"] div#ajax-message').html(response.msg);
+		//$.scrollTo("div.body", {duration: 800, axis:"y"});
+
+	} else if(response.type == 1) {
+		var grid = $('#'+response.id).find('.grid-view').attr('id');
+		$.fn.yiiGridView.update(grid);
+		$('#'+response.id+' div#ajax-message').html(response.msg);
+		clearInput('form[action="'+link+'"]');
+
+	} else if(response.type == 2) {
+		replaceSpecificContent(response, link);
+
+	} else if(response.type == 3) {
+		//js condition
+
+	} else if(response.type == 4) {
+		notifierClosed();
+		dialogClosedPush();
+		$('*[href="'+ link +'"]').parent('div').hide();
+
+	} else if(response.type == 5) {
+		$.ajax({
+			type: 'get',
+			url: response.get,
+			dataType: 'json',
+			success: function(render) {
+				replaceContent(render, 1, link);
+				if (typeof(response.id) != 'undefined') {
+					$('#'+response.id+' div#ajax-message').html(response.msg);
+				}
+				if (typeof(response.clear) == 'undefined') {
+					clearInput('form[action="'+link+'"]');
+				}
+			}
+		});
+
+	} else if(response.type == 6) {
+		//js condition
+
+	} else if(response.type == 7) {
+		$.ajax({
+			type: 'get',
+			url: response.get,
+			success: function(data) {
+				$('#'+response.id).html(data);
+				$('#'+response.id).find('div#ajax-message').html(response.msg);
+			}
+		});
+	}
+}
+
+/**
+ * jquery address function
+ */
+//show dialog
+function replaceContent(data, type, link) {
+	if(data.redirect != null) {
+		location.href = data.redirect;
+		
+	} else {
+		if (typeof(data.partial) != 'undefined') {
+			if(type == 1)
+				pushStateBar(data.title, data.description, data.keywords, data.address);
+			
+			if(data.page == 1)
+				var content = data.render.content;
+			else 
+				var content = data.render;
+			
+			if(data.dialog == 0) {
+				lastTitle = data.title;
+				lastDescription = data.description;
+				lastKeywords = data.keywords;
+				lastUrl = data.address;
+				dialogClosed();
+				notifierClosed();
+				
+				$('div.body #content h1').html(data.titledoc);
+				$('div.body #sidebar').html(data.header);
+				$('div.body div.wrapper').html(content);
+
+			} else {
+				$('body').attr('style', 'overflow-y: hidden');
+				if(data.dialog == 1) {
+					$('div.dialog').attr('id', data.apps);
+					notifierClosed();
+				}
+				dialogShow(content, data.dialog, data.dialogWidth);
+			}
+			mediaRenderFunction();
+
+			if(data.page == 1) {
+				$.each(data.render.other, function(key, val) {
+					if(val.type == 1) {
+						$.ajax({
+							type: 'get',
+							url: val.url,
+							dataType: 'json',
+							success: function(response) {
+								formRenderResult(response, val.url);
+								//$(val.id).html(response);
+							}
+						});
+					} else {
+						$(val.id).html(val.data);
+					}
+				});
+			}
+
+			if(data.script.cssFiles != '' || data.script.scriptFiles != '') {
+				$('style[type="text/css"]').html('');
+				$('style[type="text/css"]').html(data.script.cssFiles);
+				$.when(
+					$.each(data.script.scriptFiles, function(key, val) {
+						$.getScript(val);
+					})
+				).then(function() {
+				});
+			}
+
+			if(data.dialog != 0) {
+				//$.scrollTo("body div.dialog, body div.notifier", {duration: 800, axis:"y"});		
+			}	
+			
+		} else {
+			/** 
+			 * Other Load Page
+			 *
+			 * type
+			 * 1 [pager load]
+			 *
+			 * attr
+			 * renderType [1] =>
+			 * renderSelector [1] =>
+			 * nextPage [1] =>
+			 * nextPageSelector [1] =>
+			 * nextPageParent [1] =>
+			 * summaryPager [1] =>
+			 * summaryPagerSelector [1] =>
+			 * 
+			 **/
+			if(data.type == 1) {
+				$(data.renderSelector+' div.empty').hide();
+				if(data.renderType == 1)
+					$(data.renderSelector).append(data.data);
+				else if(data.renderType == 2)
+					$(data.renderSelector).prepend(data.data);
+				else if(data.renderType == 3)
+					$(data.renderSelector).after(data.data);
+				else if(data.renderType == 4)
+					$(data.renderSelector).before(data.data);
+				
+				if(data.nextPage != 0) {
+					$(data.nextPageSelector).attr('href', data.nextPage);
+				} else {
+					if (typeof(data.nextPageParent) != 'undefined')
+						$(data.nextPageSelector).parent('div').hide();
+					else
+						$(data.nextPageSelector).hide();
+				}
+				
+				replaceSpecificContent(data, link);
+				
+			} else if(data.type == 2) {
+				replaceSpecificContent(data, link);
+			}
+		}
+	}
+}
 
 /**
  * Global Utility Function
@@ -528,9 +680,15 @@ if(o.dialogGroundUrl != '') {
 							$.ajax({
 								type: 'get',
 								url: val.url,
-								//dataType: 'json',
+								dataType: 'json',
 								success: function(response) {
+									formRenderResult(response, val.url);
+									/*
+									if(typeof(response.type) == 'undefined') {
+										$(response.id).html(response.data);
+									}
 									$(val.id).html(response);
+									*/
 								}
 							});
 						} else {
@@ -554,122 +712,6 @@ if(o.dialogGroundUrl != '') {
         complete: function(xhr,status) {
         }
 	});
-}
-
-/**
- * jquery address function
- */
-//show dialog
-function replaceContent(data, type) {
-	if(data.redirect != null) {
-		location.href = data.redirect;
-		
-	} else {
-		if (typeof(data.partial) != 'undefined') {
-			if(type == 1)
-				pushStateBar(data.title, data.description, data.keywords, data.address);
-			
-			if(data.page == 1)
-				var content = data.render.content;
-			else 
-				var content = data.render;
-			
-			if(data.dialog == 0) {
-				lastTitle = data.title;
-				lastDescription = data.description;
-				lastKeywords = data.keywords;
-				lastUrl = data.address;
-				dialogClosed();
-				notifierClosed();
-				
-				$('div.body #content h1').html(data.titledoc);
-				$('div.body #sidebar').html(data.header);
-				$('div.body div.wrapper').html(content);
-
-			} else {
-				$('body').attr('style', 'overflow-y: hidden');
-				if(data.dialog == 1) {
-					$('div.dialog').attr('id', data.apps);
-					notifierClosed();
-				}
-				dialogShow(content, data.dialog, data.dialogWidth);
-			}
-			mediaRenderFunction();
-
-			if(data.page == 1) {
-				$.each(data.render.other, function(key, val) {
-					if(val.type == 1) {
-						$.ajax({
-							type: 'get',
-							url: val.url,
-							//dataType: 'json',
-							success: function(response) {
-								$(val.id).html(response);
-							}
-						});
-					} else {
-						$(val.id).html(val.data);
-					}
-				});
-			}
-
-			if(data.script.cssFiles != '' || data.script.scriptFiles != '') {
-				$('style[type="text/css"]').html('');
-				$('style[type="text/css"]').html(data.script.cssFiles);
-				$.when(
-					$.each(data.script.scriptFiles, function(key, val) {
-						$.getScript(val);
-					})
-				).then(function() {
-				});
-			}
-
-			if(data.dialog != 0) {
-				//$.scrollTo("body div.dialog, body div.notifier", {duration: 800, axis:"y"});		
-			}	
-			
-		} else {
-			/** 
-			 * Other Load Page
-			 *
-			 * type
-			 * 1 [pager load]
-			 *
-			 * attr
-			 * renderType [1] =>
-			 * renderSelector [1] =>
-			 * nextPage [1] =>
-			 * nextPageSelector [1] =>
-			 * nextPageParent [1] =>
-			 * summaryPager [1] =>
-			 * summaryPagerSelector [1] =>
-			 * 
-			 **/
-			if(data.type == 1) {
-				if(data.renderType == 1)
-					$(data.renderSelector).append(data.data);
-				else if(data.renderType == 2)
-					$(data.renderSelector).prepend(data.data);
-				else if(data.renderType == 3)
-					$(data.renderSelector).after(data.data);
-				else if(data.renderType == 4)
-					$(data.renderSelector).before(data.data);
-					
-				if (typeof(data.summaryPager) != 'undefined')					
-					$(data.summaryPagerSelector).text(data.summaryPager);
-				
-				if(data.nextPage != 0)
-					$(data.nextPageSelector).attr('href', data.nextPage);
-				else {
-					if (typeof(data.nextPageParent) != 'undefined')
-						$(data.nextPageSelector).parent('div').hide();
-					else
-						$(data.nextPageSelector).hide();
-				}
-				
-			}
-		}
-	}
 }
 
 /**

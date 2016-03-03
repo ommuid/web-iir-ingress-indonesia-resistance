@@ -66,6 +66,8 @@ class DaopUsers extends CActiveRecord
 		return array(
 			array('
 				city_input', 'required', 'on'=>'form'),
+			array('
+				user_id, city_id', 'required', 'on'=>'cityadd'),
 			array('country_id, province_id', 'numerical', 'integerOnly'=>true),
 			array('user_id, city_id', 'length', 'max'=>11),
 			array('user_id, country_id, province_id, city_id', 'safe'),

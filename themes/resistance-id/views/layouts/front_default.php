@@ -28,7 +28,7 @@
 ?>
 <?php //echo $this->dialogDetail == true ? (empty($this->dialogWidth) ? 'class="boxed clearfix"' : 'class="clearfix"') : 'class="clearfix"';?>
 
-<div id="<?php echo $class;?>" <?php echo $this->adsSidebar == true ? 'class="ads-on"' : '';?>>
+<div id="<?php echo $class;?>" class="box-wrap <?php echo $this->adsSidebar == true ? 'ads-on' : '';?>">
 	<?php if($this->adsSidebar == true) {?>
 		<div class="content <?php echo $action;?>">
 			<?php echo $content;?>

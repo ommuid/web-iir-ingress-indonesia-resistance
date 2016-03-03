@@ -80,10 +80,10 @@ a {
 	outline: none; 
 	text-decoration: none;
 }
-a:link {color: #09c; text-decoration: none;}
-a:visited {color: #09c; text-decoration: none;}
-a:hover {color: #09c; text-decoration: underline;}
-a:visited:hover {color: #056839; text-decoration: underline;}
+a:link {color: #2B587A; text-decoration: none;}
+a:visited {color: #2B587A; text-decoration: none;}
+a:hover {color: #2B587A; text-decoration: underline;}
+a:visited:hover {color: #325579; text-decoration: underline;}
 a:active,
 a:hover,
 a:focus {outline: 0;}

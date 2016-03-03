@@ -17,118 +17,126 @@
 	$cs->registerScriptFile(Yii::app()->request->baseUrl.'/externals/daop/custom_daop.js', CClientScript::POS_END);
 ?>
 
-<?php //begin.City DaOps ?>
-<div class="boxed">
-	<div class="title clearfix">
-		<h2 class="city">Citys</h2>
-		<a class="plus" href="javascript:void(0);" title="Add Operation Area">Add City Operation</a>
+<div class="boxed city">
+	<?php //begin.My City and Suggest Agent ?>
+	<div class="table">
+		<?php //begin.My City ?>
+		<div class="box">
+			<div class="title">
+				<h2 id="city-title"><span></span> City</h2>
+			</div>
+			<div class="list-view" id="city-data">
+				<div class="items city clearfix">
+					<div class="loader"></div>
+				</div>
+			</div>
+		</div>
+		
+		<?php //begin.Suggest Agent ?>
+		<div class="box medium">
+			<div class="title">
+				<h2 id="agent-title"><span></span> Agent Suggest</h2>
+			</div>
+			<div class="list-view">
+				<div class="items clearfix">
+					<div class="loader"></div>
+				</div>
+			</div>
+		</div>
 	</div>
+	<?php //end.My City and Suggest Agent ?>
 	
-	<?php $form=$this->beginWidget('application.components.system.OActiveForm', array(
-		'id'=>'daop-users-form',
-		//'action'=>Yii::app()->controller->createUrl('citypost'),
-		'enableAjaxValidation'=>true,
-		//'htmlOptions' => array('enctype' => 'multipart/form-data')
-	)); ?>
-	<fieldset>
-		<?php 
-		//echo $form->textField($model,'city_input',array('class'=>'span-5','placeholder'=>'Kota atau Kabupaten'));
-		$url = Yii::app()->controller->createUrl('citypost');
-		$userID = Yii::app()->user->id;
-		$cityID = 'DaopUsers_city_input';
-		$this->widget('zii.widgets.jui.CJuiAutoComplete', array(
-			'model' => $model,
-			'attribute' => 'city_input',
-			'source' => Yii::app()->controller->createUrl('citysuggest'),
-			'options' => array(
-				//'delay '=> 50,
-				'minLength' => 1,
-				'showAnim' => 'fold',
-				'select' => "js:function(event, ui) {
-					$.ajax({
-						type: 'post',
-						url: '$url',
-						data: { user_id: '$userID', city_id: ui.item.id},
-						dataType: 'json',
-						success: function(response) {
-							$('form #$cityID').val('');
-							$('#daop-member .list-view.city .items').prepend(response.data);
-						}
-					});
+	<?php //begin.City Suggest ?>
+	<div class="suggest">
+		<?php //begin.Title ?>
+		<div class="title clearfix">
+			<h2 id="city-suggest-title"><span></span> City Suggest</h2>
+			<div class="left">
+				<a href="javascript:void(0);" title="City Suggest Filter">Filter</a>
+			</div>
+		</div>
+		<?php //begin.Filter City ?>
+		<div class="filter">
+			<span class="arrow"></span>
+			<?php $form=$this->beginWidget('application.components.system.OActiveForm', array(
+				'id' => 'daop-users-form',
+				'method' => 'get',
+				'action' => Yii::app()->controller->createUrl('citysuggest'),
+				'enableAjaxValidation' => true,
+				'htmlOptions' => array(
+					'keyup' => '',
+				),
+			)); ?>
+				<fieldset class="clearfix">
+					<div>
+						<?php echo $form->dropDownList($model,'province_id', OmmuZoneProvince::getProvince(72), array('prompt'=>'All Province'));?>
+					</div>
+					<div>
+						<?php echo $form->textField($model,'city_input',array('class'=>'span-5','placeholder'=>'Kota atau Kabupaten'));?>
+					</div>
+					<?php echo CHtml::submitButton('Filter', array('onclick' => 'setEnableSave()')); ?>
+				</fieldset>
+			<?php $this->endWidget(); ?>
+		</div>
+		<?php //begin.Render Data ?>
+		<div class="list-view" id="city-suggest-data">
+			<div class="items city clearfix">
+				<div class="loader"></div>
+			</div>
+		</div>
+	</div>
+	<?php //end.City Suggest ?>
+</div>
 
-				}"
-			),
-			'htmlOptions' => array(
-				'class'	=> 'span-5',
-				'placeholder' => 'Kota atau Kabupaten'
-			),
-		));	?>
-		<?php echo $form->error($model,'city_input'); ?>
-		<?php echo CHtml::submitButton($model->isNewRecord ? Phrase::trans(1,0) : Phrase::trans(2,0), array('onclick' => 'setEnableSave()')); ?>
-	</fieldset>
-	<?php $this->endWidget(); ?>
+<?php //begin.Specific City ?>
+<div class="boxed specific">
+	<div class="box">
+		<div class="title clearfix">
+			<h2 id="specific-title"><span></span> Specific in City</h2>
+			<div class="left">
+				<a href="javascript:void(0);" title="Specific in City Suggest">Specific Suggest</a>
+			</div>
+		</div>
 	
-	<div class="list-view city">
-		<div class="items clearfix">
-			<div class="loader"></div>
+		<?php //begin.Specific Suggest ?>
+		<div class="suggest">
+			<div class="filter">
+				<span class="arrow"></span>
+				<?php $form=$this->beginWidget('application.components.system.OActiveForm', array(
+					'id' => 'daop-users-form',
+					'method' => 'get',
+					'action' => Yii::app()->controller->createUrl('anothersuggest'),
+					'enableAjaxValidation' => true,
+					'htmlOptions' => array(
+						'keyup' => '',
+					),
+				)); ?>
+					<fieldset>
+						<?php echo $form->dropDownList($another,'provinceId_search', OmmuZoneProvince::getProvince(72), array('prompt'=>'All Province'));?>
+						<?php echo $form->dropDownList($another,'cityId_search', OmmuZoneCity::getCity(), array('prompt'=>'All City'));?>
+						<?php echo $form->textField($another,'another_input',array('class'=>'span-5','placeholder'=>'Kelurahan, Kecamatan atau Nama Jalan'));?>
+						<?php echo CHtml::submitButton('Filter', array('onclick' => 'setEnableSave()')); ?>
+					</fieldset>
+					<fieldset>
+						<?php echo $form->textField($another,'another_input',array('class'=>'span-5','placeholder'=>'Kelurahan, Kecamatan atau Nama Jalan'));?>
+						<?php echo CHtml::submitButton('Filter', array('onclick' => 'setEnableSave()')); ?>
+					</fieldset>
+				<?php $this->endWidget(); ?>
+			</div>
+			<?php //begin.Render Data ?>
+			<div class="list-view" id="specific-suggest-data">
+				<div class="items specific clearfix">
+					<div class="loader"></div>
+				</div>
+			</div>
+		</div>
+		<?php //end.Specific Suggest ?>
+		
+		<div class="list-view" id="specific-data">
+			<div class="items specific clearfix">
+				<div class="loader"></div>
+			</div>
 		</div>
 	</div>
 </div>
-
-<?php //begin.Another DaOps ?>
-<div class="boxed">
-	<div class="title clearfix">
-		<h2 class="specific">Specific in City</h2>
-		<a class="plus" href="javascript:void(0);" title="Add Specific Operation Area">Add Specific City Operation</a>
-	</div>
-	
-	<?php $form=$this->beginWidget('application.components.system.OActiveForm', array(
-		'id'=>'daop-users-form',
-		//'action'=>Yii::app()->controller->createUrl('anotherpost'),
-		'enableAjaxValidation'=>true,
-		//'htmlOptions' => array('enctype' => 'multipart/form-data')
-	)); ?>
-	<fieldset>
-		<?php 
-		//echo $form->textField($another,'another_input',array('class'=>'span-5','placeholder'=>'Kelurahan, Kecamatan atau Nama Jalan'));
-		$url = Yii::app()->controller->createUrl('anotherpost');
-		$userID = Yii::app()->user->id;
-		$anotherID = 'DaopAnotherUser_another_input';
-		$this->widget('zii.widgets.jui.CJuiAutoComplete', array(
-			'model' => $another,
-			'attribute' => 'another_input',
-			'source' => Yii::app()->controller->createUrl('anothersuggest'),
-			'options' => array(
-				//'delay '=> 50,
-				'minLength' => 1,
-				'showAnim' => 'fold',
-				'select' => "js:function(event, ui) {
-					$.ajax({
-						type: 'post',
-						url: '$url',
-						data: { user_id: '$userID', another_id: ui.item.id, another: ui.item.value },
-						dataType: 'json',
-						success: function(response) {
-							$('form #$anotherID').val('');
-							$('#daop-member .list-view.specific .items').prepend(response.data);
-						}
-					});
-
-				}"
-			),
-			'htmlOptions' => array(
-				'class'	=> 'span-5',
-				'placeholder' => 'Kelurahan, Kecamatan atau Nama Jalan'
-			),
-		));	?>
-		<?php echo $form->error($model,'another_input'); ?>
-		<?php echo CHtml::submitButton($model->isNewRecord ? Phrase::trans(1,0) : Phrase::trans(2,0), array('onclick' => 'setEnableSave()')); ?>
-	</fieldset>
-	<?php $this->endWidget(); ?>	
-	
-	<div class="list-view specific">
-		<div class="items clearfix">
-			<div class="loader"></div>
-		</div>
-	</div>
-</div>
+<?php //end.Specific City ?>

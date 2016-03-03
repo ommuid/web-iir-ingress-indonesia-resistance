@@ -16,7 +16,7 @@ if(isset($_GET['protocol']) && $_GET['protocol'] == 'script') {
 	 ** Construction condition
 	 */
 	$setting = OmmuSettings::model()->findByPk(1,array(
-		'select' => 'online, site_type, site_title, construction_date, signup_inviteonly, general_include',
+		'select' => 'online, site_type, site_url, site_title, construction_date, signup_inviteonly, general_include',
 	));
 	$construction = (($setting->online == 0 && date('Y-m-d', strtotime($setting->construction_date)) > date('Y-m-d')) && (Yii::app()->user->isGuest || (!Yii::app()->user->isGuest && in_array(!Yii::app()->user->level, array(1,2))))) ? 1 : 0 ;
 
@@ -157,10 +157,21 @@ if(isset($_GET['protocol']) && $_GET['protocol'] == 'script') {
 	<header>
 		<div class="container clearfix">
 			<?php //begin.Username ?>
-			<div class="sep agent-text">
-				<a href="<?php echo Yii::app()->createUrl('site/index')?>" title="resistance.web.id"><h2>resistance.web.id</h2></a>				
+			<div class="sep logo">
+				<a class="text" href="<?php echo Yii::app()->createUrl('site/index')?>" title="<?php echo $setting->site_url;?>"><h2><?php echo $setting->site_url;?></h2></a>				
 			</div>
-			<?php $this->widget('HeaderUsermenu'); ?>
+			<?php //begin.Serach ?>
+			<div class="sep search">
+				<?php $form=$this->beginWidget('application.components.system.OActiveForm', array(
+					'id'=>'daop-anothers-form',
+					'enableAjaxValidation'=>true,
+					//'htmlOptions' => array('enctype' => 'multipart/form-data')
+				)); ?>
+					<input type="text" placeholder="Search...">
+				<?php $this->endWidget(); ?>
+			</div>
+			<?php //begin.Usermenu
+			$this->widget('HeaderUsermenu'); ?>
 		</div>
 	</header>
 	<?php //end.Header ?>
@@ -214,27 +225,29 @@ if(isset($_GET['protocol']) && $_GET['protocol'] == 'script') {
 		*/?>
 		<?php //end.Slider ?>
 		
-		<div class="container"><div class="ommu-wrap">
-			<?php //begin.Sidebar ?>
-			<div id="sidebar">
-				<?php $this->widget('SidebarAccountMenu'); ?>
+		<div class="container">
+			<div class="ommu-wrap">
+				<?php //begin.Sidebar ?>
+				<div id="sidebar">
+					<?php $this->widget('SidebarAccountMenu'); ?>
+				</div>
+				<?php //end.Sidebar ?>
+			
+				<?php //begin.Content ?>
+				<div id="content">
+					<?php //begin.Title Page ?>
+					<h1><?php echo CHtml::encode($this->pageTitle); ?></h1>
+					
+					<div class="wrapper"><?php echo $this->dialogDetail == false ? $content : '';?></div>
+				</div>
+				<?php //end.Content ?>
 			</div>
-			<?php //end.Sidebar ?>
-		
-			<?php //begin.Content ?>
-			<div id="content">
-				<?php //begin.Title Page ?>
-				<h1><?php echo CHtml::encode($this->pageTitle); ?></h1>
-				
-				<div class="wrapper"><?php echo $this->dialogDetail == false ? $content : '';?></div>
 
-				<?php //begin.Footer ?>
-				<footer class="clearfix">
-					<?php $this->widget('FrontFooterCopyright'); ?>
-				</footer>
-			</div>
-			<?php //end.Content ?>
-		</div></div>
+			<?php //begin.Footer ?>
+			<footer class="clearfix">
+				<?php $this->widget('FrontFooterCopyright'); ?>
+			</footer>
+		</div>
 	</div>
 	<?php //end.BodyContent ?>
 

@@ -34,6 +34,8 @@ class DaopAnotherUser extends CActiveRecord
 	public $another_input;
 	
 	// Variable Search
+	public $provinceId_search;
+	public $cityId_search;
 	public $another_search;
 	public $user_search;
 
@@ -68,11 +70,12 @@ class DaopAnotherUser extends CActiveRecord
 				another_input', 'required'),
 			array('another_id, user_id', 'required'),
 			array('another_id, user_id', 'length', 'max'=>11),
-			array('another_id, user_id', 'safe'),
+			array('another_id, user_id,
+				provinceId_search, cityId_search', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('id, another_id, user_id, creation_date,
-				another_search, user_search', 'safe', 'on'=>'search'),
+				provinceId_search, cityId_search, another_search, user_search', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -99,6 +102,8 @@ class DaopAnotherUser extends CActiveRecord
 			'another_id' => 'Another',
 			'user_id' => 'User',
 			'creation_date' => 'Creation Date',
+			'provinceId_search' => 'Province',
+			'cityId_search' => 'City',
 			'another_input' => 'Another',
 			'user_search' => 'User',
 		);
@@ -140,13 +145,15 @@ class DaopAnotherUser extends CActiveRecord
 		$criteria->with = array(
 			'another_relation' => array(
 				'alias'=>'another_relation',
-				'select'=>'another_name',
+				'select'=>'another_name, province_id, city_id',
 			),
 			'user_relation' => array(
 				'alias'=>'user_relation',
 				'select'=>'displayname',
 			),
 		);
+		$criteria->compare('another_relation.province_id',strtolower($this->provinceId_search), true);
+		$criteria->compare('another_relation.city_id',strtolower($this->cityId_search), true);
 		$criteria->compare('another_relation.another_name',strtolower($this->another_search), true);
 		$criteria->compare('user_relation.displayname',strtolower($this->user_search), true);
 

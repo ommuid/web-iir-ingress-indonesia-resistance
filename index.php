@@ -16,16 +16,17 @@ if(!file_exists(dirname(__FILE__).'/protected/runtime')) {
 }
 
 // change the following paths if necessary
-$yii    = dirname(__FILE__).'/../../yii-1.1.16/framework/yii.php';
+$yii    = dirname(__FILE__).'/../yii-1.1.16/framework/yii.php';
 $config = dirname(__FILE__).'/protected/config/common.php';
 
 if($_SERVER["SERVER_ADDR"]=='127.0.0.1' || $_SERVER["HTTP_HOST"]=='localhost') {
 	$config = dirname(__FILE__).'/protected/config/common-dev.php';
-	// remove the following lines when in production mode
-	defined('YII_DEBUG') or define('YII_DEBUG',true);
-	// specify how many levels of call stack should be shown in each log message
-	defined('YII_TRACE_LEVEL') or define('YII_TRACE_LEVEL',3);
 }
+
+// remove the following lines when in production mode
+defined('YII_DEBUG') or define('YII_DEBUG',true);
+// specify how many levels of call stack should be shown in each log message
+defined('YII_TRACE_LEVEL') or define('YII_TRACE_LEVEL',3);
 
 require_once($yii);
 $app = Yii::createWebApplication($config);
