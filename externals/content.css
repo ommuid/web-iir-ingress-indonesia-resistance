@@ -1,0 +1,346 @@
+.body #content .table,
+.body #content .box,
+.body #content .list-view .items .empty {
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+}
+.body #content .table {
+	width: 100%;
+}
+.body #content .table .box {
+	display: table-cell;
+	vertical-align: top;
+	padding: 0 15px 0 0;
+}
+.body #content .table .box:last-child {
+	padding: 0 0 0 0;
+}
+.body #content .table .box.smaller {
+	width: 200px;
+}
+.body #content .table .box.small {
+	width: 230px;
+}
+.body #content .table .box.medium {
+	width: 270px;
+}
+
+/* Title */
+.body #content .title {
+	margin: 0 0 15px 0;
+}
+.body #content h2,
+.body #content h2 * {
+	font-weight: 500;
+	font-size: 18px;
+	line-height: 23px;
+}
+.body #content h2 {
+	margin: 0 0 0 0;
+}
+.body #content h2 span {
+	font-weight: 700;
+}
+
+/* Loading */
+.body #content .list-view .items .empty,
+.body #content .list-view .items div.loader {
+	height: 100px;	
+}
+.body #content .list-view .items .empty {
+	padding: 20px 0 0 0;
+}
+.body #content .list-view .items .empty h3,
+.body #content .list-view .items .empty h3 * {
+	color: #808080;
+	font-size: 22px;
+	line-height: 26px;
+	font-weight: 300;
+}
+.body #content .list-view .items .empty h3 {
+	margin: 0 0 0 0;
+}
+.body #content .list-view .items .empty h3 strong {
+	font-weight: 500;	
+}
+.body #content .list-view .items div.loader {
+	background: url('images/ajax_loader.gif') 10px 40% no-repeat;
+}
+
+
+/* =Daop Module
+-------------------------------------------------------------- */
+/* @daop-member
+-------------------------------------------------------------- */
+/* Default */
+.body #daop-member .list-view {
+	margin: 0 0 0 0;
+}
+.body #daop-member .boxed {
+	padding: 15px 15px 20px 15px;
+	border-bottom: 3px solid #02779e;
+	margin: 0 0 20px 0;
+}
+.body #daop-member .boxed:last-child {
+	padding: 0 15px 0 15px;
+	border: none;	
+}
+.body #daop-member .boxed .table {
+	padding: 0 0 20px 0;
+}
+
+/* City */
+.body #daop-member .boxed.city {
+	margin: 0 0 20px 0;
+}
+.body #daop-member .boxed.city .table {
+	padding: 0 0 25px 0;
+}
+.body #daop-member #city-data.list-view {
+	border-bottom: 1px solid #02779e;
+}
+.body #daop-member .items.city .sep,
+.body #daop-member .items.specific .sep {
+	float: left;
+	margin: 0 14px 12px 0;
+}
+.body #daop-member .items.city .sep div,
+.body #daop-member .items.specific .sep a:last-child {
+	padding: 5px 0 0 0;
+}
+.body #daop-member .items.city .sep .img,
+.body #daop-member .items.specific .sep .img {
+	position: relative;
+	padding: 0 0 0 0;
+}
+.body #daop-member .items.city .sep div a,
+.body #daop-member .items.city .sep div img,
+.body #daop-member .items.city .sep div span,
+.body #daop-member .items.specific .sep a,
+.body #daop-member .items.specific .sep div img {
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	display: block;
+}
+.body #daop-member .items.city .sep .img a,
+.body #daop-member .items.specific .sep .img a {
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	background: rgba(84,118,154,0.9) url('daop/images/trash_32.png') 50% 50% no-repeat;
+	color: transparent;
+	display: none;
+}
+
+
+.body #daop-member .items.city .sep .img:hover a,
+.body #daop-member .items.city .sep .img a.loader,
+.body #daop-member .items.city .sep.active .img a,
+.body #daop-member .items.specific .sep .img:hover a,
+.body #daop-member .items.specific .sep .img a.loader,
+.body #daop-member .items.specific .sep.active .img a {
+	display: block;
+}
+.body #daop-member .items.city .sep .img a.loader,
+.body #daop-member .items.specific .sep .img a.loader {
+	background: rgba(84,118,154,0.9) url('images/input_loader_48.gif') 50% 50% no-repeat;
+}
+.body #daop-member .items.city .sep .img img {
+	width: 120px;
+	height: 150px;
+	border: 1px solid #ddd;
+}
+.body #daop-member .items.city .sep .img:hover img {
+	border: 1px solid #bbb;
+}
+.body #daop-member .items.city .sep div:last-child a,
+.body #daop-member .items.city .sep div:last-child span,
+.body #daop-member .items.specific .sep a:last-child {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	width: 120px;
+	text-align: center;
+}
+.body #daop-member .items.city .sep div:last-child a,
+.body #daop-member .items.specific .sep a:last-child {
+	font-weight: 700;
+}
+.body #daop-member .items.city .sep div:last-child span {
+	padding: 2px 0 0 0;
+	color: #808080;
+	font-size: 11px;
+	line-height: 14px;
+}
+
+.body #daop-member .suggest .items.city .sep {
+	margin: 0 14px 15px 0;
+}
+.body #daop-member .suggest .items.city .empty {
+	padding: 30px 0 0 0;
+}
+.body #daop-member .suggest .items.city .sep .img img {
+	width: 100px;
+	height: 100px;
+}
+.body #daop-member .suggest .items.city .sep div:last-child a,
+.body #daop-member .suggest .items.city .sep div:last-child span {
+	width: 100px;
+	text-align: center;
+}
+.body #daop-member .suggest .items.city .sep .img a {
+	background: rgba(84,118,154,0.9) url('daop/images/ok_32.png') 50% 50% no-repeat;
+}
+.body #daop-member .suggest .items.city .sep .img a.loader {
+	background: rgba(84,118,154,0.9) url('images/input_loader_32.gif') 50% 50% no-repeat;	
+}
+
+/* Paging */
+.body #daop-member .boxed.city .list-view .pager,
+.body #daop-member .boxed.specific .list-view .pager {
+	padding: 5px 20px 0 20px;
+	text-align: center;
+}
+.body #daop-member .boxed.specific .list-view .pager,
+.body #daop-member .boxed .suggest .list-view .pager {
+	background: #f8f8f8;
+	border-bottom: 1px solid #02779e;
+}
+
+/* Agent Guest */
+
+/* Specific in City */
+.body #daop-member .items.specific .sep {
+	margin: 0 12px 15px 0;
+}
+.body #daop-member .items.specific .sep a:last-child {
+	width: 100px;
+}
+.body #daop-member .items.specific .sep .img a,
+.body #daop-member .items.specific .sep .img img {
+	-webkit-border-radius: 50px;
+	-moz-border-radius: 50px;
+	border-radius: 50px;
+	width: 100px;
+	height: 100px;
+}
+
+/* Suggest */
+.body #daop-member .suggest .title {}
+.body #daop-member .suggest .title h2,
+.body #daop-member .boxed.specific .title h2 {
+	float: left;
+}
+.body #daop-member .suggest .title .left,
+.body #daop-member .boxed.specific .title .left {
+	padding: 2px 0 0 30px;
+}
+.body #daop-member .suggest .title .left a,
+.body #daop-member .boxed.specific .title .left a {
+	-webkit-border-radius: 6px;
+	-moz-border-radius: 6px;
+	border-radius: 6px;
+	display: block;
+	padding: 5px 10px;
+	text-decoration: none;
+	font-size: 12px;
+	line-height: 12px;
+	text-align: center;
+}
+.body #daop-member .suggest .title .left a {
+	width: 70px;
+}
+.body #daop-member .suggest .title .left a:hover,
+.body #daop-member .suggest .title .left a.active,
+.body #daop-member .boxed.specific .title .left a:hover,
+.body #daop-member .boxed.specific .title .left a.active {
+	background: #02779e;
+	color: #fff;
+}
+.body #daop-member .suggest .title .left a:before,
+.body #daop-member .boxed.specific .title .left a:before {
+	content: 'Show ';
+}
+.body #daop-member .suggest .title .left a.active:before,
+.body #daop-member .boxed.specific .title .left a.active:before {
+	content: 'Hide ';
+}
+.body #daop-member .suggest .filter {
+	position: relative;
+	background: #c9d8e6;
+	padding: 15px 15px 10px 15px;
+	display: block;
+}
+.body #daop-member .boxed.city .suggest .filter {
+	margin: 0 0 15px 0;
+}
+.body #daop-member .suggest .filter span.arrow {
+	position: absolute;
+	top: 100%;
+	left: 50px;
+	z-index: 10;
+}
+.body #daop-member .suggest .filter span.arrow:before {
+	content: "";
+	position: absolute;
+	left: -5px;
+	top: 0;
+	border-left: 7px solid #f9f9f9;
+	border-right: 7px solid #f9f9f9;
+	border-top: 7px solid #c9d8e6;
+}
+.body #daop-member .suggest form {
+	text-align: center;
+}
+.body #daop-member .suggest form fieldset {
+	display: inline-block;
+	text-align: left;
+}
+.body #daop-member .suggest form div {
+	float: left;
+	margin: 0 5px 0 0;
+}
+.body #daop-member .suggest form div:last-child {
+	margin: 0 0 0 0;
+}
+.body #daop-member .suggest form input[type="text"] {
+	width: 220px;
+}
+
+.body #daop-member .boxed.specific .suggest {
+	padding: 0 0 20px 0;
+}
+.body #daop-member .boxed.specific .suggest .filter {
+	padding: 0 0 0 0;
+	background: #02779e;
+}
+.body #daop-member .boxed.specific .suggest form,
+.body #daop-member .boxed.specific .suggest form fieldset  {
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+}
+.body #daop-member .boxed.specific .suggest form {
+	display: table;
+	width: 100%;
+}
+.body #daop-member .boxed.specific .suggest form fieldset {
+	display: table-cell;
+	vertical-align: middle;
+	width: 65%;
+	padding: 10px 10px 10px 10px;
+}
+.body #daop-member .boxed.specific .suggest form fieldset:first-child {
+	background: #c9d8e6;
+}
+.body #daop-member .boxed.specific .suggest form fieldset:last-child {
+	width: 35%;
+}
+.body #daop-member .boxed.specific .suggest .list-view .items {
+	background: #f9f9f9;
+	padding: 20px 0 5px 15px;
+}

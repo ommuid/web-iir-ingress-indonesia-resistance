@@ -1,0 +1,21 @@
+code			: 16000
+name			: Member
+description		: Member
+folder_name		: users
+global_model	: Users
+version			: 1.2.0
+created_date	: 2012-08-30 14:03
+author			: Putra Sudaryanto
+
+db_table_name	: 
+ - ommu_user_block
+ - ommu_user_contact
+ - ommu_user_forgot
+ - ommu_user_invite
+ - ommu_user_level
+ - ommu_user_option
+ - ommu_user_photo
+ - ommu_user_verify
+ - ommu_users
+ 
+db_sql_filename	: 

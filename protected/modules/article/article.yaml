@@ -1,0 +1,18 @@
+code			: 26000
+name			: Article
+description		: Article
+folder_name		: article
+global_model	: Article
+version			: 1.2.5_20131108
+created_date	: 2012-08-30 14:03
+author			: Putra Sudaryanto
+
+db_table_name	: 
+ - ommu_article_category
+ - ommu_article_likes
+ - ommu_article_media
+ - ommu_article_setting
+ - ommu_article_tag
+ - ommu_articles
+ 
+db_sql_filename	: 

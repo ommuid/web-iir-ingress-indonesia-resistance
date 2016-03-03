@@ -1,0 +1,640 @@
+/** 
+ * layout.css
+ * @author Putra Sudaryanto <putra.sudaryanto@gmail.com>
+ * @copyright Copyright (c) 2014 Ommu Platform (ommu.co)
+ * version: 0.1.0
+ * @link http://company.ommu.co
+ * @contect (+62)856-299-4114
+ *
+ *	CSS Reset : reset default browser style
+ *	Loading and Dialog
+ *	Header
+ *	Body
+ *	Footer
+ *	Responsive
+ *
+ */
+
+/* =CSS Reset : reset default browser style
+-------------------------------------------------------------*/
+html,
+body {
+	height: 100%;
+}
+html {
+	background: #f7f7f7;
+}
+body,
+div.body {
+	position: relative;
+}
+body {
+}
+.container {
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+}
+
+/* =Loading and Dialog
+-------------------------------------------------------------- */
+div[class^="open-dialog"] {
+	display: none;
+}
+
+/* Loading */
+.loading,
+.dialog,
+.notifier {
+	position: fixed;
+	top:0;
+	right:0;
+	bottom: 0;
+	left: 0;
+	display: none;
+	cursor: zoom-out;
+	cursor: -moz-zoom-out;
+	cursor: -webkit-zoom-out;
+}
+.loading {
+	z-index: 995;
+	background: url('../images/dialog/loading_medium.png') 50% 30px no-repeat;
+}
+.loading.load {
+	background: rgba(0,0,0,0.6) url('../images/dialog/loading_medium.png') 50% 30px no-repeat;
+}
+
+/* Dialog */
+.dialog {
+	z-index: 980;
+	background: rgba(0,0,0,0.6);
+	-webkit-overflow-scrolling: touch;
+	overflow-y: scroll;
+}
+.dialog .fixed,
+.dialog .fixed .valign,
+.dialog .dialog-box,
+.dialog .dialog-box .content,
+.notifier .fixed,
+.notifier .fixed .valign,
+.notifier .dialog-box,
+.notifier .dialog-box .content {
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+}
+.dialog .fixed,
+.dialog .fixed .valign,
+.notifier .fixed,
+.notifier .fixed .valign {
+	width: 100%;
+	height: 100%;
+}
+.dialog .fixed,
+.notifier .fixed {
+	position: static;
+	display: table;
+	padding: 20px 0 20px 0;
+}
+.dialog .fixed .valign,
+.notifier .fixed .valign {
+	display: table-cell;
+	vertical-align: middle;
+	text-align: center;
+}
+.dialog .dialog-box,
+.notifier .dialog-box {
+	-webkit-box-shadow: 0 0 10px rgba(0,0,0,0.6);
+	-moz-box-shadow: 0 0 10px rgba(0,0,0,0.6);
+	box-shadow: 0 0 10px rgba(0,0,0,0.6);
+	display: inline-block;
+}
+.dialog .dialog-box form,
+.notifier .dialog-box form {
+	padding: 0 0 0 0;
+	margin: 0 0 0 0;
+}
+.dialog .dialog-box .content,
+.dialog .dialog-box .content *,
+.notifier .dialog-box .content,
+.notifier .dialog-box .content * {}
+.dialog .dialog-box .content,
+.notifier .dialog-box .content {
+	width: 300px;
+	margin: 0 auto;
+	text-align: left;
+	cursor: auto;
+}
+.dialog .dialog-box .content {
+	-webkit-border-radius: 6px;
+	-moz-border-radius: 6px;
+	border-radius: 6px;
+}
+.notifier .dialog-box .content {
+	background: #fff;
+}
+.dialog .dialog-box .content[id='600px'],
+.notifier .dialog-box .content[id='600px'] {width: 600px;}
+.dialog .dialog-box .content[id='650px'],
+.notifier .dialog-box .content[id='650px'] {width: 650px;}
+.dialog .dialog-box .content[id='700px'],
+.notifier .dialog-box .content[id='700px'] {width: 700px;}
+.dialog .dialog-box .content[id='750px'],
+.notifier .dialog-box .content[id='750px'] {width: 750px;}
+.dialog .dialog-box .content[id='800px'],
+.notifier .dialog-box .content[id='800px'] {width: 800px;}
+.dialog .dialog-box .content[id='850px'],
+.notifier .dialog-box .content[id='850px'] {width: 850px;}
+.dialog .dialog-box .content[id='900px'],
+.notifier .dialog-box .content[id='900px'] {width: 900px;}
+.dialog .dialog-box .content[id='950px'],
+.notifier .dialog-box .content[id='950px'] {width: 950px;}
+
+/* Notifier */
+.notifier {
+	z-index: 990;
+	background: rgba(0,0,0,0.6);
+}
+.notifier .dialog-box {
+	background: url('../images/dialog/dialog_content_bg.png') repeat;
+	padding: 7px 7px 7px 7px;
+}
+.notifier .dialog-box .content[id='250px'] {width: 250px;}
+.notifier .dialog-box .content[id='300px'] {width: 300px;}
+.notifier .dialog-box .content[id='350px'] {width: 350px;}
+.notifier .dialog-box .content[id='400px'] {width: 400px;}
+.notifier .dialog-box .content[id='450px'] {width: 450px;}
+.notifier .dialog-box .content[id='500px'] {width: 500px;}
+.notifier .dialog-box .content[id='550px'] {width: 550px;}
+
+
+/* =Header
+-------------------------------------------------------------- */
+header,
+header .sep {
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+}
+header {
+	-moz-box-shadow:    0 0 3px 3px rgba(0, 0, 0, 0.1);
+	-webkit-box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.1);
+	box-shadow:         0 0 3px 3px rgba(0, 0, 0, 0.1);
+	position: fixed;
+	left: 0;
+	top: 0;
+	width: 100%;
+	background: #025d8c;
+	border-bottom: 3px solid #01537d;
+	z-index: 500;
+}
+header .container {
+	padding: 0 0 0 0;
+}
+header .sep {
+	float: left;
+}
+header .sep.usermenu {
+	float: right;
+}
+
+/* Logo */
+header .logo {
+	padding:  0 60px 0 20px;
+}
+header .logo .text,
+header .logo .text * {
+	font-size: 20px;
+	line-height: 20px;
+	color: #fff;
+	font-weight: 600;
+	white-space: nowrap;
+	text-transform: lowercase;
+}
+header .logo a.text {
+	display: block;
+	text-decoration: none;	
+}
+header .logo a.text h2 {
+	margin: 0 0 0 0;
+}
+
+/* Search */
+header .search form {
+	border-bottom: 1px solid #77899c;
+}
+header .search form input[type="text"] {
+	padding: 7px 0 7px 0;
+	background: none;
+	width: 200px;
+	border: none;
+	color: #c9d8e3;
+}
+
+/* Usermenu */
+header .sep.usermenu {
+	float: right;
+}
+header .usermenu ul {
+	display: block;
+	list-style: none;
+	margin: 0 0 0 0;
+	left: 0 0 0 0;
+}
+header .usermenu ul li,
+header .usermenu ul li a {
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	height: 42px;
+}
+header .usermenu ul li {
+	position: relative;
+	float: left;
+}
+header .usermenu ul li:after {
+	content: '';
+	position: absolute;
+	top: 100%;
+	left: 0;
+	width: 100%;
+	border-bottom: 3px solid transparent;
+}
+header .usermenu ul li:hover:after {
+	border-bottom: 3px solid #98b7d3;
+}
+header .usermenu ul li a,
+header .usermenu ul li a * {
+	font-size: 14px;
+	line-height: 14px;
+	text-decoration: none;
+	color: #fff;
+}
+header .usermenu ul li a {
+	display: block;
+	padding: 14px 17px 14px 17px;
+}
+header .usermenu ul li:hover a {
+	background: rgba(255, 255, 255, 0.3);
+	color: #fff;
+}
+header .usermenu ul li a.user-info {
+	display: table;
+	padding: 0 20px 0 15px;
+}
+header .usermenu ul li a.user-info span,
+header .usermenu ul li a.user-info h4 {
+	display: table-cell;
+	vertical-align: middle;
+}
+header .usermenu ul li a.user-info img {
+	-webkit-border-radius: 15px;
+	-moz-border-radius: 15px;
+	border-radius: 15px;
+}
+header .usermenu ul li a.user-info h4 {
+	font-weight: 400;
+	padding: 0 0 0 10px;
+}
+header .usermenu ul ul {
+	position: absolute;
+	right: 4px;
+	top: 100%;
+	background: #35587c;
+	display: none;
+}
+header .usermenu ul ul li {
+	float: none;
+	padding: 0 0 0 0;
+}
+
+/* =Body
+-------------------------------------------------------------- */
+.body,
+.body .container,
+.body .ommu-wrap,
+.body #sidebar,
+.body #content,
+.body #content .wrapper,
+.body #content .box-wrap {
+	height: 100%;
+}
+.body,
+.body #sidebar,
+.body #content {
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+}
+.body {
+	padding: 45px 0 0 0;
+}
+.body .ommu-wrap,
+.body #content .box-wrap.ads-on {
+	display: table;
+	width: 100%;
+}
+
+/* =Sidebar
+-------------------------------------------------------------- */
+.body #sidebar,
+.body #content,
+.body #content .content,
+.body #content .sidebar {
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	display: table-cell;
+	vertical-align: top;
+}
+.body #sidebar {
+	width: 200px;
+	background: #ecf0f3;
+}
+
+/* =Content
+-------------------------------------------------------------- */
+.body #content {
+	padding: 0 0 0 0;
+}
+/* Title */
+.body #content h1,
+.body #content h1 * {
+	font-size: 30px;
+	line-height: 35px;
+	font-weight: 300;
+}
+.body #content h1 {
+	display: none;
+}
+
+
+/* Adsense Active */
+.body #content .ads-on .content {
+	background: #fff;
+	padding: 0 0 20px 0;
+}
+.body #content .ads-on .sidebar {
+	width: 270px;
+}
+
+/* Exampe Content */
+.body #content .boxed {
+	margin: 0 0 15px 0;
+}
+.body #content .boxed:last-child,
+.body #content .boxed:first-child:last-child,
+.body .list-view {
+	margin: 0 0 0 0;
+}
+
+/* =Footer
+-------------------------------------------------------------- */
+footer {
+	padding: 12px 20px 15px 20px;
+	border-top: 2px solid #35587c;
+	background: #fff;
+}
+footer span.powered {
+	float: right;
+}
+
+/* =Responsive
+-------------------------------------------------------------- */
+/* Resolution 1280 */
+@media only screen and (max-width:1280px) {
+
+}
+
+/* Resolution 1024 */
+@media only screen and (max-width:1024px) {
+	.container {
+		width: 1024px;
+	}
+}
+
+/* Resolution 900 */
+@media only screen and (max-width:900px) {
+	/* Loading and Dialog */
+	.dialog[name="800px"] .fixed,
+	.dialog[name="750px"] .fixed,
+	.dialog[name="700px"] .fixed,
+	.notifier[name="800px"] .fixed,
+	.notifier[name="750px"] .fixed,
+	.notifier[name="700px"] .fixed,
+	.dialog#apps .fixed {
+		padding: 20px 20px 20px 20px;
+	}
+	.dialog[name="800px"] .dialog-box,
+	.dialog[name="750px"] .dialog-box,
+	.dialog[name="700px"] .dialog-box,
+	.notifier[name="800px"] .dialog-box,
+	.notifier[name="750px"] .dialog-box,
+	.notifier[name="700px"] .dialog-box {
+		display: block;
+	}
+	.dialog[name="800px"] .content,
+	.dialog[name="750px"] .content,
+	.dialog[name="700px"] .content,
+	.notifier[name="800px"] .content,
+	.notifier[name="750px"] .content,
+	.notifier[name="700px"] .content,
+	.dialog#apps .dialog-box .content {
+		width: auto !important;
+	}
+}
+
+/* Resolution 800 */
+@media only screen and (max-width:800px) {
+	/* Loading and Dialog */
+	.dialog[name="800px"] .fixed,
+	.dialog[name="750px"] .fixed,
+	.dialog[name="700px"] .fixed,
+	.dialog[name="650px"] .fixed,
+	.dialog[name="600px"] .fixed,
+	.notifier[name="800px"] .fixed,
+	.notifier[name="750px"] .fixed,
+	.notifier[name="700px"] .fixed,
+	.notifier[name="650px"] .fixed,
+	.notifier[name="600px"] .fixed,
+	.dialog#apps .fixed {
+		padding: 15px 15px 15px 15px;
+	}
+	.dialog[name="800px"] .dialog-box,
+	.dialog[name="750px"] .dialog-box,
+	.dialog[name="700px"] .dialog-box,
+	.dialog[name="650px"] .dialog-box,
+	.dialog[name="600px"] .dialog-box,
+	.notifier[name="800px"] .dialog-box,
+	.notifier[name="750px"] .dialog-box,
+	.notifier[name="700px"] .dialog-box,
+	.notifier[name="650px"] .dialog-box,
+	.notifier[name="600px"] .dialog-box {
+		display: block;
+	}
+	.dialog[name="800px"] .content,
+	.dialog[name="750px"] .content,
+	.dialog[name="700px"] .content,
+	.dialog[name="650px"] .content,
+	.dialog[name="600px"] .content,
+	.notifier[name="800px"] .content,
+	.notifier[name="750px"] .content,
+	.notifier[name="700px"] .content,
+	.notifier[name="650px"] .content,
+	.notifier[name="600px"] .content {
+		width: auto !important;
+	}
+
+}
+
+/* Resolution 600 */
+@media only screen and (max-width:600px) {
+	/* Loading and Dialog */
+	.dialog[name="800px"] .fixed,
+	.dialog[name="750px"] .fixed,
+	.dialog[name="700px"] .fixed,
+	.dialog[name="650px"] .fixed,
+	.dialog[name="600px"] .fixed,
+	.dialog[name="550px"] .fixed,
+	.dialog[name="500px"] .fixed,
+	.notifier[name="800px"] .fixed,
+	.notifier[name="750px"] .fixed,
+	.notifier[name="700px"] .fixed,
+	.notifier[name="650px"] .fixed,
+	.notifier[name="600px"] .fixed,
+	.notifier[name="550px"] .fixed,
+	.notifier[name="500px"] .fixed,
+	.dialog#apps .fixed {
+		padding: 10px 10px 10px 10px;
+	}
+	.dialog[name="800px"] .dialog-box,
+	.dialog[name="750px"] .dialog-box,
+	.dialog[name="700px"] .dialog-box,
+	.dialog[name="650px"] .dialog-box,
+	.dialog[name="600px"] .dialog-box,
+	.dialog[name="550px"] .dialog-box,
+	.dialog[name="500px"] .dialog-box,
+	.notifier[name="800px"] .dialog-box,
+	.notifier[name="750px"] .dialog-box,
+	.notifier[name="700px"] .dialog-box,
+	.notifier[name="650px"] .dialog-box,
+	.notifier[name="600px"] .dialog-box,
+	.notifier[name="550px"] .dialog-box,
+	.notifier[name="500px"] .dialog-box {
+		display: block;
+	}
+	.dialog[name="800px"] .content,
+	.dialog[name="750px"] .content,
+	.dialog[name="700px"] .content,
+	.dialog[name="650px"] .content,
+	.dialog[name="600px"] .content,
+	.dialog[name="550px"] .content,
+	.dialog[name="500px"] .content,
+	.notifier[name="800px"] .content,
+	.notifier[name="750px"] .content,
+	.notifier[name="700px"] .content,
+	.notifier[name="650px"] .content,
+	.notifier[name="600px"] .content,
+	.notifier[name="550px"] .content,
+	.notifier[name="500px"] .content {
+		width: auto !important;
+	}
+	
+	/* Loading and Dialog */
+	body[style*="overflow-y"],
+	.dialog,
+	.notifier {
+		overflow: visible !important;
+	}
+	.dialog,
+	.notifier {
+		position: static;
+	}
+	.dialog .fixed,
+	.notifier .fixed {
+		padding: 0 0 0 0 !important;
+	}
+	.dialog .dialog-box,
+	.notifier .dialog-box {
+		-webkit-box-shadow: 0 0 2px rgba(0,0,0,0.7);
+		-moz-box-shadow: 0 0 2px rgba(0,0,0,0.7);
+		box-shadow: 0 0 2px rgba(0,0,0,0.7);
+	}
+	body[style*="overflow-y"] div.body {
+		margin: 12px 0 0 0;
+		-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
+		filter: alpha(opacity=50);
+		-moz-opacity: 0.5;
+		-khtml-opacity: 0.5;
+		opacity: 0.5;
+	}
+
+}
+
+/* Resolution 480 */
+@media only screen and (max-width:480px) {
+	.notifier[name="800px"] .fixed,
+	.notifier[name="750px"] .fixed,
+	.notifier[name="700px"] .fixed,
+	.notifier[name="650px"] .fixed,
+	.notifier[name="600px"] .fixed,
+	.notifier[name="550px"] .fixed,
+	.notifier[name="500px"] .fixed,
+	.notifier[name="450px"] .fixed,
+	.notifier[name="400px"] .fixed,
+	.notifier[name="350px"] .fixed,
+	.notifier[name="300px"] .fixed,
+	.notifier[name="250px"] .fixed,
+	.dialog#apps .fixed {
+		padding: 10px 10px 10px 10px;
+	}
+	.notifier[name="800px"] .dialog-box,
+	.notifier[name="750px"] .dialog-box,
+	.notifier[name="700px"] .dialog-box,
+	.notifier[name="650px"] .dialog-box,
+	.notifier[name="600px"] .dialog-box,
+	.notifier[name="550px"] .dialog-box,
+	.notifier[name="500px"] .dialog-box
+	.notifier[name="450px"] .dialog-box,
+	.notifier[name="400px"] .dialog-box,
+	.notifier[name="350px"] .dialog-box,
+	.notifier[name="300px"] .dialog-box,
+	.notifier[name="250px"] .dialog-box {
+		display: block;
+	}
+	.notifier[name="800px"] .content,
+	.notifier[name="750px"] .content,
+	.notifier[name="700px"] .content,
+	.notifier[name="650px"] .content,
+	.notifier[name="600px"] .content,
+	.notifier[name="550px"] .content,
+	.notifier[name="500px"] .content
+	.notifier[name="450px"] .content,
+	.notifier[name="400px"] .content,
+	.notifier[name="350px"] .content,
+	.notifier[name="300px"] .content,
+	.notifier[name="250px"] .content {
+		width: auto !important;
+	}
+	
+	/* Loading and Dialog */
+	.notifier {
+		overflow: visible !important;
+		position: static;
+	}
+	.notifier .fixed {
+		padding: 0 0 0 0 !important;
+	}	
+	.notifier .dialog-box {
+		-webkit-box-shadow: 0 0 2px rgba(0,0,0,0.7);
+		-moz-box-shadow: 0 0 2px rgba(0,0,0,0.7);
+		box-shadow: 0 0 2px rgba(0,0,0,0.7);
+		padding: 0 0 0 0;
+	}
+
+}
+
+/* Resolution 320 */
+@media only screen and (max-width:320px) {
+
+}
