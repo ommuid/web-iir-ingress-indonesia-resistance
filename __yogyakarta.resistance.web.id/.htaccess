@@ -1,0 +1,8 @@
+RewriteEngine on
+
+RewriteCond %{HTTP_HOST} ^yogyakarta\.resistance\.web\.id$ [NC,OR]
+RewriteCond %{HTTP_HOST} ^www\.yogyakarta\.resistance\.web\.id$ [NC,OR]
+RewriteCond %{HTTP_HOST} ^jogja\.resistance\.web\.id$ [NC,OR]
+RewriteCond %{HTTP_HOST} ^www\.jogja\.resistance\.web\.id$ [NC]
+RewriteRule ^(.*)$ "http\:\/\/resistanceyk\.net\/$1" [R=301,L]
+
