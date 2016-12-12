@@ -1,0 +1,43 @@
+code			: 28000
+name			: Banner
+description		: Banner
+folder_name		: banner
+version			: 0.1.0
+created_date	: 
+author			: Putra Sudaryanto [putra@sudaryanto.id]
+
+db_table_name	: 
+ 
+db_sql_filename	: 
+
+plugin_menu		:
+	- urlTitle: View Banner
+		urlRules: {siteType: 0,1, userLevel: 1,2}
+		urlPath: {url: o/admin/manage, attr: -, icon: -}
+		
+	- urlTitle: Banner Settings
+		urlRules: {siteType: 0,1, userLevel: 1}
+		urlPath: {url: o/setting/edit, attr: -, icon: -}
+
+content_menu	:
+# controller o/admin
+	- urlTitle: Add Banner
+		urlRules: {banner, o/admin, manage, siteType: 0,1, userLevel: 1,2}
+		urlPath: {url: add, attr: -, icon: -}
+		
+	- urlTitle: Back to Manage
+		urlRules: {banner, o/admin, add,edit, siteType: 0,1, userLevel: 1,2}
+		urlPath: {url: manage, attr: -, icon: -}
+
+# controller o/setting
+		
+	- urlTitle: Add Category
+		urlRules: {banner, o/setting, manage, siteType: 0,1, userLevel: 1}
+		urlPath: {url: o/category/add, attr: -, icon: -}
+
+# controller o/category
+		
+	- urlTitle: Add Category
+		urlRules: {banner, o/category, manage, siteType: 0,1, userLevel: 1}
+		urlPath: {url: add, attr: -, icon: -}
+		
