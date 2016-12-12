@@ -1,0 +1,80 @@
+code			: 26000
+name			: Article
+description		: Article
+folder_name		: article
+version			: 0.1.0
+created_date	: 2012-08-30 14:03
+author			: Putra Sudaryanto [putra@sudaryanto.id]
+
+db_table_name	: 
+ - ommu_article_category
+ - ommu_article_likes
+ - ommu_article_media
+ - ommu_article_setting
+ - ommu_article_tag
+ - ommu_articles
+ 
+db_sql_filename	: 
+
+plugin_menu		:
+	- urlTitle: View Articles
+		urlRules: {siteType: 0,1, userLevel: 1,2}
+		urlPath: {url: o/admin/manage, attr: -, icon: -}
+		
+	- urlTitle: Article Settings
+		urlRules: {siteType: 0,1, userLevel: 1}
+		urlPath: {url: o/setting/edit, attr: -, icon: -}
+		submenu :
+			- urlTitle: Photos
+				urlRules: {siteType: 0,1, userLevel: 1,2}
+				urlPath: {url: o/media/manage, attr: -, icon: -}
+			- urlTitle: Likes
+				urlRules: {siteType: 1, userLevel: 1,2}
+				urlPath: {url: o/like/manage, attr: -, icon: -}
+			- urlTitle: Tags
+				urlRules: {siteType: 0,1, userLevel: 1,2}
+				urlPath: {url: o/tag/manage, attr: -, icon: -}
+
+content_menu	:
+# controller o/admin
+	- urlTitle: Add Article
+		urlRules: {article, o/admin, manage, siteType: 0,1, userLevel: 1,2}
+		urlPath: {url: add, attr: -, icon: -}
+		
+	- urlTitle: Back to Manage
+		urlRules: {article, o/admin, add,edit, siteType: 0,1, userLevel: 1,2}
+		urlPath: {url: manage, attr: -, icon: -}
+		
+# controller o/media
+
+	- urlTitle: Back to Article
+		urlRules: {article, o/media, manage, siteType: 0,1, userLevel: 1,2}
+		urlPath: {url: o/admin/manage, attr: -, icon: -}
+
+	- urlTitle: Back to manage
+		urlRules: {article, o/media, edit, siteType: 0,1, userLevel: 1,2}
+		urlPath: {url: manage, attr: -, icon: -}
+		
+# controller o/like		
+
+	- urlTitle: Back to Article
+		urlRules: {article, o/like, manage, siteType: 1, userLevel: 1,2}
+		urlPath: {url: o/admin/manage, attr: -, icon: -}
+		
+# controller o/tag
+
+	- urlTitle: Back to Article
+		urlRules: {article, o/tag, manage, siteType: 0,1, userLevel: 1,2}
+		urlPath: {url: o/admin/manage, attr: -, icon: -}
+		
+# controller o/setting
+
+	- urlTitle: Add Category
+		urlRules: {article, o/setting, index, siteType: 0,1, userLevel: 1,2}
+		urlPath: {url: o/category/add, attr: -, icon: -}
+		
+# controller o/category
+
+	- urlTitle: Add Category
+		urlRules: {article, o/category, manage, siteType: 0,1, userLevel: 1,2}
+		urlPath: {url: add, attr: -, icon: -}
