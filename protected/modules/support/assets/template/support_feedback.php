@@ -1,0 +1,21 @@
+<div>
+	<strong>Name</strong><br/>
+	{$displayname}
+</div><br/>
+<div>
+	<strong>Email</strong><br/>
+	{$email}
+</div><br/>
+<div>
+	<strong>Date</strong><br/>
+	{$creation_date}
+</div><br/>
+<div>
+	<strong>Subject</strong><br/>
+	{$subject}
+</div><br/>
+
+<div>
+	<strong>Message</strong><br/>
+	{$message}
+</div>

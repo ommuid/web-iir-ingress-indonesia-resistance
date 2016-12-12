@@ -1,0 +1,108 @@
+code			: 16000
+name			: Member
+description		: Member
+folder_name		: users
+version			: 0.1.0
+created_date	: 2012-08-30 14:03
+author			: Putra Sudaryanto [putra@sudaryanto.id]
+
+db_table_name	: 
+ - ommu_user_block
+ - ommu_user_contact
+ - ommu_user_forgot
+ - ommu_user_invite
+ - ommu_user_level
+ - ommu_user_option
+ - ommu_user_photo
+ - ommu_user_verify
+ - ommu_users
+ 
+db_sql_filename	: 
+
+plugin_menu		:
+	- urlTitle: Administrator
+		urlRules: {siteType: 0,1, userLevel: 1}
+		urlPath: {url: o/admin/manage, attr: -, icon: -}
+		
+	- urlTitle: User
+		urlRules: {siteType: 0,1, userLevel: 1,2}
+		urlPath: {url: o/member/manage, attr: -, icon: -}
+		
+	- urlTitle: User Level
+		urlRules: {siteType: 0,1, userLevel: 1}
+		urlPath: {url: o/level/manage, attr: -, icon: -}
+		
+	- urlTitle: Subscribes
+		urlRules: {siteType: 1, userLevel: 1,2}
+		urlPath: {url: o/newsletter/manage, attr: -, icon: -}
+		
+	- urlTitle: Invite
+		urlRules: {siteType: 1, userLevel: 1,2}
+		urlPath: {url: o/invite/manage, attr: -, icon: -}
+		
+	- urlTitle: Device
+		urlRules: {siteType: 1, userLevel: 1,2}
+		urlPath: {url: o/device/manage, attr: -, icon: -}
+		
+	- urlTitle: History
+		urlRules: {siteType: 0,1, userLevel: 1}
+		urlPath: {url: -, attr: -, icon: -}
+		submenu :
+			- urlTitle: Login
+				urlRules: {siteType: 0,1, userLevel: 1}
+				urlPath: {url: o/history/login, attr: -, icon: -}
+			- urlTitle: Change Password
+				urlRules: {siteType: 1, userLevel: 1}
+				urlPath: {url: o/history/password, attr: -, icon: -}
+			- urlTitle: Forgot Password
+				urlRules: {siteType: 1, userLevel: 1}
+				urlPath: {url: o/history/forgot, attr: -, icon: -}
+			- urlTitle: Subscribes
+				urlRules: {siteType: 1, userLevel: 1}
+				urlPath: {url: o/history/subscribe, attr: -, icon: -}
+
+content_menu	:
+# controller o/level
+	- urlTitle: Add User Level
+		urlRules: {users, o/level, manage, siteType: 0,1, userLevel: 1,2}
+		urlPath: {url: add, attr: -, icon: -}
+		
+# controller o/admin
+
+	- urlTitle: Add Administrator
+		urlRules: {users, o/admin, manage, siteType: 0,1, userLevel: 1,2}
+		urlPath: {url: add, attr: -, icon: -}
+
+	- urlTitle: Back to Manage
+		urlRules: {users, o/admin, view, siteType: 0,1, userLevel: 1,2}
+		urlPath: {url: manage, attr: -, icon: -}
+		
+# controller o/member
+
+	- urlTitle: Add User
+		urlRules: {users, o/member, manage, siteType: 0,1, userLevel: 1,2}
+		urlPath: {url: add, attr: -, icon: -}
+		
+	- urlTitle: Back to Manage
+		urlRules: {users, o/member, view, siteType: 0,1, userLevel: 1,2}
+		urlPath: {url: manage, attr: -, icon: -}
+		
+# controller o/invite
+		
+	- urlTitle: Invite User
+		urlRules: {users, o/invite, manage,queuemanage, siteType: 0,1, userLevel: 1,2}
+		urlPath: {url: add, attr: -, icon: -}
+		
+	- urlTitle: View Invites
+		urlRules: {users, o/invite, manage,queuemanage, siteType: 0,1, userLevel: 1,2}
+		urlPath: {url: manage, attr: -, icon: -}
+		
+	- urlTitle: Queue Invites
+		urlRules: {users, o/invite, manage,queuemanage, siteType: 0,1, userLevel: 1,2}
+		urlPath: {url: queuemanage, attr: -, icon: -}
+		
+# controller o/newsletter
+
+	- urlTitle: Add Subscribe
+		urlRules: {users, o/newsletter, manage, siteType: 0,1, userLevel: 1,2}
+		urlPath: {url: add, attr: -, icon: -}
