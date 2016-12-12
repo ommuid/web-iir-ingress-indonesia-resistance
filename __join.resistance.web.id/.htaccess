@@ -1,0 +1,5 @@
+RewriteEngine on
+RewriteCond %{HTTP_HOST} ^join\.resistance\.web\.id$ [NC,OR]
+RewriteCond %{HTTP_HOST} ^www\.join\.resistance\.web\.id$ [NC]
+RewriteRule ^/?$ "https\:\/\/sites\.google\.com\/site\/iirportal\/registrasi" [R=301,L]
+

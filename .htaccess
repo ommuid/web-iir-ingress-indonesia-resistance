@@ -1,5 +1,14 @@
 RewriteEngine on
 
+# Redirect from subdomian #
+# Remove www for SEO #
+RewriteCond %{HTTP_HOST} ^resistance\.waikijogja\.com$ [NC,OR]
+RewriteCond %{HTTP_HOST} ^www\.resistance\.waikijogja\.com$ [NC,OR]
+RewriteCond %{HTTP_HOST} ^resistance\.web\.id$ [NC,OR]
+RewriteCond %{HTTP_HOST} ^www\.resistance\.web\.id$ [NC]
+RewriteCond %{HTTPS} !=on
+RewriteRule ^(.*)$ "https\:\/\/resistance\.web\.id\/$1" [R=301,L]
+
 # if a directory or a file exists, use it directly
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
