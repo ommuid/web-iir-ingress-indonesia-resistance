@@ -7,19 +7,14 @@
  * Yii::setPathOfAlias('local','path/to/local-folder');
  *
  * @author Putra Sudaryanto <putra.sudaryanto@gmail.com>
- * @copyright Copyright (c) 2012 Ommu Platform (ommu.co)
- * @link https://github.com/oMMu/Ommu-Core
- * @contect (+62)856-299-4114
+ * @copyright Copyright (c) 2012 Ommu Platform (opensource.ommu.co)
+ * @link https://github.com/ommu/Core
+ * @contact (+62)856-299-4114
  *
  */
 return array(
 	'basePath'=>dirname(__FILE__).DIRECTORY_SEPARATOR.'..',
 	'name'=>'Ommu Platform',
-
-	// Language setting
-	'sourceLanguage' => '00',
-	'language'       => 'id',
-	'behaviors' => array('AppConfigBehavior'),
 
 	// Language setting
 	'sourceLanguage' => '00',
@@ -37,7 +32,6 @@ return array(
 		'application.modules.report.models.*',
 		'application.modules.support.models.*',
 		'application.modules.users.models.*',
-		'application.modules.users.models.Users',
 		//'application.modules.personal.models.*',
 
 		// Components
@@ -77,7 +71,7 @@ return array(
 
 		'errorHandler'=>array(
 			// use 'site/error' action to display errors
-            'errorAction'=>'site/error',
+			'errorAction'=>'site/error',
         ),
 
 		'log'=>array(

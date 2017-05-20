@@ -6,9 +6,9 @@
  *	params
  *
  * @author Putra Sudaryanto <putra.sudaryanto@gmail.com>
- * @copyright Copyright (c) 2012 Ommu Platform (ommu.co)
- * @link https://github.com/oMMu/Ommu-Core
- * @contect (+62)856-299-4114
+ * @copyright Copyright (c) 2012 Ommu Platform (opensource.ommu.co)
+ * @link https://github.com/ommu/Core
+ * @contact (+62)856-299-4114
  *
  */
 return array(
@@ -16,17 +16,16 @@ return array(
 	// using Yii::app()->params['paramName']
 	'params'=>array(
 		// this is used in contact page
-		'adminEmail'=>'webmaster@example.com',
+		'adminEmail'=>'support@ommu.co',
 		'primaryLang' => 'id',
 		'translateLangs' => array(
-			'en' => 'en',
+			'en_us' => 'en_us',
 			'id' => 'id',
-			'fr' => 'fr',
 		),
 		
 		// timthumb replace url
-		'timthumb_url_replace' => 0,		
-		'timthumb_url_replace_website' => 'http://nirwasita.com',	//default http
+		'timthumb_url_replace' => 0,
+		'timthumb_url_replace_website' => 'http://ommu.co',	//default http
 		// access system *from product
 		'product_access_system' => 'ommu.co.core',
 	),
