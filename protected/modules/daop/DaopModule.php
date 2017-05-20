@@ -3,6 +3,11 @@
 class DaopModule extends CWebModule
 {
 	public $defaultController = 'member';
+	
+	// getAssetsUrl()
+	//	return the URL for this module's assets, performing the publish operation
+	//	the first time, and caching the result for subsequent use.
+	private $_assetsUrl;
 
 	public function init() 
 	{
@@ -14,6 +19,14 @@ class DaopModule extends CWebModule
 			'daop.models.*',
 			'daop.components.*',
 		));
+	}
+ 
+	public function getAssetsUrl()
+	{
+		if ($this->_assetsUrl === null)
+			$this->_assetsUrl = Yii::app()->getAssetManager()->publish(Yii::getPathOfAlias('banner.assets'));
+		
+		return $this->_assetsUrl;
 	}
 
 	public function beforeControllerAction($controller, $action)
