@@ -4,10 +4,11 @@
  * @var $this ContactcategoryController
  * @var $model SupportContactCategory
  * @var $form CActiveForm
+ * version: 0.2.1
  *
  * @author Putra Sudaryanto <putra@sudaryanto.id>
- * @copyright Copyright (c) 2012 Ommu Platform (ommu.co)
- * @link https://github.com/oMMu/Ommu-Support
+ * @copyright Copyright (c) 2012 Ommu Platform (opensource.ommu.co)
+ * @link https://github.com/ommu/Support
  * @contact (+62)856-299-4114
  *
  */
@@ -26,13 +27,22 @@
 	<fieldset>
 
 		<div class="clearfix">
-			<?php echo $form->labelEx($model,'title'); ?>
+			<?php echo $form->labelEx($model,'title_i'); ?>
 			<div class="desc">
 				<?php 
-				$model->title = Phrase::trans($model->name, 2);
-				echo $form->textField($model,'title',array('maxlength'=>32,'class'=>'span-7')); ?>
-				<?php echo $form->error($model,'title'); ?>
+				if(!$model->getErrors())
+					$model->title_i = Phrase::trans($model->name);
+				echo $form->textField($model,'title_i',array('maxlength'=>32,'class'=>'span-7')); ?>
+				<?php echo $form->error($model,'title_i'); ?>
 				<?php /*<div class="small-px silent"></div>*/?>
+			</div>
+		</div>
+		
+		<div class="clearfix">
+			<?php echo $form->labelEx($model,'cat_icon'); ?>
+			<div class="desc">
+			<?php echo $form->textField($model,'cat_icon', array('maxlength'=>32,'class'=>'span-7')); ?>
+				<?php echo $form->error($model,'cat_icon'); ?>
 			</div>
 		</div>
 

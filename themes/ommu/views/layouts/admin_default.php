@@ -24,12 +24,12 @@
 			if ($currentAction != 'site/login') {?>
 			<?php //begin.Title ?>
 			<h1 class="small"><?php echo CHtml::encode($this->pageTitle); ?></h1>
-			<?php echo $this->pageDescription != OmmuSettings::getInfo('site_description') ? '<p class="intro">'.$this->pageDescription.'</p>' : '';?>
+			<?php echo strtolower($this->pageDescription) != strtolower(OmmuSettings::getInfo('site_description')) ? '<p class="intro">'.$this->pageDescription.'</p>' : '';?>
 			<?php //end.Title ?>
 
 			<?php //begin.Content Menu ?>
 			<div class="contentmenu clearfix">
-				<?php $this->widget('AdminContentMenu');?>
+				<?php $this->widget('MenuContent');?>
 				<?php $this->widget('application.components.system.CMenu', array(
 					'items'=>$this->menu,
 					'htmlOptions'=>array('class'=>'gridmenu clearfix'),

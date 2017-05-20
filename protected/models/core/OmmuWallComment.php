@@ -1,11 +1,11 @@
 <?php
 /**
  * OmmuWallComment
- * version: 1.1.0
+ * version: 1.2.0
  *
  * @author Putra Sudaryanto <putra@sudaryanto.id>
- * @copyright Copyright (c) 2015 Ommu Platform (ommu.co)
- * @link https://github.com/oMMu/Ommu-Core
+ * @copyright Copyright (c) 2015 Ommu Platform (opensource.ommu.co)
+ * @link https://github.com/ommu/Core
  * @contact (+62)856-299-4114
  *
  * This is the template for generating the model class of a specified table.
@@ -253,11 +253,11 @@ class OmmuWallComment extends CActiveRecord
 				'htmlOptions' => array(
 					'class' => 'center',
 				),
-				'filter' => Yii::app()->controller->widget('zii.widgets.jui.CJuiDatePicker', array(
+				'filter' => Yii::app()->controller->widget('application.components.system.CJuiDatePicker', array(
 					'model'=>$this,
 					'attribute'=>'creation_date',
-					'language' => 'ja',
-					'i18nScriptFile' => 'jquery.ui.datepicker-en.js',
+					'language' => 'en',
+					'i18nScriptFile' => 'jquery-ui-i18n.min.js',
 					//'mode'=>'datetime',
 					'htmlOptions' => array(
 						'id' => 'creation_date_filter',

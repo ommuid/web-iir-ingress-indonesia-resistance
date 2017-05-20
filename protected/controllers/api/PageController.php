@@ -4,7 +4,7 @@
  * @var $this PageController
  * @var $model Articles
  * @var $form CActiveForm
- * version: 0.0.1
+ * version: 1.2.0
  * Reference start
  *
  * TOC :
@@ -17,10 +17,10 @@
  *	performAjaxValidation
  *
  * @author Putra Sudaryanto <putra@sudaryanto.id>
- * @copyright Copyright (c) 2016 Ommu Platform (ommu.co)
+ * @copyright Copyright (c) 2016 Ommu Platform (opensource.ommu.co)
  * @created date 23 Juni 2016, 14:46 WIB
- * @link https://github.com/oMMu/Ommu-Articles
- * @contect (+62)856-299-4114
+ * @link https://github.com/ommu/Core
+ * @contact (+62)856-299-4114
  *
  *----------------------------------------------------------------------------------------------------------
  */
@@ -91,58 +91,57 @@ class PageController extends ControllerApi
 			$pagesize = trim($_POST['pagesize']);
 			
 			$criteria=new CDbCriteria;
-			$criteria->compare('t.publish', 1);
-			$criteria->order = 't.page_id DESC';
+			$criteria->compare('publish', 1);
+			$criteria->order = 'page_id DESC';
 			
-			if($paging != null && $paging != '' && $paging == 'false') {
-				$criteria->limit = $pagesize != null && $pagesize != '' ? $pagesize : 5;
-				$model = OmmuPages::model()->findAll($criteria);
-			} else {
+			if($paging && $paging == 'true') {
 				$dataProvider = new CActiveDataProvider('OmmuPages', array(
-					'criteria'=>$criteria,
-					'pagination'=>array(
-						'pageSize'=>$pagesize != null && $pagesize != '' ? $pagesize : 20,
+					'criteria' => $criteria,
+					'pagination' => array(
+						'pageSize' => $pagesize ? $pagesize : 20,
 					),
 				));
 				$model = $dataProvider->getData();
+			} else {
+				$criteria->limit = $pagesize ? $pagesize : 5;
+				$model = OmmuPages::model()->findAll($criteria);
 			}
 			
 			if(!empty($model)) {
 				foreach($model as $key => $item) {
-					$page_url = Utility::getProtocol().'://'.Yii::app()->request->serverName.Yii::app()->request->baseUrl.'/';
-					$page_path = 'public/page/';
+					$page_url = Utility::getProtocol().'://'.Yii::app()->request->serverName.Yii::app()->request->baseUrl;
+					$page_path = 'public/page';
 					
-					if($item->media != '' && file_exists($page_path.$item->media))
-						$media_image = $page_url.$page_path.$item->media;
+					if($item->media && file_exists($page_path.'/'.$item->media))
+						$image_url_path = $page_url.'/'.$page_path.'/'.$item->media;
 					
 					$data[] = array(
-						'id'=>$item->page_id,
-						'title'=>ucwords(strtolower(Phrase::trans($item->name, 2))),
-						'description'=>$item->desc != 0 ? Utility::shortText(Utility::hardDecode(Phrase::trans($item->desc, 2)),200) : '-',
-						'quote'=>$item->quote != 0 ? Phrase::trans($item->quote, 2) : '-',
-						'media_image'=>$item->media != '' ? $media_image : '-',
-						'media_show'=>$item->media_show == 0 ? 'hide' : 'show',
-						'media_type'=>$item->media_show != 0 ? (($item->media_type == 0 || $item->media_type == 1) ? 'large' : 'medium') : '-',
-						'creation_date'=>Utility::dateFormat($item->creation_date),
+						'id' => $item->page_id,
+						'title' => Phrase::trans($item->name),
+						'description' => $item->desc != 0 ? Utility::shortText(Utility::hardDecode(Phrase::trans($item->desc)),200) : '-',
+						'quote' => $item->quote != 0 ? Phrase::trans($item->quote) : '-',
+						'media_image' => $image_url_path ? $image_url_path : '-',
+						'media_show' => $item->media_show == 0 ? 'hide' : 'show',
+						'media_type' => $item->media_show != 0 ? (($item->media_type == 0 || $item->media_type == 1) ? 'large' : 'medium') : '-',
+						'creation_date' => strtotime($item->creation_date),
 					);					
 				}
 			} else
 				$data = array();
 			
-			if($paging != null && $paging != '' && $paging == 'false')
-				$this->_sendResponse(200, CJSON::encode($this->renderJson($data)));
-				
-			else {
+			if($paging && $paging == 'true') {
 				$pager = OFunction::getDataProviderPager($dataProvider);
-				$get = array_merge($_GET, array($pager['pageVar']=>$pager['nextPage']));
+				$get = array_merge($_GET, array($pager['pageVar'] => $pager['nextPage']));
 				$nextPager = $pager['nextPage'] != 0 ? OFunction::validHostURL(Yii::app()->controller->createUrl('list', $get)) : '-';
 				$return = array(
 					'data' => $data,
 					'pager' => $pager,
 					'nextPager' => $nextPager,
 				);
-				$this->_sendResponse(200, CJSON::encode($this->renderJson($return)));					
-			}
+				$this->_sendResponse(200, CJSON::encode($this->renderJson($return)));	
+				
+			} else
+				$this->_sendResponse(200, CJSON::encode($this->renderJson($data)));
 			
 		} else 
 			$this->redirect(Yii::app()->createUrl('site/index'));
@@ -159,29 +158,29 @@ class PageController extends ControllerApi
 			$model = OmmuPages::model()->findByPk($id);
 			
 			if($model != null) {
-				$page_url = Utility::getProtocol().'://'.Yii::app()->request->serverName.Yii::app()->request->baseUrl.'/';
-				$page_path = 'public/page/';
+				$page_url = Utility::getProtocol().'://'.Yii::app()->request->serverName.Yii::app()->request->baseUrl;
+				$page_path = 'public/page';
 					
-				if($model->media != 0 && file_exists($page_path.'/'.$model->media))
-					$media_image = $page_url.$page_path.'/'.$model->media;
+				if($model->media && file_exists($page_path.'/'.$model->media))
+					$image_url_path = $page_url.'/'.$page_path.'/'.$model->media;
 				
 				$return = array(
-					'success'=>'1',
-					'id'=>$model->page_id,
-					'title'=>ucwords(strtolower(Phrase::trans($model->name, 2))),
-					'description'=>$model->desc != 0 ? Utility::softDecode(Phrase::trans($model->desc, 2)) : '-',
-					'quote'=>$model->quote != 0 ? Phrase::trans($model->quote, 2) : '-',
-					'media_image'=>$model->media != '' ? $media_image : '-',
-					'media_show'=>$model->media_show == 0 ? 'hide' : 'show',
-					'media_type'=>$model->media_show != 0 ? (($model->media_type == 0 || $model->media_type == 1) ? 'large' : 'medium') : '-',
-					'creation_date'=>Utility::dateFormat($model->creation_date),
+					'success' => '1',
+					'id' => $model->page_id,
+					'title' => Phrase::trans($model->name),
+					'description' => $model->desc != 0 ? Utility::softDecode(Phrase::trans($model->desc)) : '-',
+					'quote' => $model->quote != 0 ? Phrase::trans($model->quote) : '-',
+					'media_image' => $image_url_path ? $image_url_path : '-',
+					'media_show' => $model->media_show == 0 ? 'hide' : 'show',
+					'media_type' => $model->media_show != 0 ? (($model->media_type == 0 || $model->media_type == 1) ? 'large' : 'medium') : '-',
+					'creation_date' => strtotime($model->creation_date),
 				);
 				
 			} else {
 				$return = array(
-					'success'=>'0',
-					'error'=>'NULL',
-					'message'=>Yii::t('phrase', 'error, halaman tidak ditemukan'),
+					'success' => '0',
+					'error' => 'NULL',
+					'message' => Yii::t('phrase', 'error, halaman tidak ditemukan'),
 				);
 			}
 			$this->_sendResponse(200, CJSON::encode($this->renderJson($return)));

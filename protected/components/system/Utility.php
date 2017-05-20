@@ -1,6 +1,7 @@
 <?php
 /**
  * Utility class file
+ * version: 1.2.0
  *
  * Contains many function that most used :
  *	getCurrentTemplate
@@ -32,10 +33,9 @@
  * @author Putra Sudaryanto <putra@sudaryanto.id>
  * @create date November 27, 2013 15:02 WIB
  * @update date April 3, 2014 15:02 WIB
- * @version 1.0
- * @copyright Copyright (c) 2013 Ommu Platform (ommu.co)
- * @link https://github.com/oMMu/Ommu-Core
- * @contect (+62)856-299-4114
+ * @copyright Copyright (c) 2013 Ommu Platform (opensource.ommu.co)
+ * @link https://github.com/ommu/Core
+ * @contact (+62)856-299-4114
  *
  */
 
@@ -136,46 +136,16 @@ class Utility
 	/**
 	* Return setting template with typePage: public, admin_sweeto or back_office
 	*/
-	public static function getContentMenu() {		
-		$module = strtolower(Yii::app()->controller->module->id);
-		
+	public static function getArrayFromYML($path)
+	{
 		Yii::import('application.components.plugin.Spyc');
-		define('DS', DIRECTORY_SEPARATOR);
-		
-		if($module != null)
-			$contentMenuPath = Yii::getPathOfAlias('application.modules.'.$module).DS.$module.'.yaml';			
-		else
-			$contentMenuPath = Yii::getPathOfAlias('application.ommu').DS.'ommu.yaml';
 			
-		if(file_exists($contentMenuPath)) {
-			$arraySpyc = Spyc::YAMLLoad($contentMenuPath);
-			$contentMenu = $arraySpyc[content_menu];
-			/* echo '<pre>';
-			print_r($contentMenu);
-			echo '</pre>';
-			exit(); */
+		if(file_exists($path)) {
+			$arraySpyc = Spyc::YAMLLoad($path);	
 			
-			if($contentMenu != null) {
-				$contentMenuData = array_filter($contentMenu, function($a){
-					$module = strtolower(Yii::app()->controller->module->id);
-					$controller = strtolower(Yii::app()->controller->id);
-					$action = strtolower(Yii::app()->controller->action->id);
-					//echo $module.'/'.$controller.'/'.$action;
-					
-					$siteType = explode(',', $a[urlRules][siteType]);
-					$userLevel = explode(',', $a[urlRules][userLevel]);
-					
-					if(count($a[urlRules]) == 5) {
-						$actionArray = explode(',', $a[urlRules][2]);
-						return $a[urlRules][0] == $module && $a[urlRules][1] == $controller && in_array($action, $actionArray) && in_array(OmmuSettings::getInfo('site_type'), $siteType) && in_array(Yii::app()->user->level, $userLevel);					
-					} else {
-						$actionArray = explode(',', $a[urlRules][1]);
-						return $a[urlRules][0] == $controller && in_array($action, $actionArray) && in_array(OmmuSettings::getInfo('site_type'), $siteType) && in_array(Yii::app()->user->level, $userLevel);					
-					}
-				});
-				return $contentMenuData;
-				
-			} else
+			if(!empty($arraySpyc))
+				return $arraySpyc;
+			else
 				return false;
 			
 		} else
@@ -185,36 +155,60 @@ class Utility
 	/**
 	* Return setting template with typePage: public, admin_sweeto or back_office
 	*/
-	public static function getPluginMenu($module=null) 
-	{		
-		Yii::import('application.components.plugin.Spyc');
-		define('DS', DIRECTORY_SEPARATOR);
-		
-		if($module == null)
-			return false;
+	public static function getModuleInfo($module=null)
+	{
+		define('DS', DIRECTORY_SEPARATOR);		
+		if($module != null)
+			$YMLPath = Yii::getPathOfAlias('application.modules.'.$module).DS.$module.'.yaml';			
 		else
-			$pluginMenuPath = Yii::getPathOfAlias('application.modules.'.$module).DS.$module.'.yaml';
+			$YMLPath = Yii::getPathOfAlias('application.ommu').DS.'ommu.yaml';
 			
+		if(file_exists($YMLPath)) {
+			$moduleInfo = self::getArrayFromYML($YMLPath);
 			
-		if(file_exists($pluginMenuPath)) {
-			$arraySpyc = Spyc::YAMLLoad($pluginMenuPath);
-			$pluginMenu = $arraySpyc[plugin_menu];
-			/* echo '<pre>';
-			print_r($pluginMenu);
-			echo '</pre>';
-			exit(); */
+			return $moduleInfo;
 			
-			if($pluginMenu != null) {
-				$pluginMenuData = array_filter($pluginMenu, function($a){					
-					$siteType = explode(',', $a[urlRules][siteType]);
-					$userLevel = explode(',', $a[urlRules][userLevel]);
-					
-					return in_array(OmmuSettings::getInfo('site_type'), $siteType) && in_array(Yii::app()->user->level, $userLevel);	
-				});
-				return $pluginMenuData;
+		} else
+			return false;
+	}
+	
+	/**
+	* Return setting template with typePage: public, admin_sweeto or back_office
+	*/
+	public static function getContentMenu($module=null) 
+	{
+		$moduleInfo = self::getModuleInfo($module);
+		$contentMenu = $moduleInfo['content_menu'];
+		
+		if($contentMenu != null) {
+			$contentMenuData = array_filter($contentMenu, function($a) {					
+				$siteType = explode(',', $a['urlRules']['siteType']);
+				$userLevel = explode(',', $a['urlRules']['userLevel']);
 				
-			} else
-				return false;
+				return in_array(OmmuSettings::getInfo('site_type'), $siteType) && in_array(Yii::app()->user->level, $userLevel);
+			});
+			return $contentMenuData;
+			
+		} else
+			return false;
+	}
+	
+	/**
+	* Return setting template with typePage: public, admin_sweeto or back_office
+	*/
+	public static function getModuleMenu($module=null) 
+	{
+		$moduleInfo = self::getModuleInfo($module);
+		$moduleMenu = $moduleInfo['plugin_menu'];
+		
+		if($moduleMenu != null) {
+			$moduleMenuData = array_filter($moduleMenu, function($a){					
+				$siteType = explode(',', $a['urlRules']['siteType']);
+				$userLevel = explode(',', $a['urlRules']['userLevel']);
+				
+				return in_array(OmmuSettings::getInfo('site_type'), $siteType) && in_array(Yii::app()->user->level, $userLevel);
+			});
+			return $moduleMenuData;
 			
 		} else
 			return false;
@@ -342,7 +336,11 @@ class Utility
 	/**
 	 * Get date format (general setting)
 	 */
-	public static function dateFormat($date, $time=false) {
+	public static function dateFormat($date, $time=false) 
+	{
+		if(is_numeric($date) && (int)$date == $date)
+			$date = date('Y-m-d H:i:s', $date);
+		
 		$setting = OmmuSettings::model()->findByPk(1,array(
 			'select' => 'site_dateformat, site_timeformat',
 		));

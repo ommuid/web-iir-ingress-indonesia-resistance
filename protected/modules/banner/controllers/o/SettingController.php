@@ -9,15 +9,15 @@
  *
  * TOC :
  *	Index
- *	Manage
+ *	Edit
  *
  *	LoadModel
  *	performAjaxValidation
  *
  * @author Putra Sudaryanto <putra@sudaryanto.id>
- * @copyright Copyright (c) 2014 Ommu Platform (ommu.co)
- * @link https://github.com/oMMu/Ommu-Banner
- * @contect (+62)856-299-4114
+ * @copyright Copyright (c) 2014 Ommu Platform (opensource.ommu.co)
+ * @link https://github.com/ommu/Banner
+ * @contact (+62)856-299-4114
  *
  *----------------------------------------------------------------------------------------------------------
  */
@@ -41,12 +41,10 @@ class SettingController extends Controller
 				$arrThemes = Utility::getCurrentTemplate('admin');
 				Yii::app()->theme = $arrThemes['folder'];
 				$this->layout = $arrThemes['layout'];
-			} else {
-				$this->redirect(Yii::app()->createUrl('site/login'));
-			}
-		} else {
+			} else
+				throw new CHttpException(404, Yii::t('phrase', 'The requested page does not exist.'));
+		} else
 			$this->redirect(Yii::app()->createUrl('site/login'));
-		}
 	}
 
 	/**

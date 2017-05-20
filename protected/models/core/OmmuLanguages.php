@@ -1,11 +1,11 @@
 <?php
 /**
  * OmmuLanguages
- * version: 1.1.0
+ * version: 1.2.0
  *
  * @author Putra Sudaryanto <putra@sudaryanto.id>
- * @copyright Copyright (c) 2012 Ommu Platform (ommu.co)
- * @link https://github.com/oMMu/Ommu-Core
+ * @copyright Copyright (c) 2012 Ommu Platform (opensource.ommu.co)
+ * @link https://github.com/ommu/Core
  * @contact (+62)856-299-4114
  *
  * This is the template for generating the model class of a specified table.
@@ -26,7 +26,6 @@
  * @property integer $actived
  * @property integer $defaults
  * @property string $code
- * @property integer $orders
  * @property string $name
  * @property string $creation_date
  * @property string $creation_id
@@ -68,12 +67,12 @@ class OmmuLanguages extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('code, name', 'required'),
-			array('actived, defaults, orders', 'numerical', 'integerOnly'=>true),
+			array('actived, defaults', 'numerical', 'integerOnly'=>true),
 			array('code', 'length', 'max'=>6),
 			array('name', 'length', 'max'=>32),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('language_id, actived, defaults, code, orders, name, creation_date, creation_id, modified_date, modified_id,
+			array('language_id, actived, defaults, code, name, creation_date, creation_id, modified_date, modified_id,
 				creation_search, modified_search', 'safe', 'on'=>'search'),
 		);
 	}
@@ -86,8 +85,8 @@ class OmmuLanguages extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'creation_relation' => array(self::BELONGS_TO, 'Users', 'creation_id'),
-			'modified_relation' => array(self::BELONGS_TO, 'Users', 'modified_id'),
+			'creation' => array(self::BELONGS_TO, 'Users', 'creation_id'),
+			'modified' => array(self::BELONGS_TO, 'Users', 'modified_id'),
 		);
 	}
 
@@ -101,7 +100,6 @@ class OmmuLanguages extends CActiveRecord
 			'actived' => Yii::t('attribute', 'Actived'),
 			'defaults' => Yii::t('attribute', 'Defaults'),
 			'code' => Yii::t('attribute', 'Language Code'),
-			'orders' => Yii::t('attribute', 'Orders'),
 			'name' => Yii::t('attribute', 'Language Name'),
 			'creation_date' => Yii::t('attribute', 'Creation Date'),
 			'creation_id' => Yii::t('attribute', 'Creation'),
@@ -122,12 +120,23 @@ class OmmuLanguages extends CActiveRecord
 		// should not be searched.
 
 		$criteria=new CDbCriteria;
+		
+		// Custom Search
+		$criteria->with = array(
+			'creation' => array(
+				'alias'=>'creation',
+				'select'=>'displayname'
+			),
+			'modified' => array(
+				'alias'=>'modified',
+				'select'=>'displayname'
+			),
+		);
 
 		$criteria->compare('language_id',$this->language_id);
 		$criteria->compare('actived',$this->actived);
 		$criteria->compare('defaults',$this->defaults);
 		$criteria->compare('code',strtolower($this->code),true);
-		$criteria->compare('orders',$this->orders);
 		$criteria->compare('name',strtolower($this->name),true);
 		if($this->creation_date != null && !in_array($this->creation_date, array('0000-00-00 00:00:00', '0000-00-00')))
 			$criteria->compare('date(t.creation_date)',date('Y-m-d', strtotime($this->creation_date)));
@@ -136,19 +145,8 @@ class OmmuLanguages extends CActiveRecord
 			$criteria->compare('date(t.modified_date)',date('Y-m-d', strtotime($this->modified_date)));
 		$criteria->compare('t.modified_id',$this->modified_id);
 		
-		// Custom Search
-		$criteria->with = array(
-			'creation_relation' => array(
-				'alias'=>'creation_relation',
-				'select'=>'displayname'
-			),
-			'modified_relation' => array(
-				'alias'=>'modified_relation',
-				'select'=>'displayname'
-			),
-		);
-		$criteria->compare('creation_relation.displayname',strtolower($this->creation_search), true);
-		$criteria->compare('modified_relation.displayname',strtolower($this->modified_search), true);
+		$criteria->compare('creation.displayname',strtolower($this->creation_search), true);
+		$criteria->compare('modified.displayname',strtolower($this->modified_search), true);
 		
 		if(!isset($_GET['OmmuLanguages_sort']))
 			$criteria->order = 't.language_id DESC';
@@ -183,7 +181,6 @@ class OmmuLanguages extends CActiveRecord
 			$this->defaultColumns[] = 'actived';
 			$this->defaultColumns[] = 'defaults';
 			$this->defaultColumns[] = 'code';
-			$this->defaultColumns[] = 'orders';
 			$this->defaultColumns[] = 'name';
 			$this->defaultColumns[] = 'creation_date';
 			$this->defaultColumns[] = 'creation_id';
@@ -207,7 +204,7 @@ class OmmuLanguages extends CActiveRecord
 			$this->defaultColumns[] = 'code';
 			$this->defaultColumns[] = array(
 				'name' => 'creation_search',
-				'value' => '$data->creation_relation->displayname',
+				'value' => '$data->creation->displayname',
 			);
 			$this->defaultColumns[] = array(
 				'name'  => 'defaults',
@@ -245,7 +242,6 @@ class OmmuLanguages extends CActiveRecord
 		$criteria=new CDbCriteria;
 		if($actived != null)
 			$criteria->compare('t.actived',$actived);
-		$criteria->order = 't.orders ASC';
 		
 		$model = self::model()->findAll($criteria);
 		
@@ -270,9 +266,14 @@ class OmmuLanguages extends CActiveRecord
 	/**
 	 * Get Default
 	 */
-	public static function getDefault(){
+	public static function getDefault($select=null) {
 		$model = self::model()->findByAttributes(array('defaults' => 1));
-		return $model->language_id;
+		if($select == null)
+			$return = $model->language_id;
+		else
+			$return = $model->$select;
+			
+		return $return;
 	}
 
 	/**
@@ -281,9 +282,8 @@ class OmmuLanguages extends CActiveRecord
 	protected function beforeValidate() {
 		if(parent::beforeValidate()) {		
 			if($this->isNewRecord) {
-				if ($this->defaults == 1)
+				if($this->defaults == 1)
 					$this->actived = 1;
-				$this->orders = 1;
 				$this->creation_id = Yii::app()->user->id;	
 			} else
 				$this->modified_id = Yii::app()->user->id;	

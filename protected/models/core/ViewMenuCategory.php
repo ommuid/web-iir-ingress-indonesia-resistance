@@ -1,12 +1,12 @@
 <?php
 /**
  * ViewMenuCategory
- * version: 1.1.0
+ * version: 1.2.0
  *
  * @author Putra Sudaryanto <putra@sudaryanto.id>
- * @copyright Copyright (c) 2016 Ommu Platform (ommu.co)
+ * @copyright Copyright (c) 2016 Ommu Platform (opensource.ommu.co)
  * @created date 24 March 2016, 09:28 WIB
- * @link https://github.com/oMMu/Ommu-Core
+ * @link https://github.com/ommu/Core
  * @contact (+62)856-299-4114
  *
  * This is the template for generating the model class of a specified table.
@@ -24,9 +24,8 @@
  *
  * The followings are the available columns in table '_view_core_menu_category':
  * @property integer $cat_id
- * @property string $title
- * @property string $description
  * @property string $menus
+ * @property string $menu_all
  */
 class ViewMenuCategory extends CActiveRecord
 {
@@ -68,11 +67,11 @@ class ViewMenuCategory extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('cat_id', 'numerical', 'integerOnly'=>true),
-			array('menus', 'length', 'max'=>21),
-			array('title, description', 'safe'),
+			array('menus, menu_all', 'length', 'max'=>21),
+			array('', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('cat_id, title, description, menus', 'safe', 'on'=>'search'),
+			array('cat_id, menus, menu_all', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -94,9 +93,8 @@ class ViewMenuCategory extends CActiveRecord
 	{
 		return array(
 			'cat_id' => Yii::t('attribute', 'Category'),
-			'title' => Yii::t('attribute', 'Title'),
-			'description' => Yii::t('attribute', 'Description'),
 			'menus' => Yii::t('attribute', 'Menus'),
+			'menu_all' => Yii::t('attribute', 'Menu All'),
 		);
 	}
 
@@ -119,9 +117,8 @@ class ViewMenuCategory extends CActiveRecord
 		$criteria=new CDbCriteria;
 
 		$criteria->compare('t.cat_id',$this->cat_id);
-		$criteria->compare('t.title',strtolower($this->title),true);
-		$criteria->compare('t.description',strtolower($this->description),true);
 		$criteria->compare('t.menus',strtolower($this->menus),true);
+		$criteria->compare('t.menu_all',strtolower($this->menu_all),true);
 
 		if(!isset($_GET['ViewMenuCategory_sort']))
 			$criteria->order = 't.cat_id DESC';
@@ -153,9 +150,8 @@ class ViewMenuCategory extends CActiveRecord
 			}
 		} else {
 			$this->defaultColumns[] = 'cat_id';
-			$this->defaultColumns[] = 'title';
-			$this->defaultColumns[] = 'description';
 			$this->defaultColumns[] = 'menus';
+			$this->defaultColumns[] = 'menu_all';
 		}
 
 		return $this->defaultColumns;
@@ -171,9 +167,8 @@ class ViewMenuCategory extends CActiveRecord
 				'value' => '$this->grid->dataProvider->pagination->currentPage*$this->grid->dataProvider->pagination->pageSize + $row+1'
 			);
 			$this->defaultColumns[] = 'cat_id';
-			$this->defaultColumns[] = 'title';
-			$this->defaultColumns[] = 'description';
 			$this->defaultColumns[] = 'menus';
+			$this->defaultColumns[] = 'menu_all';
 		}
 		parent::afterConstruct();
 	}

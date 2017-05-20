@@ -3,11 +3,12 @@
  * Banner Categories (banner-category)
  * @var $this CategoryController
  * @var $model BannerCategory
+ * version: 0.0.1
  *
  * @author Putra Sudaryanto <putra@sudaryanto.id>
- * @copyright Copyright (c) 2014 Ommu Platform (ommu.co)
- * @link https://github.com/oMMu/Ommu-Banner
- * @contect (+62)856-299-4114
+ * @copyright Copyright (c) 2014 Ommu Platform (opensource.ommu.co)
+ * @link https://github.com/ommu/Banner
+ * @contact (+62)856-299-4114
  *
  */
 
@@ -29,11 +30,10 @@ if(Yii::app()->user->hasFlash('success'))
 	'attributes'=>array(
 		'cat_id',
 		'publish',
-		'orders',
 		'name',
 		'desc',
-		'media_size',
-		'limit',
+		'banner_size',
+		'banner_limit',
 		'creation_date',
 		'creation_id',
 		'modified_date',

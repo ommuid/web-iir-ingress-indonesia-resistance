@@ -1,14 +1,25 @@
 <?php
 /**
  * OFunction class file
+ * version: 1.2.0
  *
- * @author Putra Sudaryanto <putra@sudaryanto.me>
+ * Reference start
+ *
+ * TOC :
+ *	getDataProviderPager
+ *	urlParse
+ *	twitterParse
+ *	OParse
+ *	validHostURL
+ *	validFeedbackData
+ *	setUrlManagerRules
+ *	getRulePos
+ *
+ * @author Putra Sudaryanto <putra@sudaryanto.id>
  * @create date April 15, 2014 10:29 WIB
- * @version 1.0
- * @copyright Copyright (c) 2014 Ommu Platform (ommu.co)
- * @link https://github.com/oMMu/Ommu-Core
- * @contect (+62)856-299-4114
- *
+ * @copyright Copyright (c) 2014 Ommu Platform (opensource.ommu.co)
+ * @link https://github.com/ommu/Core
+ * @contact (+62)856-299-4114
  *
  * Contains many function that most used
  *
@@ -75,7 +86,8 @@ class OFunction
 	 * Valid target api url, if application ecc3 datacenter is accessed from other place
 	 * Defined host url + target url
 	 */
-	public static function validHostURL($targetUrl) {
+	public static function validHostURL($targetUrl) 
+	{
 		$req = Yii::app()->request;
 		$url = ($req->port == 80? 'http://': 'https://') . $req->serverName;
 		
@@ -89,7 +101,8 @@ class OFunction
 	 * Valid target api url, if application ecc3 datacenter is accessed from other place
 	 * Defined host url + target url
 	 */
-	public static function validFeedbackData($data) {
+	public static function validFeedbackData($data) 
+	{
 		return $data != null ? $data : '-';
 	}
 	

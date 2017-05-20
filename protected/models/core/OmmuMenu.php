@@ -1,12 +1,12 @@
 <?php
 /**
  * OmmuMenu
- * version: 1.1.0
+ * version: 1.2.0
  *
  * @author Putra Sudaryanto <putra@sudaryanto.id>
- * @copyright Copyright (c) 2016 Ommu Platform (ommu.co)
+ * @copyright Copyright (c) 2016 Ommu Platform (opensource.ommu.co)
  * @created date 24 March 2016, 09:46 WIB
- * @link https://github.com/oMMu/Ommu-Core
+ * @link https://github.com/ommu/Core
  * @contact (+62)856-299-4114
  *
  * This is the template for generating the model class of a specified table.
@@ -47,6 +47,7 @@ class OmmuMenu extends CActiveRecord
 	public $title;
 	
 	// Variable Search
+	public $parent_search;
 	public $creation_search;
 	public $modified_search;
 
@@ -83,11 +84,12 @@ class OmmuMenu extends CActiveRecord
 			array('name, creation_id, modified_id', 'length', 'max'=>11),
 			array('sitetype_access, userlevel_access,
 				title', 'length', 'max'=>32),
-			array('', 'safe'),
+			array('attr,
+				title', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('id, publish, cat_id, dependency, orders, name, url, attr, sitetype_access, userlevel_access, creation_date, creation_id, modified_date, modified_id,
-				title, creation_search, modified_search', 'safe', 'on'=>'search'),
+				title, parent_search, creation_search, modified_search', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -100,9 +102,11 @@ class OmmuMenu extends CActiveRecord
 		// class name for the relations automatically generated below.
 		return array(
 			'view' => array(self::BELONGS_TO, 'ViewMenu', 'id'),
-			'cat_relation' => array(self::BELONGS_TO, 'OmmuMenuCategory', 'cat_id'),
-			'creation_relation' => array(self::BELONGS_TO, 'Users', 'creation_id'),
-			'modified_relation' => array(self::BELONGS_TO, 'Users', 'modified_id'),
+			'title' => array(self::BELONGS_TO, 'OmmuSystemPhrase', 'name'),
+			'cat' => array(self::BELONGS_TO, 'OmmuMenuCategory', 'cat_id'),
+			'creation' => array(self::BELONGS_TO, 'Users', 'creation_id'),
+			'modified' => array(self::BELONGS_TO, 'Users', 'modified_id'),
+			'submenus' => array(self::HAS_MANY, 'OmmuMenu', 'dependency', 'on'=>'submenus.publish=1'),
 		);
 	}
 
@@ -126,6 +130,7 @@ class OmmuMenu extends CActiveRecord
 			'creation_id' => Yii::t('attribute', 'Creation'),
 			'modified_date' => Yii::t('attribute', 'Modified Date'),
 			'modified_id' => Yii::t('attribute', 'Modified'),
+			'parent_search' => Yii::t('attribute', 'Parent'),
 			'creation_search' => Yii::t('attribute', 'Creation'),
 			'modified_search' => Yii::t('attribute', 'Modified'),
 		);
@@ -148,6 +153,36 @@ class OmmuMenu extends CActiveRecord
 		// @todo Please modify the following code to remove attributes that should not be searched.
 
 		$criteria=new CDbCriteria;
+		
+		// Custom Search
+		$defaultLang = OmmuLanguages::getDefault('code');
+		if(isset(Yii::app()->session['language']))
+			$language = Yii::app()->session['language'];
+		else 
+			$language = $defaultLang;
+		
+		$criteria->with = array(
+			'title' => array(
+				'alias'=>'title',
+				'select'=>$language,
+			),
+			'submenus' => array(
+				'alias'=>'submenus',
+				'together' => true,
+			),
+			'submenus.title' => array(
+				'alias'=>'submenu_title',
+				'select'=>$language,
+			),
+			'creation' => array(
+				'alias'=>'creation',
+				'select'=>'displayname'
+			),
+			'modified' => array(
+				'alias'=>'modified',
+				'select'=>'displayname'
+			),
+		);
 
 		$criteria->compare('t.id',strtolower($this->id),true);
 		if(isset($_GET['type']) && $_GET['type'] == 'publish')
@@ -184,23 +219,10 @@ class OmmuMenu extends CActiveRecord
 		else
 			$criteria->compare('t.modified_id',$this->modified_id);
 		
-		// Custom Search
-		$criteria->with = array(
-			'view' => array(
-				'alias'=>'view',
-			),
-			'creation_relation' => array(
-				'alias'=>'creation_relation',
-				'select'=>'displayname'
-			),
-			'modified_relation' => array(
-				'alias'=>'modified_relation',
-				'select'=>'displayname'
-			),
-		);
-		$criteria->compare('view.title',strtolower($this->title), true);
-		$criteria->compare('creation_relation.displayname',strtolower($this->creation_search), true);
-		$criteria->compare('modified_relation.displayname',strtolower($this->modified_search), true);
+		$criteria->compare('title.'.$language,strtolower($this->title), true);
+		$criteria->compare('submenu_title.'.$language,strtolower($this->parent_search), true);
+		$criteria->compare('creation.displayname',strtolower($this->creation_search), true);
+		$criteria->compare('modified.displayname',strtolower($this->modified_search), true);
 
 		if(!isset($_GET['OmmuMenu_sort']))
 			$criteria->order = 't.id DESC';
@@ -270,22 +292,22 @@ class OmmuMenu extends CActiveRecord
 			if(!isset($_GET['category'])) {
 				$this->defaultColumns[] = array(
 					'name' => 'cat_id',
-					'value' => 'Phrase::trans($data->cat_relation->name, 2)',
+					'value' => 'Phrase::trans($data->cat->name)',
 					'filter'=> OmmuMenuCategory::getCategory(),
 					'type' => 'raw',
 				);
 			}
 			$this->defaultColumns[] = array(
 				'name' => 'title',
-				'value' => 'Phrase::trans($data->name, 2)',
+				'value' => 'Phrase::trans($data->submenus->title->name)',
 			);
 			$this->defaultColumns[] = array(
-				'name' => 'dependency',
+				'name' => 'parent_search',
 				'value' => '$data->dependency != 0 ? $data->dependency : "-"',
 			);
 			$this->defaultColumns[] = array(
 				'name' => 'creation_search',
-				'value' => '$data->creation_relation->displayname',
+				'value' => '$data->creation->displayname',
 			);
 			$this->defaultColumns[] = array(
 				'name' => 'creation_date',
@@ -293,11 +315,11 @@ class OmmuMenu extends CActiveRecord
 				'htmlOptions' => array(
 					'class' => 'center',
 				),
-				'filter' => Yii::app()->controller->widget('zii.widgets.jui.CJuiDatePicker', array(
+				'filter' => Yii::app()->controller->widget('application.components.system.CJuiDatePicker', array(
 					'model'=>$this,
 					'attribute'=>'creation_date',
-					'language' => 'ja',
-					'i18nScriptFile' => 'jquery.ui.datepicker-en.js',
+					'language' => 'en',
+					'i18nScriptFile' => 'jquery-ui-i18n.min.js',
 					//'mode'=>'datetime',
 					'htmlOptions' => array(
 						'id' => 'creation_date_filter',
@@ -367,7 +389,7 @@ class OmmuMenu extends CActiveRecord
 			$items = array();
 			if($model != null) {
 				foreach($model as $key => $val) {
-					$items[$val->id] = Phrase::trans($val->name, 2);
+					$items[$val->id] = Phrase::trans($val->name);
 				}
 				return $items;
 			} else {
@@ -393,10 +415,13 @@ class OmmuMenu extends CActiveRecord
 	/**
 	 * before save attributes
 	 */
-	protected function beforeSave() {
-		if(parent::beforeSave()) {			
-			if($this->isNewRecord) {
-				$location = strtolower(Yii::app()->controller->id);
+	protected function beforeSave() 
+	{
+		$currentAction = strtolower(Yii::app()->controller->id.'/'.Yii::app()->controller->action->id);
+		$location = Utility::getUrlTitle($currentAction);
+		
+		if(parent::beforeSave()) {
+			if($this->isNewRecord || (!$this->isNewRecord && $this->name == 0)) {
 				$title=new OmmuSystemPhrase;
 				$title->location = $location.'_title';
 				$title->en_us = $this->title;

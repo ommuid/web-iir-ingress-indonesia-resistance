@@ -1,11 +1,11 @@
 <?php
 /**
  * ViewZoneVillage
- * version: 1.1.0
+ * version: 1.2.0
  *
  * @author Putra Sudaryanto <putra@sudaryanto.id>
- * @copyright Copyright (c) 2015 Ommu Platform (ommu.co)
- * @link https://github.com/oMMu/Ommu-Core
+ * @copyright Copyright (c) 2015 Ommu Platform (opensource.ommu.co)
+ * @link https://github.com/ommu/Core
  * @contact (+62)856-299-4114
  *
  * This is the template for generating the model class of a specified table.
@@ -25,8 +25,8 @@
  * @property string $village_id
  * @property string $village_name
  * @property string $district_name
- * @property string $city
- * @property string $province
+ * @property string $city_name
+ * @property string $province_name
  */
 class ViewZoneVillage extends CActiveRecord
 {
@@ -69,10 +69,10 @@ class ViewZoneVillage extends CActiveRecord
 		return array(
 			array('village_name', 'required'),
 			array('village_id', 'length', 'max'=>11),
-			array('village_name, district_name, city, province', 'length', 'max'=>64),
+			array('village_name, district_name, city_name, province_name', 'length', 'max'=>64),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('village_id, village_name, district_name, city, province', 'safe', 'on'=>'search'),
+			array('village_id, village_name, district_name, city_name, province_name', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -94,10 +94,10 @@ class ViewZoneVillage extends CActiveRecord
 	{
 		return array(
 			'village_id' => Yii::t('attribute', 'Village'),
-			'village_name' => Yii::t('attribute', 'Village Name'),
-			'district_name' => Yii::t('attribute', 'District Name'),
-			'city' => Yii::t('attribute', 'City'),
-			'province' => Yii::t('attribute', 'Province'),
+			'village_name' => Yii::t('attribute', 'Village'),
+			'district_name' => Yii::t('attribute', 'District'),
+			'city_name' => Yii::t('attribute', 'City'),
+			'province_name' => Yii::t('attribute', 'Province'),
 		);
 	}
 
@@ -122,8 +122,8 @@ class ViewZoneVillage extends CActiveRecord
 		$criteria->compare('t.village_id',strtolower($this->village_id),true);
 		$criteria->compare('t.village_name',strtolower($this->village_name),true);
 		$criteria->compare('t.district_name',strtolower($this->district_name),true);
-		$criteria->compare('t.city',strtolower($this->city),true);
-		$criteria->compare('t.province',strtolower($this->province),true);
+		$criteria->compare('t.city_name',strtolower($this->city_name),true);
+		$criteria->compare('t.province_name',strtolower($this->province_name),true);
 
 		if(!isset($_GET['ViewZoneVillage_sort']))
 			$criteria->order = 't.village_id DESC';
@@ -157,8 +157,8 @@ class ViewZoneVillage extends CActiveRecord
 			$this->defaultColumns[] = 'village_id';
 			$this->defaultColumns[] = 'village_name';
 			$this->defaultColumns[] = 'district_name';
-			$this->defaultColumns[] = 'city';
-			$this->defaultColumns[] = 'province';
+			$this->defaultColumns[] = 'city_name';
+			$this->defaultColumns[] = 'province_name';
 		}
 
 		return $this->defaultColumns;
@@ -176,8 +176,8 @@ class ViewZoneVillage extends CActiveRecord
 			$this->defaultColumns[] = 'village_id';
 			$this->defaultColumns[] = 'village_name';
 			$this->defaultColumns[] = 'district_name';
-			$this->defaultColumns[] = 'city';
-			$this->defaultColumns[] = 'province';
+			$this->defaultColumns[] = 'city_name';
+			$this->defaultColumns[] = 'province_name';
 		}
 		parent::afterConstruct();
 	}

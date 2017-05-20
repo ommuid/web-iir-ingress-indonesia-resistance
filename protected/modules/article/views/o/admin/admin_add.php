@@ -4,10 +4,11 @@
  * @var $this AdminController
  * @var $model Articles
  * @var $form CActiveForm
+ * version: 0.0.1
  *
  * @author Putra Sudaryanto <putra@sudaryanto.id>
- * @copyright Copyright (c) 2012 Ommu Platform (ommu.co)
- * @link https://github.com/oMMu/Ommu-Articles
+ * @copyright Copyright (c) 2012 Ommu Platform (opensource.ommu.co)
+ * @link https://github.com/ommu/Articles
  * @contact (+62)856-299-4114
  *
  */
@@ -22,5 +23,7 @@
 	<?php echo $this->renderPartial('_form', array(
 		'model'=>$model,		
 		'setting'=>$setting,
+		'media_file_type'=>$media_file_type,
+		'upload_file_type'=>$upload_file_type,
 	)); ?>
 </div>

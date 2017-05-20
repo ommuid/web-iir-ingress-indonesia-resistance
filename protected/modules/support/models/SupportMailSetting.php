@@ -1,9 +1,11 @@
 <?php
 /**
  * SupportMailSetting
+ * version: 0.2.1
+ *
  * @author Putra Sudaryanto <putra@sudaryanto.id>
- * @copyright Copyright (c) 2012 Ommu Platform (ommu.co)
- * @link https://github.com/oMMu/Ommu-Support
+ * @copyright Copyright (c) 2012 Ommu Platform (opensource.ommu.co)
+ * @link https://github.com/ommu/Support
  * @contact (+62)856-299-4114
  *
  * This is the template for generating the model class of a specified table.
@@ -88,7 +90,7 @@ class SupportMailSetting extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'modified_relation' => array(self::BELONGS_TO, 'Users', 'modified_id'),
+			'modified' => array(self::BELONGS_TO, 'Users', 'modified_id'),
 		);
 	}
 
@@ -147,12 +149,12 @@ class SupportMailSetting extends CActiveRecord
 		
 		// Custom Search
 		$criteria->with = array(
-			'modified_relation' => array(
-				'alias'=>'modified_relation',
+			'modified' => array(
+				'alias'=>'modified',
 				'select'=>'displayname',
 			),
 		);
-		$criteria->compare('modified_relation.displayname',strtolower($this->modified_search), true);
+		$criteria->compare('modified.displayname',strtolower($this->modified_search), true);
 			
 		if(!isset($_GET['SupportMailSetting_sort']))
 			$criteria->order = 't.id DESC';
@@ -225,7 +227,7 @@ class SupportMailSetting extends CActiveRecord
 			$this->defaultColumns[] = 'modified_id';
 			$this->defaultColumns[] = array(
 				'name' => 'modified_search',
-				'value' => '$data->modified_relation->displayname',
+				'value' => '$data->modified->displayname',
 			);
 
 		}
@@ -235,16 +237,16 @@ class SupportMailSetting extends CActiveRecord
 	/**
 	 * User get information
 	 */
-	public static function getInfo($id, $column=null)
+	public static function getInfo($column=null)
 	{
 		if($column != null) {
-			$model = self::model()->findByPk($id,array(
+			$model = self::model()->findByPk(1,array(
 				'select' => $column
 			));
 			return $model->$column;
 			
 		} else {
-			$model = self::model()->findByPk($id);
+			$model = self::model()->findByPk(1);
 			return $model;			
 		}
 	}
@@ -257,65 +259,77 @@ class SupportMailSetting extends CActiveRecord
 		ini_set('max_execution_time', 0);
 		ob_start();
 		
-		Yii::import('application.extensions.phpmailer.JPhpMailer');
 		$model = self::model()->findByPk(1,array(
 			'select' => 'mail_contact, mail_name, mail_from, mail_smtp, smtp_address, smtp_port, smtp_username, smtp_password, smtp_ssl',
 		));
 		$setting = OmmuSettings::model()->findByPk(1, array(
 			'select' => 'site_title',
 		));
-
-		$mail=new JPhpMailer;
-
-		if($model->mail_smtp == 1 || $_SERVER["SERVER_ADDR"]=='127.0.0.1' || $_SERVER["HTTP_HOST"]=='localhost') {
-			//in localhost or testing condition
-			//smtp google 
-			$mail->IsSMTP();								// Set mailer to use SMTP
-			$mail->Host			= $model->smtp_address;		// Specify main and backup server
-			$mail->Port			= $model->smtp_port;		// set the SMTP port
-			$mail->SMTPAuth		= true;						// Enable SMTP authentication
-			$mail->Username		= $model->smtp_username;	// SES SMTP  username
-			$mail->Password		= $model->smtp_password;	// SES SMTP password
-			if($model->smtp_ssl != 0)
-				$mail->SMTPSecure	= $model->smtp_ssl == 1 ? "tls" : "ssl";	// Enable encryption, 'ssl' also accepted
-
-		} else {
-			//live server 
-			$mail->IsMail();
-		}
 		
-		if($to_email != null && $to_name != null) {
-			$mail->SetFrom($model->mail_from, $model->mail_name);
-			$mail->AddReplyTo($model->mail_from, $model->mail_name);			
-			$mail->AddAddress($to_email, $to_name);
-		} else {
-			$mail->SetFrom($model->mail_from, Yii::t('attribute', '[System]').' '.$setting->site_title);
-			$mail->AddReplyTo($model->mail_from, Yii::t('attribute', '[System]').' '.$setting->site_title);
-			$mail->AddAddress($model->mail_contact, $model->mail_name);
-		}
+		$debug = Yii::app()->params['debug']['send_email'];
+		$debugStatus = $debug['status'];
+		$debugContent = $debug['content'];
+		$debugEmail = $debug['email'];
+		
+		if($debugStatus == 1 && in_array(Yii::app()->request->serverName, array('localhost','127.0.0.1','192.168.3.13')) && $debugContent == 'file_put_contents') {
+			file_put_contents(Utility::getUrlTitle($subject).'.htm', $message);
 			
-		// cc
-		if ($cc != null && count($cc) > 0) {
-			foreach ($cc as $email => $name)
-				$mail->AddAddress($email, $name);
-		}
-		// attachment
-		if ($attachment != null)
-			$mail->addAttachment($attachment);
-		
-		$mail->Subject = $subject;
-		$mail->MsgHTML($message);
-
-		if($mail->Send()) {
-			return true;
-			echo 'send';
 		} else {
-			return false;
-			echo 'no send';
+			if($debugStatus == 1 && in_array(Yii::app()->request->serverName, array('localhost','127.0.0.1','192.168.3.13')) && $debugContent == 'send_email')
+				$to_email = $to_name = $debugEmail;
+				
+			Yii::import('application.extensions.phpmailer.JPhpMailer');
+			$mail=new JPhpMailer;
+
+			if($model->mail_smtp == 1 || $_SERVER["SERVER_ADDR"]=='127.0.0.1' || $_SERVER["HTTP_HOST"]=='localhost') {
+				//in localhost or testing condition
+				//smtp google 
+				$mail->IsSMTP();								// Set mailer to use SMTP
+				$mail->Host			= $model->smtp_address;		// Specify main and backup server
+				$mail->Port			= $model->smtp_port;		// set the SMTP port
+				$mail->SMTPAuth		= true;						// Enable SMTP authentication
+				$mail->Username		= $model->smtp_username;	// SES SMTP  username
+				$mail->Password		= $model->smtp_password;	// SES SMTP password
+				if($model->smtp_ssl != 0)
+					$mail->SMTPSecure	= $model->smtp_ssl == 1 ? "tls" : "ssl";	// Enable encryption, 'ssl' also accepted
+
+			} else {
+				//live server 
+				$mail->IsMail();
+			}
+			
+			if($to_email != null && $to_name != null) {
+				$mail->SetFrom($model->mail_from, $model->mail_name);
+				$mail->AddReplyTo($model->mail_from, $model->mail_name);			
+				$mail->AddAddress($to_email, $to_name);
+			} else {
+				$mail->SetFrom($model->mail_from, Yii::t('phrase', '[System]').' '.$setting->site_title);
+				$mail->AddReplyTo($model->mail_from, Yii::t('phrase', '[System]').' '.$setting->site_title);
+				$mail->AddAddress($model->mail_contact, $model->mail_name);
+			}
+				
+			// cc
+			if ($cc != null && count($cc) > 0) {
+				foreach ($cc as $email => $name)
+					$mail->AddAddress($email, $name);
+			}
+			// attachment
+			if ($attachment != null)
+				$mail->addAttachment($attachment);
+			
+			$mail->Subject = $subject;
+			$mail->MsgHTML($message);
+
+			if($mail->Send()) {
+				return true;
+				//echo 'send';
+			} else {
+				return false;
+				//echo 'no send';
+			}			
 		}
 
 		ob_end_flush();
-		exit();
     }
 
 	/**
@@ -324,19 +338,17 @@ class SupportMailSetting extends CActiveRecord
 	protected function beforeValidate() {
 		if(parent::beforeValidate()) {
 			if($this->mail_smtp == '1') {
-				if($this->smtp_address == '') {
-					$this->addError('smtp_address', Yii::t('attribute', 'SMTP Server Address cannot be blank.'));
-				}
-				if($this->smtp_port == '') {
-					$this->addError('smtp_port', Yii::t('attribute', 'SMTP Server Port cannot be blank.'));
-				}
+				if($this->smtp_address == '')
+					$this->addError('smtp_address', Yii::t('phrase', 'SMTP Server Address cannot be blank.'));
+				
+				if($this->smtp_port == '')
+					$this->addError('smtp_port', Yii::t('phrase', 'SMTP Server Port cannot be blank.'));
+				
 				if($this->smtp_authentication == '1') {
-					if($this->smtp_username == '') {
-						$this->addError('smtp_username', Yii::t('attribute', 'SMTP Username cannot be blank.'));
-					}
-					if($this->smtp_password == '') {
-						$this->addError('smtp_password', Yii::t('attribute', 'SMTP Password cannot be blank.'));
-					}
+					if($this->smtp_username == '')
+						$this->addError('smtp_username', Yii::t('phrase', 'SMTP Username cannot be blank.'));
+					if($this->smtp_password == '')
+						$this->addError('smtp_password', Yii::t('phrase', 'SMTP Password cannot be blank.'));
 				}
 			}
 

@@ -4,7 +4,7 @@
  * @var $this ZonecityController
  * @var $model OmmuZoneCity
  * @var $form CActiveForm
- * version: 1.1.0
+ * version: 1.2.0
  * Reference start
  *
  * TOC :
@@ -21,9 +21,9 @@
  *	performAjaxValidation
  *
  * @author Putra Sudaryanto <putra@sudaryanto.id>
- * @copyright Copyright (c) 2015 Ommu Platform (ommu.co)
- * @link https://github.com/oMMu/Ommu-Core
- * @contect (+62)856-299-4114
+ * @copyright Copyright (c) 2015 Ommu Platform (opensource.ommu.co)
+ * @link https://github.com/ommu/Core
+ * @contact (+62)856-299-4114
  *
  *----------------------------------------------------------------------------------------------------------
  */
@@ -47,12 +47,10 @@ class ZonecityController extends Controller
 				$arrThemes = Utility::getCurrentTemplate('admin');
 				Yii::app()->theme = $arrThemes['folder'];
 				$this->layout = $arrThemes['layout'];
-			} else {
-				$this->redirect(Yii::app()->createUrl('site/login'));
-			}
-		} else {
+			} else
+				throw new CHttpException(404, Yii::t('phrase', 'The requested page does not exist.'));
+		} else
 			$this->redirect(Yii::app()->createUrl('site/login'));
-		}
 	}
 
 	/**
@@ -115,15 +113,15 @@ class ZonecityController extends Controller
 		if($id == null) {
 			if(isset($_GET['term'])) {
 				$criteria = new CDbCriteria;
-				$criteria->condition = 'city LIKE :city';
-				$criteria->select	= "city_id, city";
+				$criteria->condition = 'city_name LIKE :city';
+				$criteria->select	= "city_id, city_name";
 				$criteria->order = "city_id ASC";
 				$criteria->params = array(':city' => '%' . strtolower($_GET['term']) . '%');
 				$model = OmmuZoneCity::model()->findAll($criteria);
 
 				if($model) {
 					foreach($model as $items) {
-						$result[] = array('id' => $items->city_id, 'value' => $items->city);
+						$result[] = array('id' => $items->city_id, 'value' => $items->city_name);
 					}
 				}
 			}

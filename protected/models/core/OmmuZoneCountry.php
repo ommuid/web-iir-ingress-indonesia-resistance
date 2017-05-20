@@ -1,11 +1,11 @@
 <?php
 /**
  * OmmuZoneCountry
- * version: 1.1.0
+ * version: 1.2.0
  *
  * @author Putra Sudaryanto <putra@sudaryanto.id>
- * @copyright Copyright (c) 2012 Ommu Platform (ommu.co)
- * @link https://github.com/oMMu/Ommu-Core
+ * @copyright Copyright (c) 2012 Ommu Platform (opensource.ommu.co)
+ * @link https://github.com/ommu/Core
  * @contact (+62)856-299-4114
  *
  * This is the template for generating the model class of a specified table.
@@ -23,7 +23,7 @@
  *
  * The followings are the available columns in table 'ommu_core_zone_country':
  * @property integer $country_id
- * @property string $country
+ * @property string $country_name
  * @property string $code
  * @property string $creation_date
  * @property string $creation_id
@@ -67,14 +67,14 @@ class OmmuZoneCountry extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('country, code', 'required'),
-			array('country', 'length', 'max'=>64),
+			array('country_name, code', 'required'),
+			array('country_name', 'length', 'max'=>64),
 			array('code', 'length', 'max'=>2),
 			array('creation_id, modified_id', 'length', 'max'=>11),
 			array('creation_id, modified_id', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('country_id, country, code, creation_date, creation_id, modified_date, modified_id,
+			array('country_id, country_name, code, creation_date, creation_id, modified_date, modified_id,
 				creation_search, modified_search', 'safe', 'on'=>'search'),
 		);
 	}
@@ -87,9 +87,9 @@ class OmmuZoneCountry extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'creation_relation' => array(self::BELONGS_TO, 'Users', 'creation_id'),
-			'modified_relation' => array(self::BELONGS_TO, 'Users', 'modified_id'),
-			'province_relation' => array(self::HAS_MANY, 'OmmuZoneProvince', 'country_id'),
+			'creation' => array(self::BELONGS_TO, 'Users', 'creation_id'),
+			'modified' => array(self::BELONGS_TO, 'Users', 'modified_id'),
+			'provinces' => array(self::HAS_MANY, 'OmmuZoneProvince', 'country_id'),
 		);
 	}
 
@@ -100,7 +100,7 @@ class OmmuZoneCountry extends CActiveRecord
 	{
 		return array(
 			'country_id' => Yii::t('attribute', 'Country'),
-			'country' => Yii::t('attribute', 'Country'),
+			'country_name' => Yii::t('attribute', 'Country'),
 			'code' => Yii::t('attribute', 'Code'),
 			'creation_date' => Yii::t('attribute', 'Creation Date'),
 			'creation_id' => Yii::t('attribute', 'Creation'),
@@ -128,9 +128,21 @@ class OmmuZoneCountry extends CActiveRecord
 		// @todo Please modify the following code to remove attributes that should not be searched.
 
 		$criteria=new CDbCriteria;
+		
+		// Custom Search
+		$criteria->with = array(
+			'creation' => array(
+				'alias'=>'creation',
+				'select'=>'displayname',
+			),
+			'modified' => array(
+				'alias'=>'modified',
+				'select'=>'displayname',
+			),
+		);
 
 		$criteria->compare('t.country_id',$this->country_id);
-		$criteria->compare('t.country',strtolower($this->country),true);
+		$criteria->compare('t.country_name',strtolower($this->country_name),true);
 		$criteria->compare('t.code',strtolower($this->code),true);
 		if($this->creation_date != null && !in_array($this->creation_date, array('0000-00-00 00:00:00', '0000-00-00')))
 			$criteria->compare('date(t.creation_date)',date('Y-m-d', strtotime($this->creation_date)));
@@ -145,19 +157,8 @@ class OmmuZoneCountry extends CActiveRecord
 		else
 			$criteria->compare('t.modified_id',$this->modified_id);
 		
-		// Custom Search
-		$criteria->with = array(
-			'creation_relation' => array(
-				'alias'=>'creation_relation',
-				'select'=>'displayname',
-			),
-			'modified_relation' => array(
-				'alias'=>'modified_relation',
-				'select'=>'displayname',
-			),
-		);
-		$criteria->compare('creation_relation.displayname',strtolower($this->creation_search), true);
-		$criteria->compare('modified_relation.displayname',strtolower($this->modified_search), true);
+		$criteria->compare('creation.displayname',strtolower($this->creation_search), true);
+		$criteria->compare('modified.displayname',strtolower($this->modified_search), true);
 
 		if(!isset($_GET['OmmuZoneCountry_sort']))
 			$criteria->order = 't.country_id DESC';
@@ -189,7 +190,7 @@ class OmmuZoneCountry extends CActiveRecord
 			}
 		} else {
 			//$this->defaultColumns[] = 'country_id';
-			$this->defaultColumns[] = 'country';
+			$this->defaultColumns[] = 'country_name';
 			$this->defaultColumns[] = 'code';
 			$this->defaultColumns[] = 'creation_date';
 			$this->defaultColumns[] = 'creation_id';
@@ -209,11 +210,11 @@ class OmmuZoneCountry extends CActiveRecord
 				'header' => 'No',
 				'value' => '$this->grid->dataProvider->pagination->currentPage*$this->grid->dataProvider->pagination->pageSize + $row+1'
 			);
-			$this->defaultColumns[] = 'country';
+			$this->defaultColumns[] = 'country_name';
 			$this->defaultColumns[] = 'code';
 			$this->defaultColumns[] = array(
 				'name' => 'creation_search',
-				'value' => '$data->creation_relation->displayname',
+				'value' => '$data->creation->displayname',
 			);
 			$this->defaultColumns[] = array(
 				'name' => 'creation_date',
@@ -221,11 +222,11 @@ class OmmuZoneCountry extends CActiveRecord
 				'htmlOptions' => array(
 					'class' => 'center',
 				),
-				'filter' => Yii::app()->controller->widget('zii.widgets.jui.CJuiDatePicker', array(
+				'filter' => Yii::app()->controller->widget('application.components.system.CJuiDatePicker', array(
 					'model'=>$this,
 					'attribute'=>'creation_date',
-					'language' => 'ja',
-					'i18nScriptFile' => 'jquery.ui.datepicker-en.js',
+					'language' => 'en',
+					'i18nScriptFile' => 'jquery-ui-i18n.min.js',
 					//'mode'=>'datetime',
 					'htmlOptions' => array(
 						'id' => 'creation_date_filter',
@@ -265,13 +266,14 @@ class OmmuZoneCountry extends CActiveRecord
 	/**
 	 * Get country
 	 */
-	public static function getCountry() {
+	public static function getCountry() 
+	{
 		$model = self::model()->findAll();
 
 		$items = array();
 		if($model != null) {
 			foreach($model as $key => $val) {
-				$items[$val->country_id] = $val->country;
+				$items[$val->country_id] = $val->country_name;
 			}
 			return $items;
 		} else {

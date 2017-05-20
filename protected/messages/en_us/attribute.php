@@ -143,7 +143,6 @@ return array(
 	'site_dateformat' => 'Site Dateformat',
 	'site_description' => 'Site Description',
 	'site_email' => 'Email Setting',
-	'site_headline' => 'Site Headline',
 	'site_keywords' => 'Site Keywords',
 	'site_timeformat' => 'Site Timeformat',
 	'site_title' => 'Site Title',

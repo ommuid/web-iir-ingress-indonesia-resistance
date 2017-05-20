@@ -4,10 +4,11 @@
  * @var $this AdminController
  * @var $model Articles
  * @var $form CActiveForm
+ * version: 0.0.1
  *
  * @author Putra Sudaryanto <putra@sudaryanto.id>
- * @copyright Copyright (c) 2012 Ommu Platform (ommu.co)
- * @link https://github.com/oMMu/Ommu-Articles
+ * @copyright Copyright (c) 2012 Ommu Platform (opensource.ommu.co)
+ * @link https://github.com/ommu/Articles
  * @contact (+62)856-299-4114
  *
  */
@@ -26,11 +27,6 @@
 		<li>
 			<?php echo $model->getAttributeLabel('cat_id'); ?><br/>
 			<?php echo $form->textField($model,'cat_id'); ?>
-		</li>
-
-		<li>
-			<?php echo $model->getAttributeLabel('user_id'); ?><br/>
-			<?php echo $form->textField($model,'user_id',array('size'=>11,'maxlength'=>11)); ?>
 		</li>
 
 		<li>
@@ -56,21 +52,6 @@
 		<li>
 			<?php echo $model->getAttributeLabel('comment_code'); ?><br/>
 			<?php echo $form->textField($model,'comment_code'); ?>
-		</li>
-
-		<li>
-			<?php echo $model->getAttributeLabel('comment'); ?><br/>
-			<?php echo $form->textField($model,'comment'); ?>
-		</li>
-
-		<li>
-			<?php echo $model->getAttributeLabel('view'); ?><br/>
-			<?php echo $form->textField($model,'view'); ?>
-		</li>
-
-		<li>
-			<?php echo $model->getAttributeLabel('media_id'); ?><br/>
-			<?php echo $form->textField($model,'media_id',array('size'=>60,'maxlength'=>64)); ?>
 		</li>
 
 		<li>

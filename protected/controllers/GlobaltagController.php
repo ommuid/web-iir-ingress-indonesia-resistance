@@ -2,7 +2,7 @@
 /**
  * GlobaltagController
  * Handle GlobaltagController
- * version: 1.1.0
+ * version: 1.2.0
  * Reference start
  *
  * TOC :
@@ -19,8 +19,8 @@
  *	performAjaxValidation
  *
  * @author Putra Sudaryanto <putra@sudaryanto.id>
- * @copyright Copyright (c) 2012 Ommu Platform (ommu.co)
- * @link https://github.com/oMMu/Ommu-Core
+ * @copyright Copyright (c) 2012 Ommu Platform (opensource.ommu.co)
+ * @link https://github.com/ommu/Core
  * @contact (+62)856-299-4114
  *
  *----------------------------------------------------------------------------------------------------------
@@ -45,12 +45,10 @@ class GlobaltagController extends Controller
 				$arrThemes = Utility::getCurrentTemplate('admin');
 				Yii::app()->theme = $arrThemes['folder'];
 				$this->layout = $arrThemes['layout'];
-			} else {
+			} else
 				throw new CHttpException(404, Yii::t('phrase', 'The requested page does not exist.'));
-			}
-		} else {
+		} else
 			$this->redirect(Yii::app()->createUrl('site/login'));
-		}
 	}
 
 	/**
@@ -115,11 +113,11 @@ class GlobaltagController extends Controller
 		if(Yii::app()->request->isAjaxRequest) {
 			if(isset($_GET['term'])) {
 				$criteria = new CDbCriteria;
-				$criteria->condition = 'publish = 1 AND body LIKE :body';
-				$criteria->select	= "tag_id, body";
+				$criteria->select	= 'tag_id, body';
+				$criteria->compare('publish',1);
+				$criteria->compare('body',Utility::getUrlTitle(strtolower(trim($_GET['term']))), true);
 				$criteria->limit = $limit;
 				$criteria->order = "tag_id ASC";
-				$criteria->params = array(':body' => '%' . strtolower($_GET['term']) . '%');
 				$model = OmmuTags::model()->findAll($criteria);
 
 				if($model) {

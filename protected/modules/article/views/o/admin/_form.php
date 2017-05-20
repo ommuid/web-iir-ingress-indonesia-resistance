@@ -4,37 +4,37 @@
  * @var $this AdminController
  * @var $model Articles
  * @var $form CActiveForm
+ * version: 0.0.1
  *
  * @author Putra Sudaryanto <putra@sudaryanto.id>
- * @copyright Copyright (c) 2012 Ommu Platform (ommu.co)
- * @link https://github.com/oMMu/Ommu-Articles
+ * @copyright Copyright (c) 2012 Ommu Platform (opensource.ommu.co)
+ * @link https://github.com/ommu/Articles
  * @contact (+62)856-299-4114
  *
  */
 
-	$controller = strtolower(Yii::app()->controller->id);
-	if($model->isNewRecord || (!$model->isNewRecord && ($model->article_type == 3 || ($model->article_type == 1 && $setting->media_limit == 1)))) {
+	if($model->isNewRecord || (!$model->isNewRecord && $condition == 0))
 		$validation = false;
-	} else {
+	else
 		$validation = true;
-	}
 
 	$cs = Yii::app()->getClientScript();
 $js=<<<EOP
-	$('select#Articles_article_type').live('change', function() {
+	$('select#Articles_article_type').on('change', function() {
 		var id = $(this).val();
 		$('fieldset div.filter').slideUp();
 		$('div#title').slideDown();
 		$('div#quote').slideDown();
-		if(id == '1') {
+		if(id == 'standard') {
 			$('div.filter#media').slideDown();
-		} else if(id == '2') {
+			$('div#file').slideDown();
+		} else if(id == 'video') {
 			$('div.filter#video').slideDown();
-		} else if(id == '3') {
-			$('div.filter#audio').slideDown();
-		} else if(id == '4') {
+			$('div#file').slideDown();
+		} else if(id == 'quote') {
 			$('div#title').slideUp();
 			$('div#quote').slideUp();
+			$('div#file').slideUp();
 		}
 	});
 EOP;
@@ -78,13 +78,11 @@ EOP;
 							echo $form->dropDownList($model,'article_type', $arrAttrParams);
 							//echo $form->dropDownList($model,'article_type', $arrAttrParams, array('prompt'=>Yii::t('phrase', 'Choose one')));
 						} else {
-							if($model->article_type == 1)
+							if($model->article_type == 'standard')
 								echo '<strong>'.Yii::t('phrase', 'Standard').'</strong>';
-							elseif($model->article_type == 2)
+							elseif($model->article_type == 'video')
 								echo '<strong>'.Yii::t('phrase', 'Video').'</strong>';
-							/* elseif($model->article_type == 3)
-								echo '<strong>'.Yii::t('phrase', 'Audio').'</strong>'; */
-							elseif($model->article_type == 4)
+							elseif($model->article_type == 'quote')
 								echo '<strong>'.Yii::t('phrase', 'Quote').'</strong>';
 						}?>
 						<?php echo $form->error($model,'article_type'); ?>
@@ -106,7 +104,7 @@ EOP;
 					</div>
 				</div>
 	
-				<div id="title" class="clearfix <?php echo $model->article_type == 4 ? 'hide' : '';?>">
+				<div id="title" class="clearfix <?php echo $model->article_type == 'quote' ? 'hide' : '';?>">
 					<label><?php echo $model->getAttributeLabel('title');?> <span class="required">*</span></label>
 					<div class="desc">
 						<?php echo $form->textField($model,'title',array('maxlength'=>128,'class'=>'span-8')); ?>
@@ -114,10 +112,13 @@ EOP;
 					</div>
 				</div>
 	
-				<?php if(!$model->isNewRecord && ($model->article_type == 1 && $setting->media_limit == 1)) {
-					$model->old_media_input = $model->cover->media;
-					echo $form->hiddenField($model,'old_media_input');
-					if($model->media_id != 0) {
+				<?php if(!$model->isNewRecord && $condition == 0) {
+					$medias = $model->medias;
+					if(!empty($medias)) {
+						$media = $model->view->media_cover ? $model->view->media_cover : $medias[0]->media;
+						if(!$model->getErrors())
+							$model->old_media_input = $media;
+						echo $form->hiddenField($model,'old_media_input');
 						$image = Yii::app()->request->baseUrl.'/public/article/'.$model->article_id.'/'.$model->old_media_input;
 						$media = '<img src="'.Utility::getTimThumb($image, 320, 150, 1).'" alt="">';
 						echo '<div class="clearfix">';
@@ -127,42 +128,49 @@ EOP;
 					}
 				}?>
 
-				<?php if($model->isNewRecord || (!$model->isNewRecord && $model->article_type == 2)) {?>
-					<div id="video" class="clearfix filter <?php echo $model->isNewRecord ? 'hide' : ''?>">
-						<label for="Articles_video"><?php echo $model->getAttributeLabel('video_input');?> <span class="required">*</span></label>
+				<?php if($model->isNewRecord || (!$model->isNewRecord && $condition == 0)) {?>
+				<div id="media" class="<?php echo (($model->isNewRecord && !$model->getErrors()) || ($model->article_type == 'standard' && (($model->isNewRecord && $model->getErrors()) || (!$model->isNewRecord && ($setting->media_limit == 1 || ($setting->media_limit != 1 && $model->cat->single_photo == 1)))))) ? '' : 'hide';?> clearfix filter">
+					<?php echo $form->labelEx($model,'media_input'); ?>
+					<div class="desc">
+						<?php echo $form->fileField($model,'media_input'); ?>
+						<?php echo $form->error($model,'media_input'); ?>
+						<span class="small-px">extensions are allowed: <?php echo Utility::formatFileType($media_file_type, false);?></span>
+					</div>
+				</div>
+				<?php }?>
+
+				<?php if($model->isNewRecord || (!$model->isNewRecord && $model->article_type == 'video')) {?>
+					<div id="video" class="<?php echo ($model->article_type == 'video' && (($model->isNewRecord && $model->getErrors()) || !$model->isNewRecord)) ? '' : 'hide';?> clearfix filter">
+						<label for="Articles_video_input"><?php echo $model->getAttributeLabel('video_input');?> <span class="required">*</span></label>
 						<div class="desc">
-							<?php $model->video_input = $model->cover->media;
-							echo $form->textField($model,'video_input',array('maxlength'=>32, 'class'=>'span-8')); ?>
+							<?php
+							$medias = $model->medias;
+							if(!empty($medias))
+								$media = $model->view->media_cover ? $model->view->media_cover : $medias[0]->media;
+							if(!$model->getErrors())
+								$model->video_input = $media;
+							echo $form->textField($model,'video_input',array('maxlength'=>32, 'class'=>'span-8'));?>
 							<?php echo $form->error($model,'video_input'); ?>
 							<span class="small-px">http://www.youtube.com/watch?v=<strong>HOAqSoDZSho</strong></span>
 						</div>
 					</div>
 				<?php }?>
-
-				<?php if($model->isNewRecord || (!$model->isNewRecord && ($model->article_type == 1 && $setting->media_limit == 1))) {?>
-				<div id="media" class="clearfix filter">
-					<?php echo $form->labelEx($model,'media_input'); ?>
-					<div class="desc">
-						<?php echo $form->fileField($model,'media_input'); ?>
-						<?php echo $form->error($model,'media_input'); ?>
-						<span class="small-px">extensions are allowed: <?php echo Utility::formatFileType(unserialize($setting->media_file_type), false);?></span>
-					</div>
-				</div>
-				<?php }?>
-		
-				<?php if(!$model->isNewRecord || ($model->isNewRecord && $setting->meta_keyword != '')) {?>
+				
 				<div class="clearfix">
-					<?php echo $form->labelEx($model,'keyword'); ?>
+					<?php echo $form->labelEx($model,'keyword_input'); ?>
 					<div class="desc">
 						<?php 
-						if(!$model->isNewRecord) {
-							//echo $form->textField($model,'keyword',array('maxlength'=>32,'class'=>'span-6'));
+						if($model->isNewRecord) {
+							echo $form->textArea($model,'keyword_input',array('rows'=>6, 'cols'=>50, 'class'=>'span-10 smaller'));
+							
+						} else {
+							//echo $form->textField($model,'keyword_input',array('maxlength'=>32,'class'=>'span-6'));
 							$url = Yii::app()->controller->createUrl('o/tag/add', array('type'=>'article'));
 							$article = $model->article_id;
-							$tagId = 'Articles_keyword';
+							$tagId = 'Articles_keyword_input';
 							$this->widget('zii.widgets.jui.CJuiAutoComplete', array(
 								'model' => $model,
-								'attribute' => 'keyword',
+								'attribute' => 'keyword_input',
 								'source' => Yii::app()->createUrl('globaltag/suggest'),
 								'options' => array(
 									//'delay '=> 50,
@@ -186,49 +194,55 @@ EOP;
 									'class'	=> 'span-6',
 								),
 							));
-							echo $form->error($model,'keyword');
+							echo $form->error($model,'keyword_input');							
 						}?>
 						<div id="keyword-suggest" class="suggest clearfix">
 							<?php 
-							$arrKeyword = explode(',', $setting->meta_keyword);
-							foreach($arrKeyword as $row) {?>
-								<div class="d"><?php echo $row;?></div>
+							if($setting->meta_keyword && $setting->meta_keyword != '-') {
+								$arrKeyword = explode(',', $setting->meta_keyword);
+								foreach($arrKeyword as $row) {?>
+									<div class="d"><?php echo $row;?></div>
 							<?php }
+							}
 							if(!$model->isNewRecord) {
-								if($tag != null) {
-									foreach($tag as $key => $val) {?>
-									<div><?php echo $val->tag_TO->body;?><a href="<?php echo Yii::app()->controller->createUrl('o/tag/delete',array('id'=>$val->id,'type'=>'article'));?>" title="<?php echo Yii::t('phrase', 'Delete');?>"><?php echo Yii::t('phrase', 'Delete');?></a></div>
+								$tags = $model->tags;
+								if(!empty($tags)) {
+									foreach($tags as $key => $val) {?>
+									<div><?php echo $val->tag->body;?><a href="<?php echo Yii::app()->controller->createUrl('o/tag/delete',array('id'=>$val->id,'type'=>'article'));?>" title="<?php echo Yii::t('phrase', 'Delete');?>"><?php echo Yii::t('phrase', 'Delete');?></a></div>
 								<?php }
 								}
 							}?>
 						</div>
+						<?php if($model->isNewRecord) {?><span class="small-px">tambahkan tanda koma (,) jika ingin menambahkan keyword lebih dari satu</span><?php }?>
 					</div>
 				</div>
-				<?php }?>
 	
 			</div>
 	
 			<div class="right">
 				<?php
 				if(!$model->isNewRecord) {
-					$model->old_media_file = $model->media_file;
-					echo $form->hiddenField($model,'old_media_file');
+					$model->old_media_file_input = $model->media_file;
+					echo $form->hiddenField($model,'old_media_file_input');
 					if($model->media_file != '') {
 						$file = Yii::app()->request->baseUrl.'/public/article/'.$model->article_id.'/'.$model->media_file;
 						echo '<div class="clearfix">';
-						echo $form->labelEx($model,'old_media_file');
+						echo $form->labelEx($model,'old_media_file_input');
 						echo '<div class="desc"><a href="'.$file.'" title="'.$model->media_file.'">'.$model->media_file.'</a></div>';
 						echo '</div>';
 					}
 				}?>
-				<div class="clearfix">
+				
+				<?php if($model->isNewRecord || (!$model->isNewRecord && in_array($model->article_type, array('standard','video')))) {?>
+				<div id="file" class="<?php echo (($model->isNewRecord && !$model->getErrors()) || (in_array($model->article_type, array('standard','video')) && ($model->isNewRecord && $model->getErrors()) || !$model->isNewRecord)) ? '' : 'hide';?> clearfix">
 					<?php echo $form->labelEx($model,'media_file'); ?>
 					<div class="desc">
 						<?php echo $form->fileField($model,'media_file'); ?>
 						<?php echo $form->error($model,'media_file'); ?>
-						<span class="small-px">extensions are allowed: <?php echo Utility::formatFileType(unserialize($setting->upload_file_type), false);?></span>
+						<span class="small-px">extensions are allowed: <?php echo Utility::formatFileType($upload_file_type, false);?></span>
 					</div>
 				</div>
+				<?php }?>
 	
 				<div class="clearfix">
 					<?php echo $form->labelEx($model,'published_date'); ?>
@@ -236,7 +250,7 @@ EOP;
 						<?php 
 						$model->published_date = $model->isNewRecord && $model->published_date == '' ? date('d-m-Y') : date('d-m-Y', strtotime($model->published_date));
 						//echo $form->textField($model,'published_date', array('class'=>'span-7'));
-						$this->widget('zii.widgets.jui.CJuiDatePicker',array(
+						$this->widget('application.components.system.CJuiDatePicker',array(
 							'model'=>$model, 
 							'attribute'=>'published_date',
 							//'mode'=>'datetime',
@@ -264,7 +278,7 @@ EOP;
 					echo $form->hiddenField($model,'comment_code');
 				}?>
 	
-				<?php if(OmmuSettings::getInfo('site_headline') == 1) {?>
+				<?php if($setting->headline == 1) {?>
 				<div class="clearfix publish">
 					<?php echo $form->labelEx($model,'headline'); ?>
 					<div class="desc">
@@ -290,8 +304,8 @@ EOP;
 	</fieldset>
 
 	<fieldset>
-		<?php if($model->isNewRecord || (!$model->isNewRecord && $model->article_type != 4)) {?>
-		<div class="clearfix <?php echo $model->article_type == 4 ? 'hide' : '';?>" id="quote">
+		<?php if($model->isNewRecord || (!$model->isNewRecord && $model->article_type != 'quote')) {?>
+		<div class="clearfix <?php echo $model->article_type == 'quote' ? 'hide' : '';?>" id="quote">
 			<?php echo $form->labelEx($model,'quote'); ?>
 			<div class="desc">
 				<?php 
@@ -312,7 +326,7 @@ EOP;
 						'fullscreen' => array('js' => array('fullscreen.js')),
 					),
 				)); ?>
-				<?php if($model->isNewRecord || (!$model->isNewRecord && $model->article_type != 4)) {?>
+				<?php if($model->isNewRecord || (!$model->isNewRecord && $model->article_type != 'quote')) {?>
 					<span class="small-px"><?php echo Yii::t('phrase', 'Note : add {$quote} in description article');?></span>
 				<?php }?>
 				<?php echo $form->error($model,'quote'); ?>

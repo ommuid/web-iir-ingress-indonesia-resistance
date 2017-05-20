@@ -1,9 +1,11 @@
 <?php
-
 /**
+ * UserInviteQueue
+ * version: 0.0.1
+ *
  * @author Putra Sudaryanto <putra@sudaryanto.id>
- * @copyright Copyright (c) 2012 Ommu Platform (ommu.co)
- * @link https://github.com/oMMu/Ommu-Users
+ * @copyright Copyright (c) 2012 Ommu Platform (opensource.ommu.co)
+ * @link https://github.com/ommu/Users
  * @contact (+62)856-299-4114
  *
  * This is the template for generating the model class of a specified table.
@@ -21,7 +23,7 @@
  *
  * The followings are the available columns in table 'ommu_user_invite_queue':
  * @property string $queue_id
- * @property string $member_id
+ * @property string $user_id
  * @property string $reference_id
  * @property string $email
  * @property integer $invite
@@ -34,7 +36,7 @@ class UserInviteQueue extends CActiveRecord
 	public $defaultColumns = array();
 	
 	// Variable Search
-	public $member_search;
+	public $user_search;
 	public $reference_search;
 
 	/**
@@ -65,14 +67,14 @@ class UserInviteQueue extends CActiveRecord
 		return array(
 			array('email', 'required'),
 			array('invite', 'numerical', 'integerOnly'=>true),
-			array('member_id, reference_id', 'length', 'max'=>11),
+			array('user_id, reference_id', 'length', 'max'=>11),
 			array('email', 'length', 'max'=>32),
 			array('email', 'email'),
 			array('', 'safe', 'on'=>'search'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('queue_id, member_id, reference_id, email, invite,
-				member_search, reference_search', 'safe', 'on'=>'search'),
+			array('queue_id, user_id, reference_id, email, invite,
+				user_search, reference_search', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -84,7 +86,7 @@ class UserInviteQueue extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'member' => array(self::BELONGS_TO, 'Users', 'member_id'),
+			'user' => array(self::BELONGS_TO, 'Users', 'user_id'),
 			'reference' => array(self::BELONGS_TO, 'Users', 'reference_id'),
 			'invite' => array(self::HAS_MANY, 'UserInvites', 'queue_id'),
 		);
@@ -97,11 +99,11 @@ class UserInviteQueue extends CActiveRecord
 	{
 		return array(
 			'queue_id' => Yii::t('attribute', 'Queue'),
-			'member_id' => Yii::t('attribute', 'Member'),
+			'user_id' => Yii::t('attribute', 'User'),
 			'reference_id' => Yii::t('attribute', 'Reference'),
 			'email' => Yii::t('attribute', 'Email'),
 			'invite' => Yii::t('attribute', 'Invite'),
-			'member_search' => Yii::t('attribute', 'Member'),
+			'user_search' => Yii::t('attribute', 'Member'),
 			'reference_search' => Yii::t('attribute', 'Reference'),
 		);
 	}
@@ -118,15 +120,15 @@ class UserInviteQueue extends CActiveRecord
 		$criteria=new CDbCriteria;
 
 		$criteria->compare('t.queue_id',$this->queue_id);
-		$criteria->compare('t.member_id',$this->member_id);
+		$criteria->compare('t.user_id',$this->user_id);
 		$criteria->compare('t.reference_id',$this->reference_id);
 		$criteria->compare('t.email',strtolower($this->email),true);
 		$criteria->compare('t.invite',$this->invite);
 		
 		// Custom Search
 		$criteria->with = array(
-			'member' => array(
-				'alias'=>'member',
+			'user' => array(
+				'alias'=>'user',
 				'select'=>'displayname'
 			),
 			'reference' => array(
@@ -134,7 +136,7 @@ class UserInviteQueue extends CActiveRecord
 				'select'=>'displayname'
 			),
 		);
-		$criteria->compare('member.displayname',strtolower($this->member_search), true);
+		$criteria->compare('user.displayname',strtolower($this->user_search), true);
 		$criteria->compare('reference.displayname',strtolower($this->reference_search), true);
 		
 		if(!isset($_GET['UserInviteQueue_sort']))
@@ -164,7 +166,7 @@ class UserInviteQueue extends CActiveRecord
 			}
 		}else {
 			//$this->defaultColumns[] = 'queue_id';
-			$this->defaultColumns[] = 'member_id';
+			$this->defaultColumns[] = 'user_id';
 			$this->defaultColumns[] = 'reference_id';
 			$this->defaultColumns[] = 'email';
 			$this->defaultColumns[] = 'invite';
@@ -183,8 +185,8 @@ class UserInviteQueue extends CActiveRecord
 				'value' => '$this->grid->dataProvider->pagination->currentPage*$this->grid->dataProvider->pagination->pageSize + $row+1'
 			);
 			$this->defaultColumns[] = array(
-				'name' => 'member_search',
-				'value' => '$data->member_id == 0 ? "-" : $data->member->displayname',
+				'name' => 'user_search',
+				'value' => '$data->user_id == 0 ? "-" : $data->user->displayname',
 			);
 			$this->defaultColumns[] = array(
 				'name' => 'reference_search',

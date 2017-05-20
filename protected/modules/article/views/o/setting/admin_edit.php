@@ -4,10 +4,11 @@
  * @var $this SettingController
  * @var $model ArticleSetting
  * @var $form CActiveForm
+ * version: 0.0.1
  *
  * @author Putra Sudaryanto <putra@sudaryanto.id>
- * @copyright Copyright (c) 2012 Ommu Platform (ommu.co)
- * @link https://github.com/oMMu/Ommu-Articles
+ * @copyright Copyright (c) 2012 Ommu Platform (opensource.ommu.co)
+ * @link https://github.com/ommu/Articles
  * @contact (+62)856-299-4114
  *
  */
@@ -17,18 +18,6 @@
 		$model->id=>array('view','id'=>$model->id),
 		'Update',
 	);
-	$cs = Yii::app()->getClientScript();
-$js=<<<EOP
-	$('input[name="ArticleSetting[media_resize]"]').live('change', function() {
-		var id = $(this).val();
-		if(id == '1') {
-			$('div#resize_size').slideDown();
-		} else {
-			$('div#resize_size').slideUp();
-		}
-	});
-EOP;
-	$cs->registerScript('resize', $js, CClientScript::POS_END);
 ?>
 
 <div id="partial-article-category">
@@ -54,18 +43,21 @@ EOP;
 				'buttons' => array(
 					'view' => array(
 						'label' => 'view',
+						'imageUrl' => false,
 						'options' => array(
 							'class' => 'view',
 						),
 						'url' => 'Yii::app()->controller->createUrl("o/category/view",array("id"=>$data->primaryKey))'),
 					'update' => array(
 						'label' => 'update',
+						'imageUrl' => false,
 						'options' => array(
 							'class' => 'update'
 						),
 						'url' => 'Yii::app()->controller->createUrl("o/category/edit",array("id"=>$data->primaryKey))'),
 					'delete' => array(
 						'label' => 'delete',
+						'imageUrl' => false,
 						'options' => array(
 							'class' => 'delete'
 						),

@@ -1,9 +1,11 @@
 <?php
 /**
  * LoginFormOauth
+ * version: 0.0.1
+ *
  * @author Putra Sudaryanto <putra@sudaryanto.id>
- * @copyright Copyright (c) 2015 Ommu Platform (ommu.co)
- * @link https://github.com/oMMu/Ommu-Core
+ * @copyright Copyright (c) 2015 Ommu Platform (opensource.ommu.co)
+ * @link https://github.com/ommu/Users
  * @contact (+62)856-299-4114
  *
  * LoginForm class.
@@ -29,7 +31,6 @@ class LoginFormOauth extends CFormModel
 		return array(
 			// email and password are required
 			array('email, password', 'required'),
-
 			//array('email', 'email'),
 			// rememberMe needs to be a boolean
 			array('rememberMe', 'boolean'),
@@ -49,6 +50,7 @@ class LoginFormOauth extends CFormModel
 			'email' => Yii::t('attribute', 'Email'),
 			'password' => Yii::t('attribute', 'Password'),
 			'rememberMe' => Yii::t('attribute', 'Remember me next time'),
+			'token' => Yii::t('attribute', 'Token'),
 		);
 	}
 

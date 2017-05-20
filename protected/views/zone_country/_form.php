@@ -4,12 +4,12 @@
  * @var $this ZonecountryController
  * @var $model OmmuZoneCountry
  * @var $form CActiveForm
- * version: 1.1.0
+ * version: 1.2.0
  *
  * @author Putra Sudaryanto <putra@sudaryanto.id>
- * @copyright Copyright (c) 2015 Ommu Platform (ommu.co)
- * @link https://github.com/oMMu/Ommu-Core
- * @contect (+62)856-299-4114
+ * @copyright Copyright (c) 2015 Ommu Platform (opensource.ommu.co)
+ * @link https://github.com/ommu/Core
+ * @contact (+62)856-299-4114
  *
  */
 ?>
@@ -28,10 +28,10 @@
 		<?php //begin.Messages ?>
 
 		<div class="clearfix">
-			<?php echo $form->labelEx($model,'country'); ?>
+			<?php echo $form->labelEx($model,'country_name'); ?>
 			<div class="desc">
-				<?php echo $form->textField($model,'country',array('maxlength'=>64)); ?>
-				<?php echo $form->error($model,'country'); ?>
+				<?php echo $form->textField($model,'country_name',array('maxlength'=>64)); ?>
+				<?php echo $form->error($model,'country_name'); ?>
 				<?php /*<div class="small-px silent"></div>*/?>
 			</div>
 		</div>

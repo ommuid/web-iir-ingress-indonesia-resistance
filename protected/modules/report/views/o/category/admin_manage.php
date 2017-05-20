@@ -3,10 +3,11 @@
  * Report Category (report-category)
  * @var $this CategoryController
  * @var $model ReportCategory
+ * version: 0.0.1
  *
  * @author Putra Sudaryanto <putra@sudaryanto.id>
- * @copyright Copyright (c) 2014 Ommu Platform (ommu.co)
- * @link https://github.com/oMMu/Ommu-Report
+ * @copyright Copyright (c) 2014 Ommu Platform (opensource.ommu.co)
+ * @link https://github.com/ommu/Report
  * @contact (+62)856-299-4114
  *
  */
@@ -39,18 +40,21 @@
 				'buttons' => array(
 					'view' => array(
 						'label' => 'view',
+						'imageUrl' => false,
 						'options' => array(
 							'class' => 'view'
 						),
 						'url' => 'Yii::app()->controller->createUrl("edit",array("id"=>$data->primaryKey))'),
 					'update' => array(
 						'label' => 'update',
+						'imageUrl' => false,
 						'options' => array(
 							'class' => 'update'
 						),
 						'url' => 'Yii::app()->controller->createUrl("edit",array("id"=>$data->primaryKey))'),
 					'delete' => array(
 						'label' => 'delete',
+						'imageUrl' => false,
 						'options' => array(
 							'class' => 'delete'
 						),
@@ -63,6 +67,7 @@
 				'id'=>'report-category-grid',
 				'dataProvider'=>$model->search(),
 				'filter'=>$model,
+				'afterAjaxUpdate' => 'reinstallDatePicker',
 				'columns' => $columnData,
 				'pager' => array('header' => ''),
 			));

@@ -4,22 +4,31 @@
  * @var $this AdminController
  * @var $model Banners
  * @var $form CActiveForm
+ * version: 0.0.1
  *
  * @author Putra Sudaryanto <putra@sudaryanto.id>
- * @copyright Copyright (c) 2014 Ommu Platform (ommu.co)
- * @link https://github.com/oMMu/Ommu-Banner
- * @contect (+62)856-299-4114
+ * @copyright Copyright (c) 2014 Ommu Platform (opensource.ommu.co)
+ * @link https://github.com/ommu/Banner
+ * @contact (+62)856-299-4114
  *
  */
-
+	
 	$cs = Yii::app()->getClientScript();
 $js=<<<EOP
-	$('#Banners_permanent').live('change', function() {
+	$('#Banners_permanent_i').on('change', function() {
 		var id = $(this).prop('checked');		
 		if(id == true) {
 			$('div#expired-date').slideUp();
 		} else {
 			$('div#expired-date').slideDown();
+		}
+	});
+	$('#Banners_linked_i').on('change', function() {
+		var id = $(this).prop('checked');		
+		if(id == true) {
+			$('div#url').slideDown();
+		} else {
+			$('div#url').slideUp();
 		}
 	});
 EOP;
@@ -29,7 +38,7 @@ EOP;
 <?php $form=$this->beginWidget('application.components.system.OActiveForm', array(
 	'id'=>'banners-form',
 	'enableAjaxValidation'=>true,
-	'htmlOptions' => array('enctype' => 'multipart/form-data')
+	'htmlOptions' => array('enctype' => 'multipart/form-data'),
 )); ?>
 
 <?php //begin.Messages ?>
@@ -63,7 +72,23 @@ EOP;
 		</div>
 	</div>
 
+	<?php 
+	if(!$model->getErrors()) {
+		$model->linked_i = 0;
+		if($model->isNewRecord || (!$model->isNewRecord && $model->url != '-'))
+			$model->linked_i = 1;
+	}?>
+	
 	<div class="clearfix">
+		<?php echo $form->labelEx($model,'linked_i'); ?>
+		<div class="desc">
+			<?php echo $form->checkBox($model,'linked_i'); ?>
+			<?php echo $form->error($model,'linked_i'); ?>
+			<?php /*<div class="small-px silent"></div>*/?>
+		</div>
+	</div>
+
+	<div id="url" class="<?php echo $model->linked_i == 0 ? 'hide' : ''?> clearfix">
 		<?php echo $form->labelEx($model,'url'); ?>
 		<div class="desc">
 			<?php echo $form->textArea($model,'url',array('class'=>'span-10 smaller', 'rows'=>6, 'cols'=>50)); ?>
@@ -71,27 +96,24 @@ EOP;
 			<div class="small-px silent">example: http://opensource.ommu.co</div>
 		</div>
 	</div>
-	
-	<?php if(!$model->isNewRecord) {
-		$model->old_media = $model->media;
-		echo $form->hiddenField($model,'old_media');
-		if($model->media != '') {
-			$resizeSize = explode(',', $model->category_relation->media_size);
-			$file = Yii::app()->request->baseUrl.'/public/banner/'.$model->old_media;
-			$media = '<img src="'.Utility::getTimThumb($file, $resizeSize[0], $resizeSize[1], 1).'" alt="">';
-			echo '<div class="clearfix">';
-			echo $form->labelEx($model,'old_media');
-			echo '<div class="desc">'.$media.'</div>';
-			echo '</div>';
-		}
-	}?>
 
 	<div class="clearfix">
-		<?php echo $form->labelEx($model,'media'); ?>
+		<?php echo $form->labelEx($model,'banner_filename'); ?>
 		<div class="desc">
-			<?php echo $form->fileField($model,'media'); ?>
-			<?php echo $form->error($model,'media'); ?>
-			<?php /*<div class="small-px silent"></div>*/?>
+			<?php 
+			if(!$model->isNewRecord) {
+				if(!$model->getErrors())
+					$model->old_banner_filename_i = $model->banner_filename;
+				echo $form->hiddenField($model,'old_banner_filename_i');
+				if($model->old_banner_filename_i != '') {
+					$bannerSize = unserialize($model->category->banner_size);
+					$banner = Yii::app()->request->baseUrl.'/public/banner/'.$model->old_banner_filename_i;?>
+					<img class="mb-15" src="<?php echo Utility::getTimThumb($banner, $bannerSize['width'], $bannerSize['height'], 3);?>" alt="">
+			<?php }
+			}?>
+			<?php echo $form->fileField($model,'banner_filename'); ?>
+			<?php echo $form->error($model,'banner_filename'); ?>
+			<span class="small-px">extensions are allowed: <?php echo Utility::formatFileType($banner_file_type, false);?></span>
 		</div>
 	</div>
 
@@ -101,7 +123,7 @@ EOP;
 			<?php
 			!$model->isNewRecord ? ($model->published_date != '0000-00-00' ? $model->published_date = date('d-m-Y', strtotime($model->published_date)) : '') : '';
 			//echo $form->textField($model,'published_date');
-			$this->widget('zii.widgets.jui.CJuiDatePicker',array(
+			$this->widget('application.components.system.CJuiDatePicker',array(
 				'model'=>$model,
 				'attribute'=>'published_date',
 				//'mode'=>'datetime',
@@ -118,27 +140,28 @@ EOP;
 	</div>
 
 	<?php 
-	$model->permanent = 0;
-	if($model->isNewRecord || (!$model->isNewRecord && in_array(date('Y-m-d', strtotime($model->expired_date)), array('0000-00-00','1970-01-01'))))
-		$model->permanent = 1;
-	?>
+	if(!$model->getErrors()) {
+		$model->permanent_i = 0;
+		if($model->isNewRecord || (!$model->isNewRecord && in_array(date('Y-m-d', strtotime($model->expired_date)), array('0000-00-00','1970-01-01'))))
+			$model->permanent_i = 1;
+	}?>
 	
 	<div class="clearfix">
-		<?php echo $form->labelEx($model,'permanent'); ?>
+		<?php echo $form->labelEx($model,'permanent_i'); ?>
 		<div class="desc">
-			<?php echo $form->checkBox($model,'permanent'); ?>
-			<?php echo $form->error($model,'permanent'); ?>
+			<?php echo $form->checkBox($model,'permanent_i'); ?>
+			<?php echo $form->error($model,'permanent_i'); ?>
 			<?php /*<div class="small-px silent"></div>*/?>
 		</div>
 	</div>
 	
-	<div id="expired-date" class="clearfix <?php echo $model->permanent == 1 ? 'hide' : ''?>">
+	<div id="expired-date" class="<?php echo $model->permanent_i == 1 ? 'hide' : ''?> clearfix">
 		<?php echo $form->labelEx($model,'expired_date'); ?>
 		<div class="desc">
 			<?php
 			!$model->isNewRecord ? (!in_array(date('Y-m-d', strtotime($model->expired_date)), array('0000-00-00','1970-01-01')) ? $model->expired_date = date('d-m-Y', strtotime($model->expired_date)) : '') : '';
 			//echo $form->textField($model,'expired_date');
-			$this->widget('zii.widgets.jui.CJuiDatePicker',array(
+			$this->widget('application.components.system.CJuiDatePicker',array(
 				'model'=>$model,
 				'attribute'=>'expired_date',
 				//'mode'=>'datetime',

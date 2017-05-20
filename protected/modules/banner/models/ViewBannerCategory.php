@@ -1,9 +1,11 @@
 <?php
 /**
  * ViewBannerCategory
+ * version: 0.0.1
+ *
  * @author Putra Sudaryanto <putra@sudaryanto.id>
- * @copyright Copyright (c) 2015 Ommu Platform (ommu.co)
- * @link https://github.com/oMMu/Ommu-Banner
+ * @copyright Copyright (c) 2015 Ommu Platform (opensource.ommu.co)
+ * @link https://github.com/ommu/Banner
  * @contact (+62)856-299-4114
  *
  * This is the template for generating the model class of a specified table.
@@ -21,13 +23,11 @@
  *
  * The followings are the available columns in table '_view_banner_category':
  * @property integer $cat_id
- * @property string $category_name
- * @property string $category_desc
- * @property string $banner_publish
+ * @property string $banners
  * @property string $banner_pending
  * @property string $banner_expired
  * @property string $banner_unpublish
- * @property string $banners
+ * @property string $banner_all
  */
 class ViewBannerCategory extends CActiveRecord
 {
@@ -69,11 +69,10 @@ class ViewBannerCategory extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('cat_id', 'numerical', 'integerOnly'=>true),
-			array('banner_publish, banner_pending, banner_expired, banner_unpublish, banners', 'length', 'max'=>21),
-			array('category_name, category_desc', 'safe'),
+			array('banners, banner_pending, banner_expired, banner_unpublish, banner_all', 'length', 'max'=>21),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('cat_id, category_name, category_desc, banner_publish, banner_pending, banner_expired, banner_unpublish, banners', 'safe', 'on'=>'search'),
+			array('cat_id, banners, banner_pending, banner_expired, banner_unpublish, banner_all', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -95,13 +94,11 @@ class ViewBannerCategory extends CActiveRecord
 	{
 		return array(
 			'cat_id' => Yii::t('attribute', 'Category'),
-			'category_name' => Yii::t('attribute', 'Category'),
-			'category_desc' => Yii::t('attribute', 'Description'),
-			'banner_publish' => Yii::t('attribute', 'Publish'),
+			'banners' => Yii::t('attribute', 'Banners'),
 			'banner_pending' => Yii::t('attribute', 'Pending'),
 			'banner_expired' => Yii::t('attribute', 'Expired'),
 			'banner_unpublish' => Yii::t('attribute', 'Unpublish'),
-			'banners' => Yii::t('attribute', 'Banners'),
+			'banner_all' => Yii::t('attribute', 'Banner All'),
 		);
 	}
 
@@ -124,13 +121,11 @@ class ViewBannerCategory extends CActiveRecord
 		$criteria=new CDbCriteria;
 
 		$criteria->compare('t.cat_id',$this->cat_id);
-		$criteria->compare('t.category_name',strtolower($this->category_name),true);
-		$criteria->compare('t.category_desc',strtolower($this->category_desc),true);
-		$criteria->compare('t.banner_publish',strtolower($this->banner_publish),true);
+		$criteria->compare('t.banners',strtolower($this->banners),true);
 		$criteria->compare('t.banner_pending',strtolower($this->banner_pending),true);
 		$criteria->compare('t.banner_expired',strtolower($this->banner_expired),true);
 		$criteria->compare('t.banner_unpublish',strtolower($this->banner_unpublish),true);
-		$criteria->compare('t.banners',strtolower($this->banners),true);
+		$criteria->compare('t.banner_all',strtolower($this->banner_all),true);
 
 		if(!isset($_GET['ViewBannerCategory_sort']))
 			$criteria->order = 't.cat_id DESC';
@@ -162,13 +157,11 @@ class ViewBannerCategory extends CActiveRecord
 			}
 		} else {
 			$this->defaultColumns[] = 'cat_id';
-			$this->defaultColumns[] = 'category_name';
-			$this->defaultColumns[] = 'category_desc';
-			$this->defaultColumns[] = 'banner_publish';
+			$this->defaultColumns[] = 'banners';
 			$this->defaultColumns[] = 'banner_pending';
 			$this->defaultColumns[] = 'banner_expired';
 			$this->defaultColumns[] = 'banner_unpublish';
-			$this->defaultColumns[] = 'banners';
+			$this->defaultColumns[] = 'banner_all';
 		}
 
 		return $this->defaultColumns;
@@ -184,13 +177,11 @@ class ViewBannerCategory extends CActiveRecord
 				'value' => '$this->grid->dataProvider->pagination->currentPage*$this->grid->dataProvider->pagination->pageSize + $row+1'
 			);
 			$this->defaultColumns[] = 'cat_id';
-			$this->defaultColumns[] = 'category_name';
-			$this->defaultColumns[] = 'category_desc';
-			$this->defaultColumns[] = 'banner_publish';
+			$this->defaultColumns[] = 'banners';
 			$this->defaultColumns[] = 'banner_pending';
 			$this->defaultColumns[] = 'banner_expired';
 			$this->defaultColumns[] = 'banner_unpublish';
-			$this->defaultColumns[] = 'banners';
+			$this->defaultColumns[] = 'banner_all';
 		}
 		parent::afterConstruct();
 	}

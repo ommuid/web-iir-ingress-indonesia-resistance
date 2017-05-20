@@ -1,9 +1,11 @@
 <?php
 /**
  * ArticleTag
+ * version: 0.0.1
+ *
  * @author Putra Sudaryanto <putra@sudaryanto.id>
- * @copyright Copyright (c) 2012 Ommu Platform (ommu.co)
- * @link https://github.com/oMMu/Ommu-Articles
+ * @copyright Copyright (c) 2012 Ommu Platform (opensource.ommu.co)
+ * @link https://github.com/ommu/Articles
  * @contact (+62)856-299-4114
  *
  * This is the template for generating the model class of a specified table.
@@ -32,7 +34,7 @@
 class ArticleTag extends CActiveRecord
 {
 	public $defaultColumns = array();
-	public $body;
+	public $tag_input;
 	
 	// Variable Search
 	public $article_search;
@@ -68,7 +70,7 @@ class ArticleTag extends CActiveRecord
 			array('article_id, tag_id', 'required'),
 			array('article_id, tag_id, creation_id', 'length', 'max'=>11),
 			array(' 
-				body', 'safe'),
+				tag_input', 'safe'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('id, article_id, tag_id, creation_date,
@@ -85,8 +87,8 @@ class ArticleTag extends CActiveRecord
 		// class name for the relations automatically generated below.
 		return array(
 			'article' => array(self::BELONGS_TO, 'Articles', 'article_id'),
-			'tag_TO' => array(self::BELONGS_TO, 'OmmuTags', 'tag_id'),
-			'creation_relation' => array(self::BELONGS_TO, 'Users', 'creation_id'),
+			'tag' => array(self::BELONGS_TO, 'OmmuTags', 'tag_id'),
+			'creation' => array(self::BELONGS_TO, 'Users', 'creation_id'),
 		);
 	}
 
@@ -123,12 +125,12 @@ class ArticleTag extends CActiveRecord
 				'alias'=>'article',
 				'select'=>'title'
 			),
-			'tag_TO' => array(
-				'alias'=>'tag_TO',
+			'tag' => array(
+				'alias'=>'tag',
 				'select'=>'body'
 			),
-			'creation_relation' => array(
-				'alias'=>'creation_relation',
+			'creation' => array(
+				'alias'=>'creation',
 				'select'=>'displayname'
 			),
 		);
@@ -144,8 +146,8 @@ class ArticleTag extends CActiveRecord
 		$criteria->compare('t.creation_id',$this->creation_id);
 		
 		$criteria->compare('article.title',strtolower($this->article_search), true);
-		$criteria->compare('tag_TO.body',strtolower($this->tag_search), true);
-		$criteria->compare('creation_relation.displayname',strtolower($this->creation_search), true);
+		$criteria->compare('tag.body',Utility::getUrlTitle(strtolower(trim($this->tag_search))), true);
+		$criteria->compare('creation.displayname',strtolower($this->creation_search), true);
 
 		if(!isset($_GET['ArticleTag_sort']))
 			$criteria->order = 't.id DESC';
@@ -198,20 +200,16 @@ class ArticleTag extends CActiveRecord
 			if(!isset($_GET['article'])) {
 				$this->defaultColumns[] = array(
 					'name' => 'article_search',
-					'value' => '$data->article->title."<br/><span>".Utility::shortText(Utility::hardDecode($data->article->body),150)."</span>"',
-					'htmlOptions' => array(
-						'class' => 'bold',
-					),
-					'type' => 'raw',
+					'value' => '$data->article->title',
 				);
 			}
 			$this->defaultColumns[] = array(
 				'name' => 'tag_search',
-				'value' => '$data->tag_TO->body',
+				'value' => 'str_replace(\'-\', \' \', $data->tag->body)',
 			);
 			$this->defaultColumns[] = array(
 				'name' => 'creation_search',
-				'value' => '$data->creation_relation->displayname',
+				'value' => '$data->creation->displayname',
 			);
 			$this->defaultColumns[] = array(
 				'name' => 'creation_date',
@@ -219,11 +217,11 @@ class ArticleTag extends CActiveRecord
 				'htmlOptions' => array(
 					'class' => 'center',
 				),
-				'filter' => Yii::app()->controller->widget('zii.widgets.jui.CJuiDatePicker', array(
+				'filter' => Yii::app()->controller->widget('application.components.system.CJuiDatePicker', array(
 					'model'=>$this, 
 					'attribute'=>'creation_date', 
-					'language' => 'ja',
-					'i18nScriptFile' => 'jquery.ui.datepicker-en.js',
+					'language' => 'en',
+					'i18nScriptFile' => 'jquery-ui-i18n.min.js',
 					//'mode'=>'datetime',
 					'htmlOptions' => array(
 						'id' => 'creation_date_filter',
@@ -247,24 +245,30 @@ class ArticleTag extends CActiveRecord
 	/**
 	 * get article tag
 	 */
-	public static function getKeyword($keyword, $id) {
-		$model = self::model()->findAll(array(
-			'condition' => 'article_id = :id',
-			'params' => array(
-				':id' => $id,
-			),
-			'order' => 'id ASC',
-			'limit' => 30,
-		));
+	public static function getKeyword($keyword, $tags) 
+	{
+		if(empty($tags))
+			return $keyword;
 		
-		$tag = '';
-		if($model != null) {
-			foreach($model as $val) {
-				$tag .= ','.$val->tag_TO->body;
-			}
+		else {
+			$tag = array();
+			foreach($tags as $val)
+				$tag[] = $val->tag->body;
+				
+			$implodeTag = Utility::formatFileType($tag, false);
+			return $keyword.', '.$implodeTag;
 		}
-		
-		return $keyword.$tag;
+	}
+
+	/**
+	 * before validate attributes
+	 */
+	protected function beforeValidate() {
+		if(parent::beforeValidate()) {
+			if($this->isNewRecord)
+				$this->creation_id = Yii::app()->user->id;
+		}
+		return true;
 	}
 	
 	/**
@@ -276,23 +280,21 @@ class ArticleTag extends CActiveRecord
 				if($this->tag_id == 0) {
 					$tag = OmmuTags::model()->find(array(
 						'select' => 'tag_id, body',
-						'condition' => 'publish = 1 AND body = :body',
+						'condition' => 'body = :body',
 						'params' => array(
-							':body' => $this->body,
+							':body' => Utility::getUrlTitle(strtolower(trim($this->tag_input))),
 						),
 					));
-					if($tag != null) {
+					if($tag != null)
 						$this->tag_id = $tag->tag_id;
-					} else {
+					else {
 						$data = new OmmuTags;
-						$data->body = $this->body;
-						if($data->save()) {
+						$data->body = $this->tag_input;
+						if($data->save())
 							$this->tag_id = $data->tag_id;
-						}
 					}					
 				}
 			}
-			$this->creation_id = Yii::app()->user->id;
 		}
 		return true;
 	}

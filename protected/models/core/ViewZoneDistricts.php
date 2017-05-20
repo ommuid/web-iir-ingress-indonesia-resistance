@@ -1,11 +1,11 @@
 <?php
 /**
  * ViewZoneDistricts
- * version: 1.1.0
+ * version: 1.2.0
  *
  * @author Putra Sudaryanto <putra@sudaryanto.id>
- * @copyright Copyright (c) 2015 Ommu Platform (ommu.co)
- * @link https://github.com/oMMu/Ommu-Core
+ * @copyright Copyright (c) 2015 Ommu Platform (opensource.ommu.co)
+ * @link https://github.com/ommu/Core
  * @contact (+62)856-299-4114
  *
  * This is the template for generating the model class of a specified table.
@@ -24,8 +24,8 @@
  * The followings are the available columns in table '_view_core_zone_districts':
  * @property string $district_id
  * @property string $district_name
- * @property string $city
- * @property string $province
+ * @property string $city_name
+ * @property string $province_name
  */
 class ViewZoneDistricts extends CActiveRecord
 {
@@ -68,10 +68,10 @@ class ViewZoneDistricts extends CActiveRecord
 		return array(
 			array('district_name', 'required'),
 			array('district_id', 'length', 'max'=>11),
-			array('district_name, city, province', 'length', 'max'=>64),
+			array('district_name, city_name, province_name', 'length', 'max'=>64),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('district_id, district_name, city, province', 'safe', 'on'=>'search'),
+			array('district_id, district_name, city_name, province_name', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -93,9 +93,9 @@ class ViewZoneDistricts extends CActiveRecord
 	{
 		return array(
 			'district_id' => Yii::t('attribute', 'District'),
-			'district_name' => Yii::t('attribute', 'District Name'),
-			'city' => Yii::t('attribute', 'City'),
-			'province' => Yii::t('attribute', 'Province'),
+			'district_name' => Yii::t('attribute', 'District'),
+			'city_name' => Yii::t('attribute', 'City'),
+			'province_name' => Yii::t('attribute', 'Province'),
 		);
 	}
 
@@ -119,8 +119,8 @@ class ViewZoneDistricts extends CActiveRecord
 
 		$criteria->compare('t.district_id',strtolower($this->district_id),true);
 		$criteria->compare('t.district_name',strtolower($this->district_name),true);
-		$criteria->compare('t.city',strtolower($this->city),true);
-		$criteria->compare('t.province',strtolower($this->province),true);
+		$criteria->compare('t.city_name',strtolower($this->city_name),true);
+		$criteria->compare('t.province_name',strtolower($this->province_name),true);
 
 		if(!isset($_GET['ViewZoneDistricts_sort']))
 			$criteria->order = 't.district_id DESC';
@@ -153,8 +153,8 @@ class ViewZoneDistricts extends CActiveRecord
 		} else {
 			$this->defaultColumns[] = 'district_id';
 			$this->defaultColumns[] = 'district_name';
-			$this->defaultColumns[] = 'city';
-			$this->defaultColumns[] = 'province';
+			$this->defaultColumns[] = 'city_name';
+			$this->defaultColumns[] = 'province_name';
 		}
 
 		return $this->defaultColumns;
@@ -171,8 +171,8 @@ class ViewZoneDistricts extends CActiveRecord
 			);
 			$this->defaultColumns[] = 'district_id';
 			$this->defaultColumns[] = 'district_name';
-			$this->defaultColumns[] = 'city';
-			$this->defaultColumns[] = 'province';
+			$this->defaultColumns[] = 'city_name';
+			$this->defaultColumns[] = 'province_name';
 		}
 		parent::afterConstruct();
 	}

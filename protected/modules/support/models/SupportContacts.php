@@ -1,9 +1,11 @@
 <?php
 /**
  * SupportContacts
+ * version: 0.2.1
+ *
  * @author Putra Sudaryanto <putra@sudaryanto.id>
- * @copyright Copyright (c) 2012 Ommu Platform (ommu.co)
- * @link https://github.com/oMMu/Ommu-Support
+ * @copyright Copyright (c) 2012 Ommu Platform (opensource.ommu.co)
+ * @link https://github.com/ommu/Support
  * @contact (+62)856-299-4114
  *
  * This is the template for generating the model class of a specified table.
@@ -23,8 +25,7 @@
  * @property integer $id
  * @property integer $publish
  * @property integer $cat_id
- * @property string $value
- * @property string $contact_icon
+ * @property string $contact_name
  * @property string $creation_date
  * @property string $creation_id
  * @property string $modified_date
@@ -67,12 +68,12 @@ class SupportContacts extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('cat_id, value', 'required'),
+			array('cat_id, contact_name', 'required'),
 			array('publish, cat_id, creation_id, modified_id', 'numerical', 'integerOnly'=>true),
-			array('contact_icon', 'safe'),
+			array('', 'safe'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('id, publish, cat_id, value, contact_icon, creation_date, creation_id, modified_date, modified_id, 
+			array('id, publish, cat_id, contact_name, creation_date, creation_id, modified_date, modified_id, 
 				creation_search, modified_search', 'safe', 'on'=>'search'),
 		);
 	}
@@ -86,8 +87,8 @@ class SupportContacts extends CActiveRecord
 		// class name for the relations automatically generated below.
 		return array(
 			'cat' => array(self::BELONGS_TO, 'SupportContactCategory', 'cat_id'),
-			'creation_relation' => array(self::BELONGS_TO, 'Users', 'creation_id'),
-			'modified_relation' => array(self::BELONGS_TO, 'Users', 'modified_id'),
+			'creation' => array(self::BELONGS_TO, 'Users', 'creation_id'),
+			'modified' => array(self::BELONGS_TO, 'Users', 'modified_id'),
 		);
 	}
 
@@ -100,8 +101,7 @@ class SupportContacts extends CActiveRecord
 			'id' => Yii::t('attribute', 'ID'),
 			'publish' => Yii::t('attribute', 'Publish'),
 			'cat_id' => Yii::t('attribute', 'Category'),
-			'value' => Yii::t('attribute', 'Value'),
-			'contact_icon' => Yii::t('attribute', 'Icons'),
+			'contact_name' => Yii::t('attribute', 'Contact Name'),
 			'creation_date' => Yii::t('attribute', 'Creation Date'),
 			'creation_id' => Yii::t('attribute', 'Creation'),
 			'modified_date' => Yii::t('attribute', 'Modified Date'),
@@ -138,8 +138,7 @@ class SupportContacts extends CActiveRecord
 			$criteria->compare('t.cat_id',$_GET['category']);
 		else
 			$criteria->compare('t.cat_id',$this->cat_id);
-		$criteria->compare('t.value',$this->value,true);
-		$criteria->compare('t.contact_icon',$this->contact_icon,true);
+		$criteria->compare('t.contact_name',$this->contact_name,true);
 		if($this->creation_date != null && !in_array($this->creation_date, array('0000-00-00 00:00:00', '0000-00-00')))
 			$criteria->compare('date(t.creation_date)',date('Y-m-d', strtotime($this->creation_date)));
 		$criteria->compare('t.creation_id',$this->creation_id);
@@ -149,17 +148,17 @@ class SupportContacts extends CActiveRecord
 		
 		// Custom Search
 		$criteria->with = array(
-			'creation_relation' => array(
-				'alias'=>'creation_relation',
+			'creation' => array(
+				'alias'=>'creation',
 				'select'=>'displayname',
 			),
-			'modified_relation' => array(
-				'alias'=>'modified_relation',
+			'modified' => array(
+				'alias'=>'modified',
 				'select'=>'displayname',
 			),
 		);
-		$criteria->compare('creation_relation.displayname',strtolower($this->creation_search), true);
-		$criteria->compare('modified_relation.displayname',strtolower($this->modified_search), true);
+		$criteria->compare('creation.displayname',strtolower($this->creation_search), true);
+		$criteria->compare('modified.displayname',strtolower($this->modified_search), true);
 		
 		if(!isset($_GET['SupportContacts_sort'])) {
 			$criteria->order = 't.id DESC';
@@ -194,8 +193,7 @@ class SupportContacts extends CActiveRecord
 			//$this->defaultColumns[] = 'id';
 			$this->defaultColumns[] = 'publish';
 			$this->defaultColumns[] = 'cat_id';
-			$this->defaultColumns[] = 'value';
-			$this->defaultColumns[] = 'contact_icon';
+			$this->defaultColumns[] = 'contact_name';
 			$this->defaultColumns[] = 'creation_date';
 			$this->defaultColumns[] = 'creation_id';
 			$this->defaultColumns[] = 'modified_date';
@@ -217,24 +215,19 @@ class SupportContacts extends CActiveRecord
 			if(!isset($_GET['category'])) {
 				$this->defaultColumns[] = array(
 					'name' => 'cat_id',
-					'value' => 'Phrase::trans($data->cat->name, 2)',
+					'value' => 'Phrase::trans($data->cat->name)',
 					'filter'=> SupportContactCategory::getCategory(),
 					'type' => 'raw',
 				);
 			}
 			$this->defaultColumns[] = array(
-				'name' => 'value',
-				'value' => '$data->value',
-				'type' => 'raw',
-			);
-			$this->defaultColumns[] = array(
-				'name' => 'contact_icon',
-				'value' => '$data->contact_icon',
+				'name' => 'contact_name',
+				'value' => '$data->contact_name',
 				'type' => 'raw',
 			);
 			$this->defaultColumns[] = array(
 				'name' => 'publish',
-				'value' => '$data->cat->publish == 2 ? "-" : Utility::getPublish(Yii::app()->controller->createUrl("publish",array("id"=>$data->id)), $data->publish, 1) ',
+				'value' => '$data->cat->publish != 2 ? Utility::getPublish(Yii::app()->controller->createUrl("publish",array("id"=>$data->id)), $data->publish, 1) : "-"',
 				'htmlOptions' => array(
 					'class' => 'center',
 				),
@@ -271,12 +264,15 @@ class SupportContacts extends CActiveRecord
 	protected function beforeValidate() {
 		if(parent::beforeValidate()) {
 			if(!$this->isNewRecord) {
-				if($this->publish == 2 && $this->value == '') {
-					$this->addError('value', Phrase::trans($this->cat->name, 2).' '.Yii::t('phrase', 'cannot be blank.'));
-				}
+				if($this->cat->publish == 2 && $this->contact_name == '')
+					$this->addError('contact_name', Phrase::trans($this->cat->name).' '.Yii::t('phrase', 'cannot be blank.'));
+				
 				$this->modified_id = Yii::app()->user->id;
 			} else
-				$this->creation_id = Yii::app()->user->id;	
+				$this->creation_id = Yii::app()->user->id;
+			
+			if($this->cat->publish == 2)
+				$this->publish = 1;
 		}
 		return true;
 	}

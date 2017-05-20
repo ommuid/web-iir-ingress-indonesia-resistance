@@ -3,11 +3,11 @@
  * Ommu Pages (ommu-pages)
  * @var $this PageController
  * @var $model OmmuPages
- * version: 1.1.0
+ * version: 1.2.0
  *
  * @author Putra Sudaryanto <putra@sudaryanto.id>
- * @copyright Copyright (c) 2012 Ommu Platform (ommu.co)
- * @link https://github.com/oMMu/Ommu-Core
+ * @copyright Copyright (c) 2012 Ommu Platform (opensource.ommu.co)
+ * @link https://github.com/ommu/Core
  * @contact (+62)856-299-4114
  *
  */
@@ -77,20 +77,23 @@
 				'buttons' => array(
 					'view' => array(
 						'label' => 'view',
+						'imageUrl' => false,
 						'options' => array(
 							'class' => 'view',
 							'off_address' => '',
 							'target' => '_blank',
 						),
-						'url' => 'Yii::app()->controller->createUrl("view",array("id"=>$data->primaryKey,"t"=>Utility::getUrlTitle(Phrase::trans($data->name,2))))'),
+						'url' => 'Yii::app()->controller->createUrl("view",array("id"=>$data->primaryKey,"slug"=>Utility::getUrlTitle(Phrase::trans($data->name))))'),
 					'update' => array(
 						'label' => 'update',
+						'imageUrl' => false,
 						'options' => array(
 							'class' => 'update'
 						),
 						'url' => 'Yii::app()->controller->createUrl("edit",array("id"=>$data->primaryKey))'),
 					'delete' => array(
 						'label' => 'delete',
+						'imageUrl' => false,
 						'options' => array(
 							'class' => 'delete'
 						),
@@ -103,6 +106,7 @@
 				'id'=>'ommu-pages-grid',
 				'dataProvider'=>$model->search(),
 				'filter'=>$model,
+				'afterAjaxUpdate' => 'reinstallDatePicker',
 				'columns' => $columnData,
 				'pager' => array('header' => ''),
 			));

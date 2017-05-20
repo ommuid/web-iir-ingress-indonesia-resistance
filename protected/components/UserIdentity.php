@@ -3,11 +3,12 @@
  * UserIdentity represents the data needed to identity a user.
  * It contains the authentication method that checks if the provided
  * data can identity the user.
+ * version: 1.2.0
  * 
  * @author Putra Sudaryanto <putra@sudaryanto.id>
- * @copyright Copyright (c) 2012 Ommu Platform (ommu.co)
- * @link https://github.com/oMMu/Ommu-Core
- * @contect (+62)856-299-4114
+ * @copyright Copyright (c) 2012 Ommu Platform (opensource.ommu.co)
+ * @link https://github.com/ommu/Core
+ * @contact (+62)856-299-4114
  *
  */
 class UserIdentity extends CUserIdentity
@@ -30,14 +31,13 @@ class UserIdentity extends CUserIdentity
 		else 
 			$record = Users::model()->findByAttributes(array('username' => $this->username));
 			
-		if($record === null) {
+		if($record === null)
 			$this->errorCode = self::ERROR_USERNAME_INVALID;
-		} else if($record->password !== Users::hashPassword($record->salt,$this->password)) {
+		else if($record->password !== Users::hashPassword($record->salt,$this->password))
 			$this->errorCode = self::ERROR_PASSWORD_INVALID;
-		} else {
+		else {
 			$this->_id = $record->user_id;
 			$this->setState('level', $record->level_id);
-			$this->setState('profile', $record->profile_id);
 			$this->setState('language', $record->language_id);
 			$this->email = $record->email;
 			$this->setState('username', $record->username);

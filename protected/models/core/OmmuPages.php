@@ -1,11 +1,11 @@
 <?php
 /**
  * OmmuPages
- * version: 1.1.0
+ * version: 1.2.0
  *
  * @author Putra Sudaryanto <putra@sudaryanto.id>
- * @copyright Copyright (c) 2012 Ommu Platform (ommu.co)
- * @link https://github.com/oMMu/Ommu-Core
+ * @copyright Copyright (c) 2012 Ommu Platform (opensource.ommu.co)
+ * @link https://github.com/ommu/Core
  * @contact (+62)856-299-4114
  *
  * This is the template for generating the model class of a specified table.
@@ -39,10 +39,10 @@
 class OmmuPages extends CActiveRecord
 {
 	public $defaultColumns = array();
-	public $title;
-	public $description;
-	public $quotes;
-	public $old_media;
+	public $title_i;
+	public $description_i;
+	public $quote_i;
+	public $old_media_i;
 	
 	// Variable Search
 	public $user_search;
@@ -76,17 +76,17 @@ class OmmuPages extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('user_id,
-				title, description', 'required'),
+				title_i, description_i', 'required'),
 			array('publish, media_show, media_type', 'numerical', 'integerOnly'=>true),
 			array('
-				title', 'length', 'max'=>256),
+				title_i', 'length', 'max'=>256),
 			//array('media', 'file', 'types' => 'jpg, jpeg, png, gif', 'allowEmpty' => true),
 			array('media, creation_date, modified_date, 
-				quotes, old_media', 'safe'),
+				quote_i, old_media_i', 'safe'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('page_id, publish, user_id, name, desc, quote, media, media_show, media_type, creation_date, creation_id, modified_date, modified_id,
-				title, description, quotes, user_search, creation_search, modified_search', 'safe', 'on'=>'search'),
+				title_i, description_i, quote_i, user_search, creation_search, modified_search', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -98,10 +98,13 @@ class OmmuPages extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'view_page' => array(self::BELONGS_TO, 'ViewPages', 'page_id'),
+			'view' => array(self::BELONGS_TO, 'ViewPages', 'page_id'),
+			'title' => array(self::BELONGS_TO, 'OmmuSystemPhrase', 'name'),
+			'description' => array(self::BELONGS_TO, 'OmmuSystemPhrase', 'desc'),
+			'quote' => array(self::BELONGS_TO, 'OmmuSystemPhrase', 'quote'),
 			'user' => array(self::BELONGS_TO, 'Users', 'user_id'),
-			'creation_relation' => array(self::BELONGS_TO, 'Users', 'creation_id'),
-			'modified_relation' => array(self::BELONGS_TO, 'Users', 'modified_id'),
+			'creation' => array(self::BELONGS_TO, 'Users', 'creation_id'),
+			'modified' => array(self::BELONGS_TO, 'Users', 'modified_id'),
 		);
 	}
 
@@ -124,10 +127,10 @@ class OmmuPages extends CActiveRecord
 			'creation_id' => Yii::t('attribute', 'Creation'),
 			'modified_date' => Yii::t('attribute', 'Modified Date'),
 			'modified_id' => Yii::t('attribute', 'Modified'),
-			'title' => Yii::t('attribute', 'Title'),
-			'description' => Yii::t('attribute', 'Description'),
-			'quotes' => Yii::t('attribute', 'Quote'),
-			'old_media' => Yii::t('attribute', 'Old Media'),
+			'title_i' => Yii::t('attribute', 'Title'),
+			'description_i' => Yii::t('attribute', 'Description'),
+			'quote_i' => Yii::t('attribute', 'Quote'),
+			'old_media_i' => Yii::t('attribute', 'Old Media'),
 			'user_search' => Yii::t('attribute', 'User'),
 			'creation_search' => Yii::t('attribute', 'Creation'),
 			'modified_search' => Yii::t('attribute', 'Modified'),
@@ -144,6 +147,43 @@ class OmmuPages extends CActiveRecord
 		// should not be searched.
 
 		$criteria=new CDbCriteria;
+		
+		// Custom Search
+		$defaultLang = OmmuLanguages::getDefault('code');
+		if(isset(Yii::app()->session['language']))
+			$language = Yii::app()->session['language'];
+		else 
+			$language = $defaultLang;
+		
+		$criteria->with = array(
+			'view' => array(
+				'alias'=>'view',
+			),
+			'title' => array(
+				'alias'=>'title',
+				'select'=>$language,
+			),
+			'description' => array(
+				'alias'=>'description',
+				'select'=>$language,
+			),
+			'quote' => array(
+				'alias'=>'quote',
+				'select'=>$language,
+			),
+			'user' => array(
+				'alias'=>'user',
+				'select'=>'displayname'
+			),
+			'creation' => array(
+				'alias'=>'creation',
+				'select'=>'displayname'
+			),
+			'modified' => array(
+				'alias'=>'modified',
+				'select'=>'displayname'
+			),
+		);
 
 		$criteria->compare('t.page_id',$this->page_id);
 		if(isset($_GET['type']) && $_GET['type'] == 'publish') {
@@ -170,30 +210,12 @@ class OmmuPages extends CActiveRecord
 			$criteria->compare('date(t.modified_date)',date('Y-m-d', strtotime($this->modified_date)));
 		$criteria->compare('t.modified_id',$this->modified_id);
 		
-		// Custom Search
-		$criteria->with = array(
-			'view_page' => array(
-				'alias'=>'view_page',
-				'select'=>'title, description'
-			),
-			'user' => array(
-				'alias'=>'user',
-				'select'=>'displayname'
-			),
-			'creation_relation' => array(
-				'alias'=>'creation_relation',
-				'select'=>'displayname'
-			),
-			'modified_relation' => array(
-				'alias'=>'modified_relation',
-				'select'=>'displayname'
-			),
-		);
-		$criteria->compare('view_page.title',strtolower($this->title), true);
-		$criteria->compare('view_page.description',strtolower($this->description), true);
+		$criteria->compare('title.'.$language,strtolower($this->title_i), true);
+		$criteria->compare('description.'.$language,strtolower($this->description_i), true);
+		$criteria->compare('quote.'.$language,strtolower($this->quote_i), true);
 		$criteria->compare('user.displayname',strtolower($this->user_search), true);
-		$criteria->compare('creation_relation.displayname',strtolower($this->creation_search), true);
-		$criteria->compare('modified_relation.displayname',strtolower($this->modified_search), true);
+		$criteria->compare('creation.displayname',strtolower($this->creation_search), true);
+		$criteria->compare('modified.displayname',strtolower($this->modified_search), true);
 		
 		if(!isset($_GET['OmmuPages_sort']))
 			$criteria->order = 't.page_id DESC';
@@ -260,16 +282,12 @@ class OmmuPages extends CActiveRecord
 				'value' => '$this->grid->dataProvider->pagination->currentPage*$this->grid->dataProvider->pagination->pageSize + $row+1'
 			);
 			$this->defaultColumns[] = array(
-				'name' => 'title',
-				'value' => 'Phrase::trans($data->name, 2)."<br/><span>".Utility::shortText(Utility::hardDecode(Phrase::trans($data->desc, 2)),150)."</span>"',
-				'htmlOptions' => array(
-					'class' => 'bold',
-				),
-				'type' => 'raw',
+				'name' => 'title_i',
+				'value' => 'Phrase::trans($data->name)',
 			);
 			$this->defaultColumns[] = array(
 				'name' => 'creation_search',
-				'value' => '$data->creation_relation->displayname',
+				'value' => '$data->creation->displayname',
 			);
 			$this->defaultColumns[] = array(
 				'name' => 'creation_date',
@@ -277,11 +295,11 @@ class OmmuPages extends CActiveRecord
 				'htmlOptions' => array(
 					'class' => 'center',
 				),
-				'filter' => Yii::app()->controller->widget('zii.widgets.jui.CJuiDatePicker', array(
+				'filter' => Yii::app()->controller->widget('application.components.system.CJuiDatePicker', array(
 					'model'=>$this, 
 					'attribute'=>'creation_date', 
-					'language' => 'ja',
-					'i18nScriptFile' => 'jquery.ui.datepicker-en.js',
+					'language' => 'en',
+					'i18nScriptFile' => 'jquery-ui-i18n.min.js',
 					//'mode'=>'datetime',
 					'htmlOptions' => array(
 						'id' => 'creation_date_filter',
@@ -338,50 +356,50 @@ class OmmuPages extends CActiveRecord
 	/**
 	 * before save attributes
 	 */
-	protected function beforeSave() {
+	protected function beforeSave() 
+	{
+		$action = strtolower(Yii::app()->controller->action->id);
+		$currentAction = strtolower(Yii::app()->controller->id.'/'.Yii::app()->controller->action->id);
+		$location = Utility::getUrlTitle($currentAction);
+		
 		if(parent::beforeSave()) {
-			$action = strtolower(Yii::app()->controller->action->id);
-			$location = strtolower(Yii::app()->controller->id);
-			if($this->isNewRecord) {
+			if($this->isNewRecord || (!$this->isNewRecord && $this->name == 0)) {
 				$title=new OmmuSystemPhrase;
 				$title->location = $location.'_title';
-				$title->en_us = $this->title;
+				$title->en_us = $this->title_i;
 				if($title->save())
 					$this->name = $title->phrase_id;
-
+				
+			} else {
+				$title = OmmuSystemPhrase::model()->findByPk($this->name);
+				$title->en_us = $this->title_i;
+				$title->save();
+			}
+			
+			if($this->isNewRecord || (!$this->isNewRecord && $this->desc == 0)) {
 				$desc=new OmmuSystemPhrase;
 				$desc->location = $location.'_description';
-				$desc->en_us = $this->description;
+				$desc->en_us = $this->description_i;
 				if($desc->save())
 					$this->desc = $desc->phrase_id;
-
+				
+			} else {
+				$desc = OmmuSystemPhrase::model()->findByPk($this->desc);
+				$desc->en_us = $this->description_i;
+				$desc->save();
+			}
+			
+			if($this->isNewRecord || (!$this->isNewRecord && $this->quote == 0)) {
 				$quote=new OmmuSystemPhrase;
 				$quote->location = $location.'_quotes';
-				$quote->en_us = $this->quotes;
+				$quote->en_us = $this->quote_i;
 				if($quote->save())
 					$this->quote = $quote->phrase_id;
 				
 			} else {
-				$title = OmmuSystemPhrase::model()->findByPk($this->name);
-				$title->en_us = $this->title;
-				$title->save();
-
-				$desc = OmmuSystemPhrase::model()->findByPk($this->desc);
-				$desc->en_us = $this->description;
-				$desc->save();
-				
-				if($this->quote != 0) {
-					$quote = OmmuSystemPhrase::model()->findByPk($this->quote);
-					$quote->en_us = $this->quotes;
-					$quote->save();						
-				} else {
-					$quote=new OmmuSystemPhrase;
-					$quote->location = $location.'_quotes';
-					$quote->en_us = $this->quotes;
-					if($quote->save()) {
-						$this->quote = $quote->phrase_id;
-					}						
-				}
+				$quote = OmmuSystemPhrase::model()->findByPk($this->quote);
+				$quote->en_us = $this->quote_i;
+				$quote->save();	
 			}
 				
 			//upload new photo
@@ -400,7 +418,7 @@ class OmmuPages extends CActiveRecord
 				
 				$this->media = CUploadedFile::getInstance($this, 'media');
 				if($this->media instanceOf CUploadedFile) {
-					$fileName = time().'_'.Utility::getUrlTitle(Phrase::trans($this->name, 2)).'.'.strtolower($this->media->extensionName);
+					$fileName = time().'_'.Utility::getUrlTitle(Phrase::trans($this->name)).'.'.strtolower($this->media->extensionName);
 					if($this->media->saveAs($page_path.'/'.$fileName)) {
 						//create thumb image
 						Yii::import('ext.phpthumb.PhpThumbFactory');
@@ -411,14 +429,14 @@ class OmmuPages extends CActiveRecord
 							$this->media_type = 1;
 						}
 						
-						if(!$this->isNewRecord && $this->old_media != '' && file_exists($page_path.'/'.$this->old_media))
-							rename($page_path.'/'.$this->old_media, 'public/page/verwijderen/'.$this->page_id.'_'.$this->old_media);
+						if(!$this->isNewRecord && $this->old_media_i != '' && file_exists($page_path.'/'.$this->old_media_i))
+							rename($page_path.'/'.$this->old_media_i, 'public/page/verwijderen/'.$this->page_id.'_'.$this->old_media_i);
 						$this->media = $fileName;
 					}
 				}
 				
 				if(!$this->isNewRecord && $this->media == '')
-					$this->media = $this->old_media;
+					$this->media = $this->old_media_i;
 			}
 		}
 		return true;

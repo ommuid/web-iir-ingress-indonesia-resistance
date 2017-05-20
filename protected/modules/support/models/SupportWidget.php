@@ -1,10 +1,12 @@
 <?php
 /**
  * SupportWidget
+ * version: 0.2.1
+ *
  * @author Putra Sudaryanto <putra@sudaryanto.id>
- * @copyright Copyright (c) 2016 Ommu Platform (ommu.co)
+ * @copyright Copyright (c) 2016 Ommu Platform (opensource.ommu.co)
  * @created date 3 February 2016, 12:24 WIB
- * @link http://company.ommu.co
+ * @link https://github.com/ommu/Support
  * @contact (+62)856-299-4114
  *
  * This is the template for generating the model class of a specified table.
@@ -87,9 +89,9 @@ class SupportWidget extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'cat_TO' => array(self::BELONGS_TO, 'SupportContactCategory', 'cat_id'),
-			'creation_TO' => array(self::BELONGS_TO, 'Users', 'creation_id'),
-			'modified_TO' => array(self::BELONGS_TO, 'Users', 'modified_id'),
+			'cat' => array(self::BELONGS_TO, 'SupportContactCategory', 'cat_id'),
+			'creation' => array(self::BELONGS_TO, 'Users', 'creation_id'),
+			'modified' => array(self::BELONGS_TO, 'Users', 'modified_id'),
 		);
 	}
 
@@ -161,17 +163,17 @@ class SupportWidget extends CActiveRecord
 		
 		// Custom Search
 		$criteria->with = array(
-			'creation_TO' => array(
-				'alias'=>'creation_TO',
+			'creation' => array(
+				'alias'=>'creation',
 				'select'=>'displayname',
 			),
-			'modified_TO' => array(
-				'alias'=>'modified_TO',
+			'modified' => array(
+				'alias'=>'modified',
 				'select'=>'displayname',
 			),
 		);
-		$criteria->compare('creation_TO.displayname',strtolower($this->creation_search), true);
-		$criteria->compare('modified_TO.displayname',strtolower($this->modified_search), true);
+		$criteria->compare('creation.displayname',strtolower($this->creation_search), true);
+		$criteria->compare('modified.displayname',strtolower($this->modified_search), true);
 
 		if(!isset($_GET['SupportWidget_sort']))
 			$criteria->order = 't.widget_id DESC';
@@ -235,7 +237,7 @@ class SupportWidget extends CActiveRecord
 			if(!isset($_GET['category'])) {
 				$this->defaultColumns[] = array(
 					'name' => 'cat_id',
-					'value' => 'Phrase::trans($data->cat_TO->name, 2)',
+					'value' => 'Phrase::trans($data->cat->name)',
 					'filter'=> SupportContactCategory::getCategory(),
 					'type' => 'raw',
 				);
@@ -247,7 +249,7 @@ class SupportWidget extends CActiveRecord
 			);
 			$this->defaultColumns[] = array(
 				'name' => 'creation_search',
-				'value' => '$data->creation_TO->displayname',
+				'value' => '$data->creation->displayname',
 			);
 			$this->defaultColumns[] = array(
 				'name' => 'creation_date',
@@ -255,11 +257,11 @@ class SupportWidget extends CActiveRecord
 				'htmlOptions' => array(
 					'class' => 'center',
 				),
-				'filter' => Yii::app()->controller->widget('zii.widgets.jui.CJuiDatePicker', array(
+				'filter' => Yii::app()->controller->widget('application.components.system.CJuiDatePicker', array(
 					'model'=>$this,
 					'attribute'=>'creation_date',
-					'language' => 'ja',
-					'i18nScriptFile' => 'jquery.ui.datepicker-en.js',
+					'language' => 'en',
+					'i18nScriptFile' => 'jquery-ui-i18n.min.js',
 					//'mode'=>'datetime',
 					'htmlOptions' => array(
 						'id' => 'creation_date_filter',

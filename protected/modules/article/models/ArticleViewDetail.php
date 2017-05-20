@@ -4,9 +4,9 @@
  * version: 0.0.1
  *
  * @author Putra Sudaryanto <putra@sudaryanto.id>
- * @copyright Copyright (c) 2016 Ommu Platform (ommu.co)
+ * @copyright Copyright (c) 2016 Ommu Platform (opensource.ommu.co)
  * @created date 8 December 2016, 10:18 WIB
- * @link http://company.ommu.co
+ * @link https://github.com/ommu/Articles
  * @contact (+62)856-299-4114
  *
  * This is the template for generating the model class of a specified table.
@@ -25,8 +25,11 @@
  * The followings are the available columns in table 'ommu_article_view_detail':
  * @property string $id
  * @property string $view_id
- * @property string $views_date
- * @property string $views_ip
+ * @property string $view_date
+ * @property string $view_ip
+ *
+ * The followings are the available model relations:
+ * @property ArticleViewDetail $view
  */
 class ArticleViewDetail extends CActiveRecord
 {
@@ -62,13 +65,13 @@ class ArticleViewDetail extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('view_id, views_ip', 'required'),
+			array('view_id, view_ip', 'required'),
 			array('view_id', 'length', 'max'=>11),
-			array('views_ip', 'length', 'max'=>20),
-			array('views_date', 'safe'),
+			array('view_ip', 'length', 'max'=>20),
+			array('view_date', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, view_id, views_date, views_ip,
+			array('id, view_id, view_date, view_ip,
 				article_search', 'safe', 'on'=>'search'),
 		);
 	}
@@ -93,14 +96,15 @@ class ArticleViewDetail extends CActiveRecord
 		return array(
 			'id' => Yii::t('attribute', 'ID'),
 			'view_id' => Yii::t('attribute', 'View'),
-			'views_date' => Yii::t('attribute', 'Views Date'),
-			'views_ip' => Yii::t('attribute', 'Views Ip'),
+			'view_date' => Yii::t('attribute', 'View Date'),
+			'view_ip' => Yii::t('attribute', 'View Ip'),
+			'article_search' => Yii::t('attribute', 'Article'),
 		);
 		/*
 			'ID' => 'ID',
 			'View' => 'View',
-			'Views Date' => 'Views Date',
-			'Views Ip' => 'Views Ip',
+			'View Date' => 'View Date',
+			'View Ip' => 'View Ip',
 		
 		*/
 	}
@@ -139,10 +143,10 @@ class ArticleViewDetail extends CActiveRecord
 			$criteria->compare('t.view_id',$_GET['view']);
 		else
 			$criteria->compare('t.view_id',$this->view_id);
-		if($this->views_date != null && !in_array($this->views_date, array('0000-00-00 00:00:00', '0000-00-00')))
-			$criteria->compare('date(t.views_date)',date('Y-m-d', strtotime($this->views_date)));
-		$criteria->compare('t.views_ip',strtolower($this->views_ip),true);
-		
+		if($this->view_date != null && !in_array($this->view_date, array('0000-00-00 00:00:00', '0000-00-00')))
+			$criteria->compare('date(t.view_date)',date('Y-m-d', strtotime($this->view_date)));
+		$criteria->compare('t.view_ip',strtolower($this->view_ip),true);
+
 		$criteria->compare('article.title',strtolower($this->article_search), true);
 
 		if(!isset($_GET['ArticleViewDetail_sort']))
@@ -176,8 +180,8 @@ class ArticleViewDetail extends CActiveRecord
 		} else {
 			//$this->defaultColumns[] = 'id';
 			$this->defaultColumns[] = 'view_id';
-			$this->defaultColumns[] = 'views_date';
-			$this->defaultColumns[] = 'views_ip';
+			$this->defaultColumns[] = 'view_date';
+			$this->defaultColumns[] = 'view_ip';
 		}
 
 		return $this->defaultColumns;
@@ -188,6 +192,14 @@ class ArticleViewDetail extends CActiveRecord
 	 */
 	protected function afterConstruct() {
 		if(count($this->defaultColumns) == 0) {
+			/*
+			$this->defaultColumns[] = array(
+				'class' => 'CCheckBoxColumn',
+				'name' => 'id',
+				'selectableRows' => 2,
+				'checkBoxHtmlOptions' => array('name' => 'trash_id[]')
+			);
+			*/
 			$this->defaultColumns[] = array(
 				'header' => 'No',
 				'value' => '$this->grid->dataProvider->pagination->currentPage*$this->grid->dataProvider->pagination->pageSize + $row+1'
@@ -195,27 +207,23 @@ class ArticleViewDetail extends CActiveRecord
 			if(!isset($_GET['view'])) {
 				$this->defaultColumns[] = array(
 					'name' => 'article_search',
-					'value' => '$data->view->article->title."<br/><span>".Utility::shortText(Utility::hardDecode($data->view->article->body),150)."</span>"',
-					'htmlOptions' => array(
-						'class' => 'bold',
-					),
-					'type' => 'raw',
+					'value' => '$data->view->article->title',
 				);
 			}
 			$this->defaultColumns[] = array(
-				'name' => 'views_date',
-				'value' => 'Utility::dateFormat($data->views_date)',
+				'name' => 'view_date',
+				'value' => 'Utility::dateFormat($data->view_date)',
 				'htmlOptions' => array(
-					'class' => 'center',
+					//'class' => 'center',
 				),
-				'filter' => Yii::app()->controller->widget('zii.widgets.jui.CJuiDatePicker', array(
+				'filter' => Yii::app()->controller->widget('application.components.system.CJuiDatePicker', array(
 					'model'=>$this,
-					'attribute'=>'views_date',
-					'language' => 'ja',
-					'i18nScriptFile' => 'jquery.ui.datepicker-en.js',
+					'attribute'=>'view_date',
+					'language' => 'en',
+					'i18nScriptFile' => 'jquery-ui-i18n.min.js',
 					//'mode'=>'datetime',
 					'htmlOptions' => array(
-						'id' => 'views_date_filter',
+						'id' => 'view_date_filter',
 					),
 					'options'=>array(
 						'showOn' => 'focus',
@@ -229,10 +237,10 @@ class ArticleViewDetail extends CActiveRecord
 				), true),
 			);
 			$this->defaultColumns[] = array(
-				'name' => 'views_ip',
-				'value' => '$data->views_ip',
+				'name' => 'view_ip',
+				'value' => '$data->view_ip',
 				'htmlOptions' => array(
-					'class' => 'center',
+					//'class' => 'center',
 				),
 			);
 		}

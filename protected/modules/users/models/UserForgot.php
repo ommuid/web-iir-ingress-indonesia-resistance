@@ -1,9 +1,11 @@
 <?php
 /**
  * UserForgot
+ * version: 0.0.1
+ *
  * @author Putra Sudaryanto <putra@sudaryanto.id>
- * @copyright Copyright (c) 2012 Ommu Platform (ommu.co)
- * @link https://github.com/oMMu/Ommu-Users
+ * @copyright Copyright (c) 2012 Ommu Platform (opensource.ommu.co)
+ * @link https://github.com/ommu/Users
  * @contact (+62)856-299-4114
  *
  * This is the template for generating the model class of a specified table.
@@ -21,10 +23,12 @@
  *
  * The followings are the available columns in table 'ommu_user_forgot':
  * @property string $forgot_id
+ * @property integer $publish
  * @property string $user_id
  * @property string $code
  * @property string $forgot_date
  * @property string $forgot_ip
+ * @property string $deleted_date
  *
  * The followings are the available model relations:
  * @property OmmuUsers $user
@@ -32,7 +36,7 @@
 class UserForgot extends CActiveRecord
 {
 	public $defaultColumns = array();
-	public $email;
+	public $email_i;
 
 	/**
 	 * Returns the static model of the specified AR class.
@@ -61,18 +65,19 @@ class UserForgot extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('code', 'required'),
-			array('email', 'required', 'on'=>'get'),
+			array('email_i', 'required', 'on'=>'get'),
+			array('publish', 'numerical', 'integerOnly'=>true),
 			array('user_id', 'length', 'max'=>11),
 			array('
-				email', 'length', 'max'=>32),
+				email_i', 'length', 'max'=>32),
 			array('code', 'length', 'max'=>64),
 			array('forgot_ip', 'length', 'max'=>20),
-			array('email', 'email'),
-			array('user_id, forgot_date, forgot_ip,
-				email', 'safe'),
+			array('email_i', 'email'),
+			array('user_id, forgot_ip,
+				email_i', 'safe'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('forgot_id, user_id, code, forgot_date, forgot_ip', 'safe', 'on'=>'search'),
+			array('forgot_id, publish, user_id, code, forgot_date, forgot_ip, deleted_date', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -95,11 +100,13 @@ class UserForgot extends CActiveRecord
 	{
 		return array(
 			'forgot_id' => Yii::t('attribute', 'Forgot'),
+			'publish' => Yii::t('attribute', 'Publish'),
 			'user_id' => Yii::t('attribute', 'User'),
 			'code' => Yii::t('attribute', 'Forgot Code'),
 			'forgot_date' => Yii::t('attribute', 'Forgot Date'),
 			'forgot_ip' => Yii::t('attribute', 'Forgot Ip'),
-			'email' => Yii::t('attribute', 'Email'),
+			'deleted_date' => Yii::t('attribute', 'Deleted Date'),
+			'email_i' => Yii::t('attribute', 'Email'),
 		);
 	}
 	
@@ -115,11 +122,23 @@ class UserForgot extends CActiveRecord
 		$criteria=new CDbCriteria;
 
 		$criteria->compare('t.forgot_id',$this->forgot_id);
+		if(isset($_GET['type']) && $_GET['type'] == 'publish')
+			$criteria->compare('t.publish',1);
+		elseif(isset($_GET['type']) && $_GET['type'] == 'unpublish')
+			$criteria->compare('t.publish',0);
+		elseif(isset($_GET['type']) && $_GET['type'] == 'trash')
+			$criteria->compare('t.publish',2);
+		else {
+			$criteria->addInCondition('t.publish',array(0,1));
+			$criteria->compare('t.publish',$this->publish);
+		}
 		$criteria->compare('t.user_id',$this->user_id);
 		$criteria->compare('t.code',$this->code,true);
 		if($this->forgot_date != null && !in_array($this->forgot_date, array('0000-00-00 00:00:00', '0000-00-00')))
 			$criteria->compare('date(t.forgot_date)',date('Y-m-d', strtotime($this->forgot_date)));
 		$criteria->compare('t.forgot_ip',$this->forgot_ip,true);
+		if($this->deleted_date != null && !in_array($this->deleted_date, array('0000-00-00 00:00:00', '0000-00-00')))
+			$criteria->compare('date(t.deleted_date)',date('Y-m-d', strtotime($this->deleted_date)));
 
 		if(!isset($_GET['UserForgot_sort']))
 			$criteria->order = 't.forgot_id DESC';
@@ -148,10 +167,12 @@ class UserForgot extends CActiveRecord
 			}
 		}else {
 			//$this->defaultColumns[] = 'forgot_id';
+			$this->defaultColumns[] = 'publish';
 			$this->defaultColumns[] = 'user_id';
 			$this->defaultColumns[] = 'code';
 			$this->defaultColumns[] = 'forgot_date';
 			$this->defaultColumns[] = 'forgot_ip';
+			$this->defaultColumns[] = 'deleted_date';
 		}
 
 		return $this->defaultColumns;
@@ -174,11 +195,11 @@ class UserForgot extends CActiveRecord
 				'htmlOptions' => array(
 					'class' => 'center',
 				),
-				'filter' => Yii::app()->controller->widget('zii.widgets.jui.CJuiDatePicker', array(
+				'filter' => Yii::app()->controller->widget('application.components.system.CJuiDatePicker', array(
 					'model'=>$this, 
 					'attribute'=>'forgot_date', 
-					'language' => 'ja',
-					'i18nScriptFile' => 'jquery.ui.datepicker-en.js',
+					'language' => 'en',
+					'i18nScriptFile' => 'jquery-ui-i18n.min.js',
 					//'mode'=>'datetime',
 					'htmlOptions' => array(
 						'id' => 'forgot_date_filter',
@@ -195,6 +216,44 @@ class UserForgot extends CActiveRecord
 				), true),
 			);
 			$this->defaultColumns[] = 'forgot_ip';
+			$this->defaultColumns[] = array(
+				'name' => 'publish',
+				'value' => '$data->publish == 1 ? Chtml::image(Yii::app()->theme->baseUrl.\'/images/icons/publish.png\') : Chtml::image(Yii::app()->theme->baseUrl.\'/images/icons/unpublish.png\')',
+				'htmlOptions' => array(
+					'class' => 'center',
+				),
+				'filter'=>array(
+					1=>Yii::t('phrase', 'Yes'),
+					0=>Yii::t('phrase', 'No'),
+				),
+				'type' => 'raw',
+			);
+			$this->defaultColumns[] = array(
+				'name' => 'deleted_date',
+				'value' => 'Utility::dateFormat($data->deleted_date)',
+				'htmlOptions' => array(
+					'class' => 'center',
+				),
+				'filter' => Yii::app()->controller->widget('application.components.system.CJuiDatePicker', array(
+					'model'=>$this, 
+					'attribute'=>'deleted_date', 
+					'language' => 'en',
+					'i18nScriptFile' => 'jquery-ui-i18n.min.js',
+					//'mode'=>'datetime',
+					'htmlOptions' => array(
+						'id' => 'deleted_date_filter',
+					),
+					'options'=>array(
+						'showOn' => 'focus',
+						'dateFormat' => 'dd-mm-yy',
+						'showOtherMonths' => true,
+						'selectOtherMonths' => true,
+						'changeMonth' => true,
+						'changeYear' => true,
+						'showButtonPanel' => true,
+					),
+				), true),
+			);
 		}
 		parent::afterConstruct();
 	}
@@ -225,12 +284,12 @@ class UserForgot extends CActiveRecord
 		$currentAction = strtolower(Yii::app()->controller->id.'/'.Yii::app()->controller->action->id);
 		if(parent::beforeValidate()) {		
 			if($this->isNewRecord) {
-				if($currentAction == 'password/forgot' && $this->email != '') {
-					$user = Users::model()->findByAttributes(array('email' => $this->email), array(
+				if($currentAction == 'password/forgot' && $this->email_i != '') {
+					$user = Users::model()->findByAttributes(array('email' => $this->email_i), array(
 						'select' => 'user_id, email',
 					));
 					if($user == null) {
-						$this->addError('email', 'Incorrect email address');
+						$this->addError('email_i', 'Incorrect email address');
 					} else {
 						$this->user_id = $user->user_id;
 					}
@@ -251,6 +310,7 @@ class UserForgot extends CActiveRecord
 		$setting = OmmuSettings::model()->findByPk(1, array(
 			'select' => 'site_title',
 		));
+		$_assetsUrl = Yii::app()->assetManager->publish(Yii::getPathOfAlias('users.assets'));
 		
 		if($this->isNewRecord) {
 			// Send Email to Member
@@ -259,30 +319,24 @@ class UserForgot extends CActiveRecord
 				'{$forgot_link}',
 			);
 			$forgot_replace = array(
-				Utility::getProtocol().'://'.Yii::app()->request->serverName.Yii::app()->request->baseUrl, $this->user->displayname, SupportMailSetting::getInfo(1, 'mail_contact'),
+				Utility::getProtocol().'://'.Yii::app()->request->serverName.$_assetsUrl, $this->user->displayname, SupportMailSetting::getInfo('mail_contact'),
 				Utility::getProtocol().'://'.Yii::app()->request->serverName.Yii::app()->createUrl('users/password/verify',array('key'=>$this->code, 'secret'=>$this->user->salt)),
 			);
 			$forgot_template = 'user_forgot_password';
 			$forgot_title = $setting->site_title.' Password Assistance';
-			$forgot_message = file_get_contents(YiiBase::getPathOfAlias('webroot.externals.users.template').'/'.$forgot_template.'.php');
+			$forgot_message = file_get_contents(YiiBase::getPathOfAlias('application.modules.users.components.templates').'/'.$forgot_template.'.php');
 			$forgot_ireplace = str_ireplace($forgot_search, $forgot_replace, $forgot_message);
 			SupportMailSetting::sendEmail($this->user->email, $this->user->displayname, $forgot_title, $forgot_ireplace);
+
+			// Update all history
+			$criteria=new CDbCriteria;
+			$criteria->addNotInCondition('forgot_id', array($this->forgot_id));
+			$criteria->compare('publish',1);
+			$criteria->compare('user_id',$this->user_id);
+
+			self::model()->updateAll(array('publish'=>0), $criteria);
+			
 		}
-	}
-
-	/**
-	 * After delete attributes
-	 */
-	protected function afterDelete() {
-		parent::afterDelete();
-
-		// Delete all history
-		self::model()->deleteAll(array(
-			'condition'=> 'user_id = :id',
-			'params'=>array(
-				':id'=>$this->user_id,
-			),
-		));
 	}
 
 }

@@ -3,25 +3,22 @@
  * Ommu Wall Comments (ommu-wall-comment)
  * @var $this WallcommentController
  * @var $model OmmuWallComment
- * version: 1.1.0
+ * version: 1.2.0
  *
  * @author Putra Sudaryanto <putra@sudaryanto.id>
- * @copyright Copyright (c) 2015 Ommu Platform (ommu.co)
- * @link https://github.com/oMMu/Ommu-Core
- * @contect (+62)856-299-4114
+ * @copyright Copyright (c) 2015 Ommu Platform (opensource.ommu.co)
+ * @link https://github.com/ommu/Core
+ * @contact (+62)856-299-4114
  *
  */
 ?>
 <div class="sep">
 	<div class="user">
 		<?php
-			if($data->user->photo_id == 0) {
-				$images = Utility::getTimThumb(Yii::app()->request->baseUrl.'/public/users/default.png', 40, 40, 1);
-			} else {
-				$images = Utility::getTimThumb(Yii::app()->request->baseUrl.'/public/users/'.Yii::app()->user->id.'/'.$data->user->photo->photo, 40, 40, 1);
-			}
-		?>	
-		<a href="javascript:void(0);" title="<?php echo $data->user->displayname;?>"><img src="<?php echo $images;?>" alt="<?php echo $data->user->displayname;?>"></a>
+		$image = Yii::app()->request->baseUrl.'/public/users/default.png';
+		if($data->user->photos)
+			$image = Yii::app()->request->baseUrl.'/public/users/'.Yii::app()->user->id.'/'.$data->user->photos;?>
+		<a href="javascript:void(0);" title="<?php echo $data->user->displayname;?>"><img src="<?php echo $image;?>" alt="<?php echo $data->user->displayname;?>"></a>
 	</div>
 	<div class="comment">
 		<h4>

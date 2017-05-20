@@ -3,11 +3,12 @@
  * Banners (banners)
  * @var $this AdminController
  * @var $model Banners
+ * version: 0.0.1
  *
  * @author Putra Sudaryanto <putra@sudaryanto.id>
- * @copyright Copyright (c) 2014 Ommu Platform (ommu.co)
- * @link https://github.com/oMMu/Ommu-Banner
- * @contect (+62)856-299-4114
+ * @copyright Copyright (c) 2014 Ommu Platform (opensource.ommu.co)
+ * @link https://github.com/ommu/Banner
+ * @contact (+62)856-299-4114
  *
  */
 
@@ -23,7 +24,7 @@
 		'attributes'=>array(
 			array(
 				'name'=>'cat_id',
-				'value'=>Phrase::trans($model->category_relation->name, 2),
+				'value'=>Phrase::trans($model->category->name),
 			),
 			'title',
 			array(
@@ -33,7 +34,7 @@
 			),
 			array(
 				'name'=>'url',
-				'value'=>CHtml::link($model->media, Yii::app()->request->baseUrl.'/public/banner/'.$model->media, array('target' => '_blank')),
+				'value'=>CHtml::link($model->banner_filename, Yii::app()->request->baseUrl.'/public/banner/'.$model->banner_filename, array('target' => '_blank')),
 				'type' => 'raw',
 			),
 			array(
@@ -52,7 +53,7 @@
 			),
 			array(
 				'name'=>'creation_id',
-				'value'=>$model->creation_relation->displayname,
+				'value'=>$model->creation->displayname,
 			),
 			array(
 				'name'=>'modified_date',
@@ -60,7 +61,7 @@
 			),
 			array(
 				'name'=>'modified_id',
-				'value'=>$model->modified_relation->displayname,
+				'value'=>$model->modified->displayname,
 			),
 			array(
 				'name'=>'publish',

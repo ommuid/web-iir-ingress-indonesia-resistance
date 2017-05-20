@@ -21,9 +21,9 @@
  *	performAjaxValidation
  *
  * @author Putra Sudaryanto <putra@sudaryanto.id>
- * @copyright Copyright (c) 2014 Ommu Platform (ommu.co)
- * @link https://github.com/oMMu/Ommu-Banner
- * @contect (+62)856-299-4114
+ * @copyright Copyright (c) 2014 Ommu Platform (opensource.ommu.co)
+ * @link https://github.com/ommu/Banner
+ * @contact (+62)856-299-4114
  *
  *----------------------------------------------------------------------------------------------------------
  */
@@ -47,12 +47,10 @@ class AdminController extends Controller
 				$arrThemes = Utility::getCurrentTemplate('admin');
 				Yii::app()->theme = $arrThemes['folder'];
 				$this->layout = $arrThemes['layout'];
-			} else {
-				$this->redirect(Yii::app()->createUrl('site/login'));
-			}
-		} else {
+			} else
+				throw new CHttpException(404, Yii::t('phrase', 'The requested page does not exist.'));
+		} else
 			$this->redirect(Yii::app()->createUrl('site/login'));
-		}
 	}
 
 	/**
@@ -143,6 +141,13 @@ class AdminController extends Controller
 	 */
 	public function actionAdd() 
 	{
+		$setting = BannerSetting::model()->findByPk(1,array(
+			'select' => 'banner_file_type',
+		));
+		$banner_file_type = unserialize($setting->banner_file_type);
+		if(empty($banner_file_type))
+			$banner_file_type = array();
+		
 		$model=new Banners;
 
 		// Uncomment the following line if AJAX validation is needed
@@ -162,6 +167,7 @@ class AdminController extends Controller
 		$this->pageMeta = '';
 		$this->render('admin_add',array(
 			'model'=>$model,
+			'banner_file_type'=>$banner_file_type,
 		));
 	}
 
@@ -172,6 +178,13 @@ class AdminController extends Controller
 	 */
 	public function actionEdit($id) 
 	{
+		$setting = BannerSetting::model()->findByPk(1,array(
+			'select' => 'banner_file_type',
+		));
+		$banner_file_type = unserialize($setting->banner_file_type);
+		if(empty($banner_file_type))
+			$banner_file_type = array();
+		
 		$model=$this->loadModel($id);
 
 		// Uncomment the following line if AJAX validation is needed
@@ -191,6 +204,7 @@ class AdminController extends Controller
 		$this->pageMeta = '';
 		$this->render('admin_edit',array(
 			'model'=>$model,
+			'banner_file_type'=>$banner_file_type,
 		));
 	}
 	

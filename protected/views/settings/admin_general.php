@@ -4,11 +4,11 @@
  * @var $this SettingsController
  * @var $model OmmuSettings
  * @var $form CActiveForm
- * version: 1.1.0
+ * version: 1.2.0
  *
  * @author Putra Sudaryanto <putra@sudaryanto.id>
- * @copyright Copyright (c) 2012 Ommu Platform (ommu.co)
- * @link https://github.com/oMMu/Ommu-Core
+ * @copyright Copyright (c) 2012 Ommu Platform (opensource.ommu.co)
+ * @link https://github.com/ommu/Core
  * @contact (+62)856-299-4114
  *
  */
@@ -19,7 +19,7 @@
 	);
 	$cs = Yii::app()->getClientScript();
 $js=<<<EOP
-	$('#OmmuSettings_online input[name="OmmuSettings[online]"]').live('change', function() {
+	$('#OmmuSettings_online input[name="OmmuSettings[online]"]').on('change', function() {
 		var id = $(this).val();
 		if(id == '0') {
 			$('div#construction').slideDown();
@@ -27,7 +27,7 @@ $js=<<<EOP
 			$('div#construction').slideUp();
 		}
 	});
-	$('#OmmuSettings_event input[name="OmmuSettings[event]"]').live('change', function() {
+	$('#OmmuSettings_event input[name="OmmuSettings[event]"]').on('change', function() {
 		var id = $(this).val();
 		if(id == '0') {
 			$('div#events').slideUp();
@@ -73,7 +73,7 @@ EOP;
 					<?php 
 					$model->construction_date = date('d-m-Y', strtotime($model->construction_date));
 					//echo $form->textField($model,'construction_date',array('maxlength'=>10, 'class'=>'span-3'));
-					$this->widget('zii.widgets.jui.CJuiDatePicker',array(
+					$this->widget('application.components.system.CJuiDatePicker',array(
 						'model'=>$model, 
 						'attribute'=>'construction_date',
 						'options'=>array(
@@ -120,7 +120,7 @@ EOP;
 					<?php 
 					$model->event_startdate = date('d-m-Y', strtotime($model->event_startdate));
 					//echo $form->textField($model,'event_startdate',array('maxlength'=>10, 'class'=>'span-3'));
-					$this->widget('zii.widgets.jui.CJuiDatePicker',array(
+					$this->widget('application.components.system.CJuiDatePicker',array(
 						'model'=>$model, 
 						'attribute'=>'event_startdate',
 						'options'=>array(
@@ -140,7 +140,7 @@ EOP;
 					<?php 
 					$model->event_finishdate = date('d-m-Y', strtotime($model->event_finishdate));
 					//echo $form->textField($model,'event_finishdate',array('maxlength'=>10, 'class'=>'span-3'));
-					$this->widget('zii.widgets.jui.CJuiDatePicker',array(
+					$this->widget('application.components.system.CJuiDatePicker',array(
 						'model'=>$model, 
 						'attribute'=>'event_finishdate',
 						'options'=>array(

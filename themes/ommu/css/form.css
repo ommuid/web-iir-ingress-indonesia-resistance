@@ -424,15 +424,30 @@ fieldset div label {
 	font-weight: bold;
 }
 fieldset div label span,
+fieldset div label span *,
+fieldset div div.desc p,
+fieldset div div.desc span.small-px,
+fieldset div div.desc span.small-px *,
+fieldset div div.desc div.small-px,
+fieldset div div.desc div.small-px *,
+fieldset div div.desc span.desc {
+	font-weight: normal;
+	font-size: 11px;
+	line-height: 14px;
+	color: #808080;	
+}
+fieldset div label span,
 fieldset div div.desc p,
 fieldset div div.desc span.small-px,
 fieldset div div.desc span.small-px *,
 fieldset div div.desc span.desc {
 	display: block;
-	font-weight: normal;
-	font-size: 11px;
-	line-height: 14px;
-	color: #808080;
+}
+fieldset div label span a,
+fieldset div div.desc span.small-px a,
+fieldset div div.desc div.small-px a {
+	color: #404040;
+	text-decoration: underline;
 }
 fieldset div label span {
 	padding: 5px 0 0 0;

@@ -1,11 +1,11 @@
 <?php
 /**
  * OmmuMeta
- * version: 1.1.0
+ * version: 1.2.0
  *
  * @author Putra Sudaryanto <putra@sudaryanto.id>
- * @copyright Copyright (c) 2012 Ommu Platform (ommu.co)
- * @link https://github.com/oMMu/Ommu-Core
+ * @copyright Copyright (c) 2012 Ommu Platform (opensource.ommu.co)
+ * @link https://github.com/ommu/Core
  * @contact (+62)856-299-4114
  *
  * This is the template for generating the model class of a specified table.
@@ -142,11 +142,11 @@ class OmmuMeta extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
+			'view' => array(self::BELONGS_TO, 'ViewMeta', 'id'),
 			'country' => array(self::BELONGS_TO, 'OmmuZoneCountry', 'office_country'),			
 			'province' => array(self::BELONGS_TO, 'OmmuZoneProvince', 'office_province'),
 			'city' => array(self::BELONGS_TO, 'OmmuZoneCity', 'office_city'),
-			'view_meta' => array(self::BELONGS_TO, 'ViewMeta', 'id'),
-			'modified_relation' => array(self::BELONGS_TO, 'Users', 'modified_id'),
+			'modified' => array(self::BELONGS_TO, 'Users', 'modified_id'),
 		);
 	}
 
@@ -270,12 +270,12 @@ class OmmuMeta extends CActiveRecord
 		
 		// Custom Search
 		$criteria->with = array(
-			'modified_relation' => array(
-				'alias'=>'modified_relation',
+			'modified' => array(
+				'alias'=>'modified',
 				'select'=>'displayname'
 			),
 		);
-		$criteria->compare('modified_relation.displayname',strtolower($this->modified_search), true);
+		$criteria->compare('modified.displayname',strtolower($this->modified_search), true);
 
 		if(!isset($_GET['OmmuMeta_sort']))
 			$criteria->order = 't.id DESC';
@@ -406,7 +406,7 @@ class OmmuMeta extends CActiveRecord
 			$this->defaultColumns[] = 'modified_date';
 			$this->defaultColumns[] = array(
 				'name' => 'modified_search',
-				'value' => '$data->modified_relation->displayname',
+				'value' => '$data->modified->displayname',
 			);
 		}
 		parent::afterConstruct();
@@ -415,16 +415,16 @@ class OmmuMeta extends CActiveRecord
 	/**
 	 * User get information
 	 */
-	public static function getInfo($id, $column=null)
+	public static function getInfo($column=null)
 	{
 		if($column != null) {
-			$model = self::model()->findByPk($id,array(
+			$model = self::model()->findByPk(1,array(
 				'select' => $column
 			));
 			return $model->$column;
 			
 		} else {
-			$model = self::model()->findByPk($id);
+			$model = self::model()->findByPk(1);
 			return $model;			
 		}
 	}

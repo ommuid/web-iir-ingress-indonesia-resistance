@@ -1,11 +1,11 @@
 <?php
 /**
  * OmmuAuthorContact
- * version: 1.1.0
+ * version: 1.2.0
  *
  * @author Putra Sudaryanto <putra@sudaryanto.id>
- * @copyright Copyright (c) 2015 Ommu Platform (ommu.co)
- * @link https://github.com/oMMu/Ommu-Core
+ * @copyright Copyright (c) 2015 Ommu Platform (opensource.ommu.co)
+ * @link https://github.com/ommu/Core
  * @contact (+62)856-299-4114
  *
  * This is the template for generating the model class of a specified table.
@@ -27,6 +27,7 @@
  * @property integer $type
  * @property string $contact
  * @property string $creation_date
+ * @property string $creation_id
  * @property string $modified_date
  * @property string $modified_id
  *
@@ -39,6 +40,7 @@ class OmmuAuthorContact extends CActiveRecord
 	
 	// Variable Search
 	public $author_search;
+	public $creation_search;
 	public $modified_search;
 
 	/**
@@ -75,8 +77,8 @@ class OmmuAuthorContact extends CActiveRecord
 			array('author_id, creation_date, modified_date', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, author_id, type, contact, creation_date, modified_date, modified_id,
-				author_search, modified_search', 'safe', 'on'=>'search'),
+			array('id, author_id, type, contact, creation_date, creation_id, modified_date, modified_id,
+				author_search, creation_search, modified_search', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -88,8 +90,9 @@ class OmmuAuthorContact extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'author_TO' => array(self::BELONGS_TO, 'OmmuAuthors', 'author_id'),
-			'modified_TO' => array(self::BELONGS_TO, 'Users', 'modified_id'),
+			'author' => array(self::BELONGS_TO, 'OmmuAuthors', 'author_id'),
+			'creation' => array(self::BELONGS_TO, 'Users', 'creation_id'),
+			'modified' => array(self::BELONGS_TO, 'Users', 'modified_id'),
 		);
 	}
 
@@ -104,9 +107,11 @@ class OmmuAuthorContact extends CActiveRecord
 			'type' => Yii::t('attribute', 'Type'),
 			'contact' => Yii::t('attribute', 'Contact'),
 			'creation_date' => Yii::t('attribute', 'Creation Date'),
+			'creation_id' => Yii::t('attribute', 'Creation'),
 			'modified_date' => Yii::t('attribute', 'Modified Date'),
 			'modified_id' => Yii::t('attribute', 'Modified'),
 			'author_search' => Yii::t('attribute', 'Author'),
+			'creation_search' => Yii::t('attribute', 'Creation'),
 			'modified_search' => Yii::t('attribute', 'Modified'),
 		);
 	}
@@ -128,6 +133,22 @@ class OmmuAuthorContact extends CActiveRecord
 		// @todo Please modify the following code to remove attributes that should not be searched.
 
 		$criteria=new CDbCriteria;
+		
+		// Custom Search
+		$criteria->with = array(
+			'author' => array(
+				'alias'=>'author',
+				'select'=>'name'
+			),
+			'creation' => array(
+				'alias'=>'creation',
+				'select'=>'displayname'
+			),
+			'modified' => array(
+				'alias'=>'modified',
+				'select'=>'displayname'
+			),
+		);
 
 		$criteria->compare('t.id',$this->id,true);
 		if(isset($_GET['author'])) {
@@ -139,23 +160,14 @@ class OmmuAuthorContact extends CActiveRecord
 		$criteria->compare('t.contact',$this->contact,true);
 		if($this->creation_date != null && !in_array($this->creation_date, array('0000-00-00 00:00:00', '0000-00-00')))
 			$criteria->compare('date(t.creation_date)',date('Y-m-d', strtotime($this->creation_date)));
+		$criteria->compare('t.creation_id',$this->creation_id);
 		if($this->modified_date != null && !in_array($this->modified_date, array('0000-00-00 00:00:00', '0000-00-00')))
 			$criteria->compare('date(t.modified_date)',date('Y-m-d', strtotime($this->modified_date)));
 		$criteria->compare('t.modified_id',$this->modified_id);
 		
-		// Custom Search
-		$criteria->with = array(
-			'author_TO' => array(
-				'alias'=>'author_TO',
-				'select'=>'name'
-			),
-			'modified_TO' => array(
-				'alias'=>'modified_TO',
-				'select'=>'displayname'
-			),
-		);
-		$criteria->compare('author_TO.name',strtolower($this->author_search), true);
-		$criteria->compare('modified_TO.displayname',strtolower($this->modified_search), true);
+		$criteria->compare('author.name',strtolower($this->author_search), true);
+		$criteria->compare('creation.displayname',strtolower($this->creation_search), true);
+		$criteria->compare('modified.displayname',strtolower($this->modified_search), true);
 
 		if(!isset($_GET['OmmuAuthorContact_sort']))
 			$criteria->order = 't.id DESC';
@@ -191,6 +203,7 @@ class OmmuAuthorContact extends CActiveRecord
 			$this->defaultColumns[] = 'type';
 			$this->defaultColumns[] = 'contact';
 			$this->defaultColumns[] = 'creation_date';
+			$this->defaultColumns[] = 'creation_id';
 			$this->defaultColumns[] = 'modified_date';
 			$this->defaultColumns[] = 'modified_id';
 		}
@@ -209,21 +222,25 @@ class OmmuAuthorContact extends CActiveRecord
 			);
 			$this->defaultColumns[] = array(
 				'name' => 'author_search',
-				'value' => '$data->author_TO->name',
+				'value' => '$data->author->name',
 			);
 			$this->defaultColumns[] = 'type';
 			$this->defaultColumns[] = 'contact';
+			$this->defaultColumns[] = array(
+				'name' => 'creation_search',
+				'value' => '$data->creation->displayname',
+			);
 			$this->defaultColumns[] = array(
 				'name' => 'creation_date',
 				'value' => 'Utility::dateFormat($data->creation_date)',
 				'htmlOptions' => array(
 					'class' => 'center',
 				),
-				'filter' => Yii::app()->controller->widget('zii.widgets.jui.CJuiDatePicker', array(
+				'filter' => Yii::app()->controller->widget('application.components.system.CJuiDatePicker', array(
 					'model'=>$this,
 					'attribute'=>'creation_date',
-					'language' => 'ja',
-					'i18nScriptFile' => 'jquery.ui.datepicker-en.js',
+					'language' => 'en',
+					'i18nScriptFile' => 'jquery-ui-i18n.min.js',
 					//'mode'=>'datetime',
 					'htmlOptions' => array(
 						'id' => 'creation_date_filter',
@@ -265,7 +282,9 @@ class OmmuAuthorContact extends CActiveRecord
 	 */
 	protected function beforeValidate() {
 		if(parent::beforeValidate()) {
-			if(!$this->isNewRecord)
+			if($this->isNewRecord)
+				$this->creation_id = Yii::app()->user->id;	
+			else
 				$this->modified_id = Yii::app()->user->id;				
 		}
 		return true;

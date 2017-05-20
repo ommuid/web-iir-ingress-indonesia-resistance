@@ -9,18 +9,18 @@
  *
  * TOC :
  *	Index
- *	Subscribe
  *	Manage
  *	Add
  *	Delete
+ *	Subscribe
  *
  *	LoadModel
  *	performAjaxValidation
  *
  * @author Putra Sudaryanto <putra@sudaryanto.id>
- * @copyright Copyright (c) 2012 Ommu Platform (ommu.co)
- * @link https://github.com/oMMu/Ommu-Users
- * @contect (+62)856-299-4114
+ * @copyright Copyright (c) 2012 Ommu Platform (opensource.ommu.co)
+ * @link https://github.com/ommu/Users
+ * @contact (+62)856-299-4114
  *
  *----------------------------------------------------------------------------------------------------------
  */
@@ -44,12 +44,10 @@ class NewsletterController extends Controller
 				$arrThemes = Utility::getCurrentTemplate('admin');
 				Yii::app()->theme = $arrThemes['folder'];
 				$this->layout = $arrThemes['layout'];
-			} else {
-				$this->redirect(Yii::app()->createUrl('site/login'));
-			}
-		} else {
+			} else
+				throw new CHttpException(404, Yii::t('phrase', 'The requested page does not exist.'));
+		} else
 			$this->redirect(Yii::app()->createUrl('site/login'));
-		}
 	}
 
 	/**
@@ -82,7 +80,7 @@ class NewsletterController extends Controller
 				//'expression'=>'isset(Yii::app()->user->level) && (Yii::app()->user->level != 1)',
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('unsubscribe','manage','add','delete'),
+				'actions'=>array('manage','add','delete','subscribe'),
 				'users'=>array('@'),
 				'expression'=>'isset(Yii::app()->user->level) && in_array(Yii::app()->user->level, array(1,2))',
 			),
@@ -102,54 +100,6 @@ class NewsletterController extends Controller
 	public function actionIndex() 
 	{
 		$this->redirect(array('manage'));
-	}	/**
-	 * Deletes a particular model.
-	 * If deletion is successful, the browser will be redirected to the 'admin' page.
-	 * @param integer $id the ID of the model to be deleted
-	 */
-	public function actionUnsubscribe() 
-	{
-		//if(!isset($_GET['type']) || (isset($_GET['type']) && $_GET['type'] == 'admin')) {
-		//}
-		$id = $_GET['id'];
-		$model=$this->loadModel($id);
-		if($model->subscribe == 1) {
-			$title = Yii::t('phrase', 'Unsubcribe');
-			$replace = 0;
-		} else {
-			$title = Yii::t('phrase', 'Subcribe');
-			$replace = 1;
-		}
-
-		if(Yii::app()->request->isPostRequest) {
-			// we only allow deletion via POST request
-			if(isset($id)) {
-				//change value active or publish
-				$model->subscribe = $replace;
-
-				if($model->update()) {
-					echo CJSON::encode(array(
-						'type' => 5,
-						'get' => Yii::app()->controller->createUrl('manage'),
-						'id' => 'partial-support-newsletter',
-						'msg' => '<div class="errorSummary success"><strong>'.Yii::t('phrase', 'Member newsletter success updated.').'</strong></div>',
-					));
-				}
-			}
-
-		} else {
-			$this->dialogDetail = true;
-			$this->dialogGroundUrl = Yii::app()->controller->createUrl('manage');
-			$this->dialogWidth = 350;
-
-			$this->pageTitle = $title;
-			$this->pageDescription = '';
-			$this->pageMeta = '';
-			$this->render('admin_unsubscribe',array(
-				'title'=>$title,
-				'model'=>$model,
-			));
-		}
 	}
 
 	/**
@@ -214,19 +164,18 @@ class NewsletterController extends Controller
                 }
             }
             Yii::app()->end();
-			
-        } else {
-			$this->dialogDetail = true;
-			$this->dialogWidth = 500;
-			$this->dialogGroundUrl = Yii::app()->controller->createUrl('manage');
-			
-			$this->pageTitle = Yii::t('phrase', 'Add Newsletter');
-			$this->pageDescription = '';
-			$this->pageMeta = '';
-			$this->render('admin_add',array(
-				'model'=>$model,
-			));		
-		}
+        }
+
+		$this->dialogDetail = true;
+		$this->dialogWidth = 500;
+		$this->dialogGroundUrl = Yii::app()->controller->createUrl('manage');
+		
+		$this->pageTitle = Yii::t('phrase', 'Add Newsletter');
+		$this->pageDescription = '';
+		$this->pageMeta = '';
+		$this->render('admin_add',array(
+			'model'=>$model,
+		));
 	}
 	
 	/**
@@ -258,6 +207,56 @@ class NewsletterController extends Controller
 			$this->pageDescription = '';
 			$this->pageMeta = '';
 			$this->render('admin_delete');
+		}
+	}
+	
+	/**
+	 * Deletes a particular model.
+	 * If deletion is successful, the browser will be redirected to the 'admin' page.
+	 * @param integer $id the ID of the model to be deleted
+	 */
+	public function actionSubscribe() 
+	{
+		//if(!isset($_GET['type']) || (isset($_GET['type']) && $_GET['type'] == 'admin')) {
+		//}
+		$id = $_GET['id'];
+		$model=$this->loadModel($id);
+		if($model->status == 1) {
+			$title = Yii::t('phrase', 'Unsubcribe');
+			$replace = 0;
+		} else {
+			$title = Yii::t('phrase', 'Subcribe');
+			$replace = 1;
+		}
+
+		if(Yii::app()->request->isPostRequest) {
+			// we only allow deletion via POST request
+			if(isset($id)) {
+				//change value active or publish
+				$model->status = $replace;
+
+				if($model->update()) {
+					echo CJSON::encode(array(
+						'type' => 5,
+						'get' => Yii::app()->controller->createUrl('manage'),
+						'id' => 'partial-support-newsletter',
+						'msg' => '<div class="errorSummary success"><strong>'.Yii::t('phrase', 'Member newsletter success updated.').'</strong></div>',
+					));
+				}
+			}
+
+		} else {
+			$this->dialogDetail = true;
+			$this->dialogGroundUrl = Yii::app()->controller->createUrl('manage');
+			$this->dialogWidth = 350;
+
+			$this->pageTitle = $title;
+			$this->pageDescription = '';
+			$this->pageMeta = '';
+			$this->render('admin_status',array(
+				'title'=>$title,
+				'model'=>$model,
+			));
 		}
 	}
 

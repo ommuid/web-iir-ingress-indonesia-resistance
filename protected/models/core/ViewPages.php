@@ -1,11 +1,11 @@
 <?php
 /**
  * ViewCorePages
- * version: 1.1.0
+ * version: 1.2.0
  *
  * @author Putra Sudaryanto <putra@sudaryanto.id>
- * @copyright Copyright (c) 2015 Ommu Platform (ommu.co)
- * @link https://github.com/oMMu/Ommu-Core
+ * @copyright Copyright (c) 2015 Ommu Platform (opensource.ommu.co)
+ * @link https://github.com/ommu/Core
  * @contact (+62)856-299-4114
  *
  * This is the template for generating the model class of a specified table.
@@ -23,8 +23,6 @@
  *
  * The followings are the available columns in table '_view_core_pages':
  * @property integer $page_id
- * @property string $title
- * @property string $description
  */
 class ViewPages extends CActiveRecord
 {
@@ -66,10 +64,10 @@ class ViewPages extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('page_id', 'numerical', 'integerOnly'=>true),
-			array('title, description', 'safe'),
+			array('', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('page_id, title, description', 'safe', 'on'=>'search'),
+			array('page_id', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -91,8 +89,6 @@ class ViewPages extends CActiveRecord
 	{
 		return array(
 			'page_id' => Yii::t('attribute', 'Page'),
-			'title' => Yii::t('attribute', 'Title'),
-			'description' => Yii::t('attribute', 'Description'),
 		);
 	}
 
@@ -115,8 +111,6 @@ class ViewPages extends CActiveRecord
 		$criteria=new CDbCriteria;
 
 		$criteria->compare('t.page_id',$this->page_id);
-		$criteria->compare('t.title',strtolower($this->title),true);
-		$criteria->compare('t.description',strtolower($this->description),true);
 
 		if(!isset($_GET['ViewCorePages_sort']))
 			$criteria->order = 't.page_id DESC';
@@ -148,8 +142,6 @@ class ViewPages extends CActiveRecord
 			}
 		} else {
 			$this->defaultColumns[] = 'page_id';
-			$this->defaultColumns[] = 'title';
-			$this->defaultColumns[] = 'description';
 		}
 
 		return $this->defaultColumns;
@@ -165,8 +157,6 @@ class ViewPages extends CActiveRecord
 				'value' => '$this->grid->dataProvider->pagination->currentPage*$this->grid->dataProvider->pagination->pageSize + $row+1'
 			);
 			$this->defaultColumns[] = 'page_id';
-			$this->defaultColumns[] = 'title';
-			$this->defaultColumns[] = 'description';
 		}
 		parent::afterConstruct();
 	}

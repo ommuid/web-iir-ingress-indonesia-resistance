@@ -4,10 +4,11 @@
  * @var $this MediaController
  * @var $model ArticleMedia
  * @var $form CActiveForm
+ * version: 0.0.1
  *
  * @author Putra Sudaryanto <putra@sudaryanto.id>
- * @copyright Copyright (c) 2012 Ommu Platform (ommu.co)
- * @link https://github.com/oMMu/Ommu-Articles
+ * @copyright Copyright (c) 2012 Ommu Platform (opensource.ommu.co)
+ * @link https://github.com/ommu/Articles
  * @contact (+62)856-299-4114
  *
  */
@@ -35,64 +36,51 @@
 	
 		<?php if(!$model->isNewRecord) {?>		
 		<div class="clearfix">
-			<?php echo $form->labelEx($model,'old_media'); ?>
+			<?php echo $form->labelEx($model,'old_media_input'); ?>
 			<div class="desc">
 				<?php 
-				$model->old_media = $model->media;
-				echo $form->hiddenField($model,'old_media');
-				if(in_array($model->article->article_type, array(1,3))) {
-					$media = Yii::app()->request->baseUrl.'/public/article/'.$model->article_id.'/'.$model->old_media;
-				}
-				if($model->article->article_type == 1) {?>
+				if(!$model->getErrors())
+					$model->old_media_input = $model->media;
+				echo $form->hiddenField($model,'old_media_input');
+				if($model->article->article_type == 'standard') {
+					$media = Yii::app()->request->baseUrl.'/public/article/'.$model->article_id.'/'.$model->old_media_input;?>
 					<img src="<?php echo Utility::getTimThumb($media, 400, 400, 3);?>" alt="">
-				<?php } else if($model->article->article_type == 2) {?>
-					<iframe width="320" height="200" src="//www.youtube.com/embed/<?php echo $model->old_media;?>" frameborder="0" allowfullscreen></iframe>
-				<?php } else if($model->article->article_type == 3) {?>
-					<audio src="<?php echo $media?>" controls="true" loop="true" autoplay="false"></audio>
+				<?php } else if($model->article->article_type == 'video') {?>
+					<iframe width="320" height="200" src="//www.youtube.com/embed/<?php echo $model->old_media_input;?>" frameborder="0" allowfullscreen></iframe>
 				<?php }?>
 			</div>
 		</div>
 		<?php }?>
 
-		<?php if($model->article->article_type == 1) {?>
+		<?php if($model->article->article_type == 'standard') {?>
 			<div class="clearfix">
 				<?php echo $form->labelEx($model,'media'); ?>
 				<div class="desc">
 					<?php echo $form->fileField($model,'media',array('maxlength'=>64)); ?>
 					<?php echo $form->error($model,'media'); ?>
+					<span class="small-px">extensions are allowed: <?php echo Utility::formatFileType($media_file_type, false);?></span>
 				</div>
 			</div>
 			
 		<?php }
-			if($model->article->article_type == 2) {
-		?>
+			if($model->article->article_type == 'video') {?>
 			<div class="clearfix">
-				<?php echo $form->labelEx($model,'video'); ?>
+				<?php echo $form->labelEx($model,'video_input'); ?>
 				<div class="desc">
 					<?php
-					$model->video = $model->media;
-					echo $form->textField($model,'video',array('maxlength'=>32)); ?>
-					<?php echo $form->error($model,'video'); ?>
+					if(!$model->getErrors())
+						$model->video_input = $model->media;
+					echo $form->textField($model,'video_input',array('maxlength'=>32)); ?>
+					<?php echo $form->error($model,'video_input'); ?>
 					<span class="small-px">http://www.youtube.com/watch?v=<strong>HOAqSoDZSho</strong></span>
 				</div>
-			</div>		
-			
-		<?php }
-			if($model->article->article_type == 3) {
-		?>
-			<div class="clearfix">
-				<?php echo $form->labelEx($model,'audio'); ?>
-				<div class="desc">
-					<?php echo $form->fileField($model,'audio',array('maxlength'=>64)); ?>
-					<?php echo $form->error($model,'audio'); ?>
-				</div>
-			</div>
+			</div>			
 		<?php }?>
 
 		<div class="clearfix">
 			<?php echo $form->labelEx($model,'caption'); ?>
 			<div class="desc">
-				<?php echo $form->textArea($model,'caption',array('rows'=>6, 'cols'=>50)); ?>
+				<?php echo $form->textArea($model,'caption',array('rows'=>6, 'cols'=>50, 'class'=>'span-10 smaller')); ?>
 				<?php echo $form->error($model,'caption'); ?>
 			</div>
 		</div>

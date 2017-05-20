@@ -3,8 +3,15 @@
  * ApplicationConfigBehavior is a behavior for the application.
  * It loads additional config parameters that cannot be statically 
  * written in config/main
+ * version: 1.2.0
  *
  * url: http://www.yiiframework.com/wiki/208/how-to-use-an-application-behavior-to-maintain-runtime-configuration/
+ *
+ * @author Putra Sudaryanto <putra@sudaryanto.id>
+ * @copyright Copyright (c) 2014 Ommu Platform (opensource.ommu.co)
+ * @link https://github.com/ommu/Core
+ * @contact (+62)856-299-4114
+ *
  */
  
 class AppConfigBehavior extends CBehavior

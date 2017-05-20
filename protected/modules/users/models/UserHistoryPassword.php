@@ -1,9 +1,11 @@
 <?php
 /**
  * UserHistoryPassword 
+ * version: 0.0.1
+ *
  * @author Putra Sudaryanto <putra@sudaryanto.id>
- * @copyright Copyright (c) 2015 Ommu Platform (ommu.co)
- * @link https://github.com/oMMu/Ommu-Users
+ * @copyright Copyright (c) 2015 Ommu Platform (opensource.ommu.co)
+ * @link https://github.com/ommu/Users
  * @contact (+62)856-299-4114
  *
  * This is the template for generating the model class of a specified table.
@@ -62,7 +64,7 @@ class UserHistoryPassword extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('user_id, password, update_date', 'required'),
+			array('user_id, password', 'required'),
 			array('user_id', 'length', 'max'=>11),
 			array('password', 'length', 'max'=>32),
 			array('update_date', 'safe'),
@@ -116,16 +118,6 @@ class UserHistoryPassword extends CActiveRecord
 		// @todo Please modify the following code to remove attributes that should not be searched.
 
 		$criteria=new CDbCriteria;
-
-		$criteria->compare('t.id',$this->id,true);
-		if(isset($_GET['user'])) {
-			$criteria->compare('t.user_id',$_GET['user']);
-		} else {
-			$criteria->compare('t.user_id',$this->user_id);
-		}
-		$criteria->compare('t.password',$this->password,true);
-		if($this->update_date != null && !in_array($this->update_date, array('0000-00-00 00:00:00', '0000-00-00')))
-			$criteria->compare('date(t.update_date)',date('Y-m-d', strtotime($this->update_date)));
 		
 		// Custom Search
 		$criteria->with = array(
@@ -134,6 +126,16 @@ class UserHistoryPassword extends CActiveRecord
 				'select'=>'displayname'
 			),
 		);
+
+		$criteria->compare('t.id',$this->id,true);
+		if(isset($_GET['user']))
+			$criteria->compare('t.user_id',$_GET['user']);
+		else
+			$criteria->compare('t.user_id',$this->user_id);
+		$criteria->compare('t.password',$this->password,true);
+		if($this->update_date != null && !in_array($this->update_date, array('0000-00-00 00:00:00', '0000-00-00')))
+			$criteria->compare('date(t.update_date)',date('Y-m-d', strtotime($this->update_date)));
+		
 		$criteria->compare('user.displayname',strtolower($this->user_search), true);
 
 		if(!isset($_GET['UserHistoryPassword_sort']))
@@ -183,22 +185,27 @@ class UserHistoryPassword extends CActiveRecord
 				'header' => 'No',
 				'value' => '$this->grid->dataProvider->pagination->currentPage*$this->grid->dataProvider->pagination->pageSize + $row+1'
 			);
+			if(!isset($_GET['user'])) {
+				$this->defaultColumns[] = array(
+					'name' => 'user_search',
+					'value' => '$data->user->displayname',
+				);
+			}
 			$this->defaultColumns[] = array(
-				'name' => 'user_search',
-				'value' => '$data->user->displayname',
+				'name' => 'password',
+				'value' => '$data->password',
 			);
-			//$this->defaultColumns[] = 'password';
 			$this->defaultColumns[] = array(
 				'name' => 'update_date',
 				'value' => 'Utility::dateFormat($data->update_date, true)',
 				'htmlOptions' => array(
-					//'class' => 'center',
+					'class' => 'center',
 				),
-				'filter' => Yii::app()->controller->widget('zii.widgets.jui.CJuiDatePicker', array(
+				'filter' => Yii::app()->controller->widget('application.components.system.CJuiDatePicker', array(
 					'model'=>$this,
 					'attribute'=>'update_date',
-					'language' => 'ja',
-					'i18nScriptFile' => 'jquery.ui.datepicker-en.js',
+					'language' => 'en',
+					'i18nScriptFile' => 'jquery-ui-i18n.min.js',
 					//'mode'=>'datetime',
 					'htmlOptions' => array(
 						'id' => 'update_date_filter',

@@ -2,7 +2,7 @@
 /**
  * PageController
  * Handle PageController
- * version: 1.1.0
+ * version: 1.2.0
  * Reference start
  *
  * TOC :
@@ -19,8 +19,8 @@
  *	performAjaxValidation
  *
  * @author Putra Sudaryanto <putra@sudaryanto.id>
- * @copyright Copyright (c) 2012 Ommu Platform (ommu.co)
- * @link https://github.com/oMMu/Ommu-Core
+ * @copyright Copyright (c) 2012 Ommu Platform (opensource.ommu.co)
+ * @link https://github.com/ommu/Core
  * @contact (+62)856-299-4114
  *
  *----------------------------------------------------------------------------------------------------------
@@ -45,9 +45,8 @@ class PageController extends Controller
 				$arrThemes = Utility::getCurrentTemplate('admin');
 				Yii::app()->theme = $arrThemes['folder'];
 				$this->layout = $arrThemes['layout'];
-			} else {
+			} else
 				throw new CHttpException(404, Yii::t('phrase', 'The requested page does not exist.'));
-			}
 		} else {
 			$arrThemes = Utility::getCurrentTemplate('public');
 			Yii::app()->theme = $arrThemes['folder'];
@@ -143,9 +142,9 @@ class PageController extends Controller
 			if($static == null) {
 				$model=$this->loadModel($id);
 				
-				$title = Phrase::trans($model->name,2);
-				$description = Phrase::trans($model->desc,2);				
-				$image = ($model->media != '' && $model->media_show == 1) ? Yii::app()->request->baseUrl.'/public/page/'.$model->media : '';
+				$title = Phrase::trans($model->name);
+				$description = Phrase::trans($model->desc);				
+				$image = ($model->media != '' && $model->media_show == 1) ? Utility::getProtocol().'://'.Yii::app()->request->serverName.Yii::app()->request->baseUrl.'/public/page/'.$model->media : '';
 				
 			} else {
 				$server = Utility::getConnected(Yii::app()->params['server_options']['bpad']);

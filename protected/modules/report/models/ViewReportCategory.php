@@ -1,9 +1,11 @@
 <?php
 /**
  * ViewReportCategory
+ * version: 0.0.1
+ *
  * @author Putra Sudaryanto <putra@sudaryanto.id>
- * @copyright Copyright (c) 2015 Ommu Platform (ommu.co)
- * @link https://github.com/oMMu/Ommu-Report
+ * @copyright Copyright (c) 2015 Ommu Platform (opensource.ommu.co)
+ * @link https://github.com/ommu/Report
  * @contact (+62)856-299-4114
  *
  * This is the template for generating the model class of a specified table.
@@ -21,8 +23,9 @@
  *
  * The followings are the available columns in table '_view_report_category':
  * @property integer $cat_id
- * @property string $category_name
- * @property string $category_desc
+ * @property string $reports
+ * @property string $report_resolved
+ * @property string $report_all
  */
 class ViewReportCategory extends CActiveRecord
 {
@@ -64,10 +67,10 @@ class ViewReportCategory extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('cat_id', 'numerical', 'integerOnly'=>true),
-			array('category_name, category_desc', 'safe'),
+			array('reports, report_resolved, report_all', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('cat_id, category_name, category_desc', 'safe', 'on'=>'search'),
+			array('cat_id, reports, report_resolved, report_all', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -89,8 +92,9 @@ class ViewReportCategory extends CActiveRecord
 	{
 		return array(
 			'cat_id' => Yii::t('attribute', 'Category'),
-			'category_name' => Yii::t('attribute', 'Category'),
-			'category_desc' => Yii::t('attribute', 'Description'),
+			'reports' => Yii::t('attribute', 'Report'),
+			'report_resolved' => Yii::t('attribute', 'Resolved'),
+			'report_all' => Yii::t('attribute', 'All'),
 		);
 	}
 
@@ -113,8 +117,9 @@ class ViewReportCategory extends CActiveRecord
 		$criteria=new CDbCriteria;
 
 		$criteria->compare('t.cat_id',$this->cat_id);
-		$criteria->compare('t.category_name',strtolower($this->category_name),true);
-		$criteria->compare('t.category_desc',strtolower($this->category_desc),true);
+		$criteria->compare('t.reports',strtolower($this->reports),true);
+		$criteria->compare('t.report_resolved',strtolower($this->report_resolved),true);
+		$criteria->compare('t.report_all',strtolower($this->report_all),true);
 
 		if(!isset($_GET['ViewReportCategory_sort']))
 			$criteria->order = 't.cat_id DESC';
@@ -146,8 +151,9 @@ class ViewReportCategory extends CActiveRecord
 			}
 		} else {
 			$this->defaultColumns[] = 'cat_id';
-			$this->defaultColumns[] = 'category_name';
-			$this->defaultColumns[] = 'category_desc';
+			$this->defaultColumns[] = 'reports';
+			$this->defaultColumns[] = 'report_resolved';
+			$this->defaultColumns[] = 'report_all';
 		}
 
 		return $this->defaultColumns;
@@ -163,8 +169,9 @@ class ViewReportCategory extends CActiveRecord
 				'value' => '$this->grid->dataProvider->pagination->currentPage*$this->grid->dataProvider->pagination->pageSize + $row+1'
 			);
 			$this->defaultColumns[] = 'cat_id';
-			$this->defaultColumns[] = 'category_name';
-			$this->defaultColumns[] = 'category_desc';
+			$this->defaultColumns[] = 'reports';
+			$this->defaultColumns[] = 'report_resolved';
+			$this->defaultColumns[] = 'report_all';
 		}
 		parent::afterConstruct();
 	}

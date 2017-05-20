@@ -1,101 +1,101 @@
 content_menu	:
 # controller meta
 	- urlTitle: Global Meta
-		urlRules: {meta, edit,google,facebook,twitter, siteType: 0,1, userLevel: 1,2}
+		urlRules: {meta, "edit,google,facebook,twitter", siteType: "0,1", userLevel: "1,2"}
 		urlPath: {url: edit, attr: -, icon: -}
 		
 	- urlTitle: Google Owner Meta
-		urlRules: {meta, edit,google,facebook,twitter, siteType: 0,1, userLevel: 1,2}
+		urlRules: {meta, "edit,google,facebook,twitter", siteType: "0,1", userLevel: "1,2"}
 		urlPath: {url: google, attr: -, icon: -}
 		
 	- urlTitle: Facebook Meta
-		urlRules: {meta, edit,google,facebook,twitter, siteType: 0,1, userLevel: 1,2}
+		urlRules: {meta, "edit,google,facebook,twitter", siteType: "0,1", userLevel: "1,2"}
 		urlPath: {url: facebook, attr: -, icon: -}
 		
 	- urlTitle: Twitter Meta
-		urlRules: {meta, edit,google,facebook,twitter, siteType: 0,1, userLevel: 1,2}
+		urlRules: {meta, "edit,google,facebook,twitter", siteType: "0,1", userLevel: "1,2"}
 		urlPath: {url: twitter, attr: -, icon: -}
 		
 # controller page
 
 	- urlTitle: Add Pages
-		urlRules: {page, manage, siteType: 0,1, userLevel: 1,2}
+		urlRules: {page, manage, siteType: "0,1", userLevel: "1,2"}
 		urlPath: {url: add, attr: -, icon: -}
 
 	- urlTitle: Update Pages
-		urlRules: {page, view, siteType: 0,1, userLevel: 1,2}
+		urlRules: {page, view, siteType: "0,1", userLevel: "1,2"}
 		urlPath: {url: manage, attr: id=$_GET*id, icon: -}
 
 	- urlTitle: Back to Manage
-		urlRules: {page, add,edit,view, siteType: 0,1, userLevel: 1,2}
+		urlRules: {page, "add,edit,view", siteType: "0,1", userLevel: "1,2"}
 		urlPath: {url: manage, attr: -, icon: -}
 
 	- urlTitle: View Pages
-		urlRules: {page, edit, siteType: 0,1, userLevel: 1,2}
+		urlRules: {page, edit, siteType: "0,1", userLevel: "1,2"}
 		urlPath: {url: view, attr: id=$_GET*id, icon: -}
 		
 # controller globaltag
 
 	- urlTitle: Add Tags
-		urlRules: {globaltag, manage, siteType: 0,1, userLevel: 1,2}
+		urlRules: {globaltag, manage, siteType: "0,1", userLevel: "1,2"}
 		urlPath: {url: add, attr: -, icon: -}
 		
 # controller language
 
 	- urlTitle: Create New Language Pack
-		urlRules: {language, manage, siteType: 0,1, userLevel: 1}
+		urlRules: {language, manage, siteType: "0,1", userLevel: 1}
 		urlPath: {url: add, attr: -, icon: -}
 		
 # controller translate
 
 	- urlTitle: Add Front Phrase
-		urlRules: {translate, manage, siteType: 0,1, userLevel: 1,2}
+		urlRules: {translate, manage, siteType: "0,1", userLevel: "1,2"}
 		urlPath: {url: add, attr: -, icon: -}
 
 	- urlTitle: Back to Manage
-		urlRules: {translate, add,edit, siteType: 0,1, userLevel: 1,2}
+		urlRules: {translate, "add,edit", siteType: "0,1", userLevel: "1,2"}
 		urlPath: {url: manage, attr: -, icon: -}
 		
 # controller author
 
 	- urlTitle: Add Author
-		urlRules: {author, manage, siteType: 0,1, userLevel: 1,2}
+		urlRules: {author, manage, siteType: "0,1", userLevel: "1,2"}
 		urlPath: {url: add, attr: -, icon: -}
 
 	- urlTitle: Author Contact
-		urlRules: {author, manage, siteType: 0,1, userLevel: 1,2}
+		urlRules: {author, manage, siteType: "0,1", userLevel: "1,2"}
 		urlPath: {url: authorcontact/manage, attr: -, icon: -}
 		
 # controller authorcontact
 
 	- urlTitle: Back to Author
-		urlRules: {authorcontact, manage, siteType: 0,1, userLevel: 1,2}
+		urlRules: {authorcontact, manage, siteType: "0,1", userLevel: "1,2"}
 		urlPath: {url: author/manage, attr: -, icon: -}		
 	
 # controller module
 
 	- urlTitle: Upload Module
-		urlRules: {module, manage, siteType: 0,1, userLevel: 1}
+		urlRules: {module, manage, siteType: "0,1", userLevel: 1}
 		urlPath: {url: module/upload, attr: -, icon: -}
 
 	- urlTitle: View All Module
-		urlRules: {module, manage, siteType: 0,1, userLevel: 1}
+		urlRules: {module, manage, siteType: "0,1", userLevel: 1}
 		urlPath: {url: module/manage, attr: type=all, icon: -}
 		
 # controller menu
 
 	- urlTitle: Add Menu
-		urlRules: {menu, manage, siteType: 0,1, userLevel: 1}
+		urlRules: {menu, manage, siteType: "0,1", userLevel: 1}
 		urlPath: {url: add, attr: -, icon: -}
 		
 # controller menucategory
 
 	- urlTitle: Add Menu Category
-		urlRules: {menucategory, manage, siteType: 0,1, userLevel: 1}
+		urlRules: {menucategory, manage, siteType: "0,1", userLevel: 1}
 		urlPath: {url: add, attr: -, icon: -}
 		
 #minus theme, template
 
 	- urlTitle: Add Theme
-		urlRules: {theme, manage, siteType: 0,1, userLevel: 1}
+		urlRules: {theme, manage, siteType: "0,1", userLevel: 1}
 		urlPath: {url: add, attr: -, icon: -}

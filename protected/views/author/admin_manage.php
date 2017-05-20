@@ -3,12 +3,12 @@
  * Ommu Authors (ommu-authors)
  * @var $this AuthorController
  * @var $model OmmuAuthors
- * version: 1.1.0
+ * version: 1.2.0
  *
  * @author Putra Sudaryanto <putra@sudaryanto.id>
- * @copyright Copyright (c) 2015 Ommu Platform (ommu.co)
- * @link https://github.com/oMMu/Ommu-Core
- * @contect (+62)856-299-4114
+ * @copyright Copyright (c) 2015 Ommu Platform (opensource.ommu.co)
+ * @link https://github.com/ommu/Core
+ * @contact (+62)856-299-4114
  *
  */
 
@@ -71,18 +71,21 @@
 				'buttons' => array(
 					'view' => array(
 						'label' => 'view',
+						'imageUrl' => false,
 						'options' => array(							
 							'class' => 'view',
 						),
 						'url' => 'Yii::app()->controller->createUrl("view",array("id"=>$data->primaryKey))'),
 					'update' => array(
 						'label' => 'update',
+						'imageUrl' => false,
 						'options' => array(
 							'class' => 'update'
 						),
 						'url' => 'Yii::app()->controller->createUrl("edit",array("id"=>$data->primaryKey))'),
 					'delete' => array(
 						'label' => 'delete',
+						'imageUrl' => false,
 						'options' => array(
 							'class' => 'delete'
 						),
@@ -95,6 +98,7 @@
 				'id'=>'ommu-authors-grid',
 				'dataProvider'=>$model->search(),
 				'filter'=>$model,
+				'afterAjaxUpdate' => 'reinstallDatePicker',
 				'columns' => $columnData,
 				'pager' => array('header' => ''),
 			));

@@ -1,6 +1,7 @@
 <?php
 /**
  * CMenu class file.
+ * version: 1.2.0
  *
  * @author Jonah Turnquist <poppitypop@gmail.com>
  * @author Qiang Xue <qiang.xue@gmail.com>
@@ -9,7 +10,7 @@
  * @license http://www.yiiframework.com/license/
  * 
  * @modify Putra Sudaryanto <putra@sudaryanto.id>
- * @contect (+62)856-299-4114
+ * @contact (+62)856-299-4114
  *
  */
 
@@ -252,7 +253,7 @@ class CMenu extends CWidget
 		{
 			$label=$this->linkLabelWrapper===null ? $item['label'] : CHtml::tag($this->linkLabelWrapper, $this->linkLabelWrapperHtmlOptions, $item['label']);
 			$url = $item['url'][0] == 'javascript:void(0);' ? 'javascript:void(0);' : $item['url'];
-			return CHtml::link($label,$url,isset($item['linkOptions']) ? $item['linkOptions'] : array());
+			return CHtml::link('<span class="icons">C</span>'.$label,$url,isset($item['linkOptions']) ? $item['linkOptions'] : array());
 		}
 		else
 			return CHtml::tag('span',isset($item['linkOptions']) ? $item['linkOptions'] : array(), $item['label']);

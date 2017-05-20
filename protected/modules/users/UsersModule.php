@@ -2,7 +2,12 @@
 
 class UsersModule extends CWebModule
 {
-	public $defaultController = 'account'; 
+	public $defaultController = 'account';
+	
+	// getAssetsUrl()
+	//	return the URL for this module's assets, performing the publish operation
+	//	the first time, and caching the result for subsequent use.
+	private $_assetsUrl;
 
 	public function init() {
 		// this method is called when the module is being created
@@ -15,6 +20,14 @@ class UsersModule extends CWebModule
 			//'personal.models.*',
 		));
 	}
+ 
+	public function getAssetsUrl()
+	{
+		if ($this->_assetsUrl === null)
+			$this->_assetsUrl = Yii::app()->getAssetManager()->publish(Yii::getPathOfAlias('users.assets'));
+		
+		return $this->_assetsUrl;
+	}
 
 	public function beforeControllerAction($controller, $action) {
 		if(parent::beforeControllerAction($controller, $action)) {
@@ -22,15 +35,16 @@ class UsersModule extends CWebModule
 			// you may place customized code here
 			//list public controller in this module
 			$publicControllers = array(
-				'account',
-				'admin',
+					'account',
+					'admin',
+					'password',
 				'forgot',
 				'newsletter',
-				'password',
 				'invite',
 				'verify',
 				'api/device',
 				'api/member',
+				'api/oauth',
 				'api/site',
 			);
 			

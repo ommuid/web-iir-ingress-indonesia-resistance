@@ -1,9 +1,11 @@
 <?php
 /**
  * UserVerify
+ * version: 0.0.1
+ *
  * @author Putra Sudaryanto <putra@sudaryanto.id>
- * @copyright Copyright (c) 2012 Ommu Platform (ommu.co)
- * @link https://github.com/oMMu/Ommu-Users
+ * @copyright Copyright (c) 2012 Ommu Platform (opensource.ommu.co)
+ * @link https://github.com/ommu/Users
  * @contact (+62)856-299-4114
  *
  * This is the template for generating the model class of a specified table.
@@ -21,10 +23,12 @@
  *
  * The followings are the available columns in table 'ommu_user_verify':
  * @property string $verify_id
+ * @property integer $publish
  * @property string $user_id
  * @property string $code
  * @property string $verify_date
  * @property string $verify_ip
+ * @property string $deleted_date
  *
  * The followings are the available model relations:
  * @property OmmuUsers $user
@@ -32,7 +36,7 @@
 class UserVerify extends CActiveRecord
 {
 	public $defaultColumns = array();
-	public $email;
+	public $email_i;
 
 	/**
 	 * Returns the static model of the specified AR class.
@@ -61,18 +65,19 @@ class UserVerify extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('code', 'required'),
-			array('email', 'required', 'on'=>'get'),
+			array('email_i', 'required', 'on'=>'get'),
+			array('publish', 'numerical', 'integerOnly'=>true),
 			array('user_id', 'length', 'max'=>11),
 			array('
-				email', 'length', 'max'=>32),
+				email_i', 'length', 'max'=>32),
 			array('code', 'length', 'max'=>64),
 			array('verify_ip', 'length', 'max'=>20),
-			array('email', 'email'),
-			array('user_id, verify_date, verify_ip,
-				email', 'safe'),
+			array('email_i', 'email'),
+			array('user_id, verify_ip,
+				email_i', 'safe'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('verify_id, user_id, code, verify_date, verify_ip', 'safe', 'on'=>'search'),
+			array('verify_id, publish, user_id, code, verify_date, verify_ip, deleted_date', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -95,11 +100,13 @@ class UserVerify extends CActiveRecord
 	{
 		return array(
 			'verify_id' => Yii::t('attribute', 'Verify'),
+			'publish' => Yii::t('attribute', 'Publish'),
 			'user_id' => Yii::t('attribute', 'User'),
 			'code' => Yii::t('attribute', 'Verify Code'),
 			'verify_date' => Yii::t('attribute', 'Verify Date'),
 			'verify_ip' => Yii::t('attribute', 'Verify Ip'),
-			'email' => Yii::t('attribute', 'Email'),
+			'deleted_date' => Yii::t('attribute', 'Deleted Date'),
+			'email_i' => Yii::t('attribute', 'Email'),
 		);
 	}
 	
@@ -115,11 +122,23 @@ class UserVerify extends CActiveRecord
 		$criteria=new CDbCriteria;
 
 		$criteria->compare('t.verify_id',$this->verify_id);
+		if(isset($_GET['type']) && $_GET['type'] == 'publish')
+			$criteria->compare('t.publish',1);
+		elseif(isset($_GET['type']) && $_GET['type'] == 'unpublish')
+			$criteria->compare('t.publish',0);
+		elseif(isset($_GET['type']) && $_GET['type'] == 'trash')
+			$criteria->compare('t.publish',2);
+		else {
+			$criteria->addInCondition('t.publish',array(0,1));
+			$criteria->compare('t.publish',$this->publish);
+		}
 		$criteria->compare('t.user_id',$this->user_id);
 		$criteria->compare('t.code',$this->code,true);
 		if($this->verify_date != null && !in_array($this->verify_date, array('0000-00-00 00:00:00', '0000-00-00')))
 			$criteria->compare('date(t.verify_date)',date('Y-m-d', strtotime($this->verify_date)));
 		$criteria->compare('t.verify_ip',$this->verify_ip,true);
+		if($this->deleted_date != null && !in_array($this->deleted_date, array('0000-00-00 00:00:00', '0000-00-00')))
+			$criteria->compare('date(t.deleted_date)',date('Y-m-d', strtotime($this->deleted_date)));
 
 		if(!isset($_GET['UserVerify_sort']))
 			$criteria->order = 't.verify_id DESC';
@@ -148,10 +167,12 @@ class UserVerify extends CActiveRecord
 			}
 		}else {
 			//$this->defaultColumns[] = 'verify_id';
+			$this->defaultColumns[] = 'publish';
 			$this->defaultColumns[] = 'user_id';
 			$this->defaultColumns[] = 'code';
 			$this->defaultColumns[] = 'verify_date';
 			$this->defaultColumns[] = 'verify_ip';
+			$this->defaultColumns[] = 'deleted_date';
 		}
 
 		return $this->defaultColumns;
@@ -174,11 +195,11 @@ class UserVerify extends CActiveRecord
 				'htmlOptions' => array(
 					'class' => 'center',
 				),
-				'filter' => Yii::app()->controller->widget('zii.widgets.jui.CJuiDatePicker', array(
+				'filter' => Yii::app()->controller->widget('application.components.system.CJuiDatePicker', array(
 					'model'=>$this, 
 					'attribute'=>'verify_date', 
-					'language' => 'ja',
-					'i18nScriptFile' => 'jquery.ui.datepicker-en.js',
+					'language' => 'en',
+					'i18nScriptFile' => 'jquery-ui-i18n.min.js',
 					//'mode'=>'datetime',
 					'htmlOptions' => array(
 						'id' => 'verify_date_filter',
@@ -195,6 +216,44 @@ class UserVerify extends CActiveRecord
 				), true),
 			);
 			$this->defaultColumns[] = 'verify_ip';
+			$this->defaultColumns[] = array(
+				'name' => 'publish',
+				'value' => '$data->publish == 1 ? Chtml::image(Yii::app()->theme->baseUrl.\'/images/icons/publish.png\') : Chtml::image(Yii::app()->theme->baseUrl.\'/images/icons/unpublish.png\')',
+				'htmlOptions' => array(
+					'class' => 'center',
+				),
+				'filter'=>array(
+					1=>Yii::t('phrase', 'Yes'),
+					0=>Yii::t('phrase', 'No'),
+				),
+				'type' => 'raw',
+			);
+			$this->defaultColumns[] = array(
+				'name' => 'deleted_date',
+				'value' => 'Utility::dateFormat($data->deleted_date)',
+				'htmlOptions' => array(
+					'class' => 'center',
+				),
+				'filter' => Yii::app()->controller->widget('application.components.system.CJuiDatePicker', array(
+					'model'=>$this, 
+					'attribute'=>'deleted_date', 
+					'language' => 'en',
+					'i18nScriptFile' => 'jquery-ui-i18n.min.js',
+					//'mode'=>'datetime',
+					'htmlOptions' => array(
+						'id' => 'deleted_date_filter',
+					),
+					'options'=>array(
+						'showOn' => 'focus',
+						'dateFormat' => 'dd-mm-yy',
+						'showOtherMonths' => true,
+						'selectOtherMonths' => true,
+						'changeMonth' => true,
+						'changeYear' => true,
+						'showButtonPanel' => true,
+					),
+				), true),
+			);
 		}
 		parent::afterConstruct();
 	}
@@ -225,15 +284,15 @@ class UserVerify extends CActiveRecord
 		$current = strtolower(Yii::app()->controller->id.'/'.Yii::app()->controller->action->id);
 		if(parent::beforeValidate()) {		
 			if($this->isNewRecord) {
-				if($current == 'verify/get' && $this->email != '') {
-					$user = Users::model()->findByAttributes(array('email' => $this->email), array(
+				if($current == 'verify/get' && $this->email_i != '') {
+					$user = Users::model()->findByAttributes(array('email' => $this->email_i), array(
 						'select' => 'user_id, email, verified',
 					));
 					if($user == null) {
-						$this->addError('email', Yii::t('phrase', 'Incorrect email address'));
+						$this->addError('email_i', Yii::t('phrase', 'Incorrect email address'));
 					} else {
 						if($user->verified == 1) {
-							$this->addError('email', Yii::t('phrase', 'Your account verified'));
+							$this->addError('email_i', Yii::t('phrase', 'Your account verified'));
 						} else {
 							$this->user_id = $user->user_id;
 						}
@@ -255,6 +314,7 @@ class UserVerify extends CActiveRecord
 		$setting = OmmuSettings::model()->findByPk(1, array(
 			'select' => 'site_title',
 		));
+		$_assetsUrl = Yii::app()->assetManager->publish(Yii::getPathOfAlias('users.assets'));
 
 		if($this->isNewRecord) {
 			// Send Email to Member
@@ -263,30 +323,24 @@ class UserVerify extends CActiveRecord
 				'{$site_title}', '{$verify_link}',
 			);
 			$verify_replace = array(
-				Utility::getProtocol().'://'.Yii::app()->request->serverName.Yii::app()->request->baseUrl, $this->user->displayname, SupportMailSetting::getInfo(1, 'mail_contact'),
+				Utility::getProtocol().'://'.Yii::app()->request->serverName.$_assetsUrl, $this->user->displayname, SupportMailSetting::getInfo('mail_contact'),
 				$setting->site_title, Utility::getProtocol().'://'.Yii::app()->request->serverName.Yii::app()->createUrl('users/verify/code',array('key'=>$this->code, 'secret'=>$this->user->salt)),
 			);
 			$verify_template = 'user_verify_email';
 			$verify_title = 'Please verify your '.$setting->site_title.' account';
-			$verify_message = file_get_contents(YiiBase::getPathOfAlias('webroot.externals.users.template').'/'.$verify_template.'.php');
+			$verify_message = file_get_contents(YiiBase::getPathOfAlias('application.modules.users.components.templates').'/'.$verify_template.'.php');
 			$verify_ireplace = str_ireplace($verify_search, $verify_replace, $verify_message);
 			SupportMailSetting::sendEmail($this->user->email, $this->user->displayname, $verify_title, $verify_ireplace);
+
+			// Update all history
+			$criteria=new CDbCriteria;
+			$criteria->addNotInCondition('verify_id', array($this->verify_id));
+			$criteria->compare('publish',1);
+			$criteria->compare('user_id',$this->user_id);
+
+			self::model()->updateAll(array('publish'=>0), $criteria);
+			
 		}
-	}
-
-	/**
-	 * After delete attributes
-	 */
-	protected function afterDelete() {
-		parent::afterDelete();
-
-		// Delete all history
-		self::model()->deleteAll(array(
-			'condition'=> 'user_id = :id',
-			'params'=>array(
-				':id'=>$this->user_id,
-			),
-		));
 	}
 
 }

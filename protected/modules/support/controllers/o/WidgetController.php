@@ -4,7 +4,7 @@
  * @var $this WidgetController
  * @var $model SupportWidget
  * @var $form CActiveForm
- * version: 0.0.1
+ * version: 0.2.1
  * Reference start
  *
  * TOC :
@@ -20,10 +20,10 @@
  *	performAjaxValidation
  *
  * @author Putra Sudaryanto <putra@sudaryanto.id>
- * @copyright Copyright (c) 2016 Ommu Platform (ommu.co)
+ * @copyright Copyright (c) 2016 Ommu Platform (opensource.ommu.co)
  * @created date 3 February 2016, 12:26 WIB
- * @link http://company.ommu.co
- * @contect (+62)856-299-4114
+ * @link https://github.com/ommu/Support
+ * @contact (+62)856-299-4114
  *
  *----------------------------------------------------------------------------------------------------------
  */
@@ -47,12 +47,10 @@ class WidgetController extends Controller
 				$arrThemes = Utility::getCurrentTemplate('admin');
 				Yii::app()->theme = $arrThemes['folder'];
 				$this->layout = $arrThemes['layout'];
-			} else {
-				$this->redirect(Yii::app()->createUrl('site/login'));
-			}
-		} else {
+			} else
+				throw new CHttpException(404, Yii::t('phrase', 'The requested page does not exist.'));
+		} else
 			$this->redirect(Yii::app()->createUrl('site/login'));
-		}
 	}
 
 	/**

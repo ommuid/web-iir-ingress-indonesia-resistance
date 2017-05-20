@@ -2,8 +2,8 @@
 /**
 * MetaController
 * Handle MetaController
-* Copyright (c) 2012, Ommu Platform (ommu.co). All rights reserved.
-* version: 1.1.0
+* Copyright (c) 2012, Ommu Platform (opensource.ommu.co). All rights reserved.
+* version: 1.2.0
 * Reference start
 *
 * TOC :
@@ -21,8 +21,8 @@
 *	performAjaxValidation
 *
 * @author Putra Sudaryanto <putra@sudaryanto.id>
-* @copyright Copyright (c) 2012 Ommu Platform (ommu.co)
-* @link https://github.com/oMMu/Ommu-Core
+* @copyright Copyright (c) 2012 Ommu Platform (opensource.ommu.co)
+* @link https://github.com/ommu/Core
 * @contact (+62)856-299-4114
 *
 *----------------------------------------------------------------------------------------------------------
@@ -47,12 +47,10 @@ class MetaController extends Controller
 				$arrThemes = Utility::getCurrentTemplate('admin');
 				Yii::app()->theme = $arrThemes['folder'];
 				$this->layout = $arrThemes['layout'];
-			} else {
+			} else
 				throw new CHttpException(404, Yii::t('phrase', 'The requested page does not exist.'));
-			}
-		} else {
+		} else
 			$this->redirect(Yii::app()->createUrl('site/login'));
-		}
 	}
 
 	/**

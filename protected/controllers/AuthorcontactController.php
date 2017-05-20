@@ -4,7 +4,7 @@
  * @var $this AuthorcontactController
  * @var $model OmmuAuthorContact
  * @var $form CActiveForm
- * version: 1.1.0
+ * version: 1.2.0
  * Reference start
  *
  * TOC :
@@ -18,9 +18,9 @@
  *	performAjaxValidation
  *
  * @author Putra Sudaryanto <putra@sudaryanto.id>
- * @copyright Copyright (c) 2015 Ommu Platform (ommu.co)
- * @link https://github.com/oMMu/Ommu-Core
- * @contect (+62)856-299-4114
+ * @copyright Copyright (c) 2015 Ommu Platform (opensource.ommu.co)
+ * @link https://github.com/ommu/Core
+ * @contact (+62)856-299-4114
  *
  *----------------------------------------------------------------------------------------------------------
  */
@@ -39,19 +39,19 @@ class AuthorcontactController extends Controller
 	 */
 	public function init() 
 	{
-		$siteType = OmmuSettings::getInfo('site_type');
+		$setting = OmmuSettings::model()->findByPk(1, array(
+			'select'=>'site_type',
+		));
 		
 		if(!Yii::app()->user->isGuest) {
-			if(in_array(Yii::app()->user->level, array(1,2)) && $siteType == 1) {
+			if(in_array(Yii::app()->user->level, array(1,2)) && $setting->site_type == 1) {
 				$arrThemes = Utility::getCurrentTemplate('admin');
 				Yii::app()->theme = $arrThemes['folder'];
 				$this->layout = $arrThemes['layout'];
-			} else {
-				$this->redirect(Yii::app()->createUrl('site/login'));
-			}
-		} else {
+			} else
+				throw new CHttpException(404, Yii::t('phrase', 'The requested page does not exist.'));
+		} else
 			$this->redirect(Yii::app()->createUrl('site/login'));
-		}
 	}
 
 	/**

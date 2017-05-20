@@ -1,11 +1,11 @@
 <?php
 /**
  * ViewMeta
- * version: 1.1.0
+ * version: 1.2.0
  *
  * @author Putra Sudaryanto <putra@sudaryanto.id>
- * @copyright Copyright (c) 2015 Ommu Platform (ommu.co)
- * @link https://github.com/oMMu/Ommu-Core
+ * @copyright Copyright (c) 2015 Ommu Platform (opensource.ommu.co)
+ * @link https://github.com/ommu/Core
  * @contact (+62)856-299-4114
  *
  * This is the template for generating the model class of a specified table.
@@ -23,9 +23,9 @@
  *
  * The followings are the available columns in table '_view_core_meta':
  * @property integer $id
- * @property string $city
- * @property string $province
- * @property string $country
+ * @property string $city_name
+ * @property string $province_name
+ * @property string $country_name
  */
 class ViewMeta extends CActiveRecord
 {
@@ -68,10 +68,10 @@ class ViewMeta extends CActiveRecord
 		return array(
 			array('id', 'required'),
 			array('id', 'numerical', 'integerOnly'=>true),
-			array('city, province, country', 'length', 'max'=>64),
+			array('city_name, province_name, country_name', 'length', 'max'=>64),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, city, province, country', 'safe', 'on'=>'search'),
+			array('id, city_name, province_name, country_name', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -93,9 +93,9 @@ class ViewMeta extends CActiveRecord
 	{
 		return array(
 			'id' => Yii::t('attribute', 'ID'),
-			'city' => Yii::t('attribute', 'City'),
-			'province' => Yii::t('attribute', 'Province'),
-			'country' => Yii::t('attribute', 'Country'),
+			'city_name' => Yii::t('attribute', 'City'),
+			'province_name' => Yii::t('attribute', 'Province'),
+			'country_name' => Yii::t('attribute', 'Country'),
 		);
 	}
 
@@ -118,9 +118,9 @@ class ViewMeta extends CActiveRecord
 		$criteria=new CDbCriteria;
 
 		$criteria->compare('t.id',$this->id);
-		$criteria->compare('t.city',strtolower($this->city),true);
-		$criteria->compare('t.province',strtolower($this->province),true);
-		$criteria->compare('t.country',strtolower($this->country),true);
+		$criteria->compare('t.city_name',strtolower($this->city_name),true);
+		$criteria->compare('t.province_name',strtolower($this->province_name),true);
+		$criteria->compare('t.country_name',strtolower($this->country_name),true);
 
 		if(!isset($_GET['ViewMeta_sort']))
 			$criteria->order = 't.id DESC';
@@ -152,9 +152,9 @@ class ViewMeta extends CActiveRecord
 			}
 		} else {
 			$this->defaultColumns[] = 'id';
-			$this->defaultColumns[] = 'city';
-			$this->defaultColumns[] = 'province';
-			$this->defaultColumns[] = 'country';
+			$this->defaultColumns[] = 'city_name';
+			$this->defaultColumns[] = 'province_name';
+			$this->defaultColumns[] = 'country_name';
 		}
 
 		return $this->defaultColumns;
@@ -169,9 +169,9 @@ class ViewMeta extends CActiveRecord
 				'header' => 'No',
 				'value' => '$this->grid->dataProvider->pagination->currentPage*$this->grid->dataProvider->pagination->pageSize + $row+1'
 			);
-			$this->defaultColumns[] = 'city';
-			$this->defaultColumns[] = 'province';
-			$this->defaultColumns[] = 'country';
+			$this->defaultColumns[] = 'city_name';
+			$this->defaultColumns[] = 'province_name';
+			$this->defaultColumns[] = 'country_name';
 		}
 		parent::afterConstruct();
 	}

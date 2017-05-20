@@ -4,10 +4,11 @@
  * @var $this MediaController
  * @var $model ArticleMedia
  * @var $form CActiveForm
+ * version: 0.0.1
  *
  * @author Putra Sudaryanto <putra@sudaryanto.id>
- * @copyright Copyright (c) 2012 Ommu Platform (ommu.co)
- * @link https://github.com/oMMu/Ommu-Articles
+ * @copyright Copyright (c) 2012 Ommu Platform (opensource.ommu.co)
+ * @link https://github.com/ommu/Articles
  * @contact (+62)856-299-4114
  *
  */
@@ -20,5 +21,8 @@
 ?>
 
 <div class="form">
-	<?php echo $this->renderPartial('_form', array('model'=>$model)); ?>
+	<?php echo $this->renderPartial('_form', array(
+		'model'=>$model,
+		'media_file_type'=>$media_file_type,
+	)); ?>
 </div>

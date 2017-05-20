@@ -3,6 +3,7 @@
  * Ommu class file
  * Bootstrap application
  * in this class you set default controller to be executed first time
+ * version: 1.2.0
  *
  * Reference start
  *
@@ -14,13 +15,13 @@
  * @author Putra Sudaryanto <putra@sudaryanto.id>
  * @create date August 6, 2012 15:02 WIB
  * @updated date February 20, 2014 15:50 WIB
- * @version 1.0.9
- * @copyright Copyright (c) 2012 Ommu Platform (ommu.co)
- * @link https://github.com/oMMu/Ommu-Core
- * @contect (+62)856-299-4114
+ * @copyright Copyright (c) 2012 Ommu Platform (opensource.ommu.co)
+ * @link https://github.com/ommu/Core
+ * @contact (+62)856-299-4114
  *
  *----------------------------------------------------------------------------------------------------------
  */
+
 Yii::import('application.components.plugin.Spyc');
 define('DS', DIRECTORY_SEPARATOR);
 
@@ -40,19 +41,20 @@ class Ommu extends CApplicationComponent
 		if(isset($_GET['theme'])) {
 			$theme = trim($_GET['theme']);
 		}
-		Yii::app()->theme = $theme;
+		//Yii::app()->theme = $theme;
 		
 		/**
 		 * controllerMap
 		 */
 		$themePath = Yii::getPathOfAlias('webroot.themes.'.$theme).DS.$theme.'.yaml';
-		$arrayThemeSpyc = Spyc::YAMLLoad($themePath);
-		$controllerSpyc = $arrayThemeSpyc['controller'];
-		if(!empty($controllerSpyc)) {
-			foreach($controllerSpyc as $key => $val)
+		$themeYML = Spyc::YAMLLoad($themePath);
+		$controllerTheme = $themeYML['controller'];
+		$controllerMap = array();
+		if(!empty($controllerTheme)) {
+			foreach($controllerTheme as $key => $val)
 				$controllerMap[$key] = 'webroot.themes.'.$theme.'.controllers.'.$val;
-			Yii::app()->controllerMap = $controllerMap;
-		}
+			Yii::app()->controllerMap = $controllerMap;	
+		}	
 
 		/**
 		 * set url manager
@@ -63,40 +65,12 @@ class Ommu extends CApplicationComponent
 			
 			//a standard rule mapping '/login' to 'site/login', and so on
 			'<action:(login|logout)>' 											=> 'site/<action>',
-			'<id:\d+>-<t:[\w\-]+>/<static:[\w\-]+>-<picture:[\w\-]+>'			=> 'page/view',
-			'<id:\d+>-<t:[\w\-]+>'												=> 'page/view',
-			//'<id:\d+>-<t:[\w\-]+>'											=> 'maintenance/page',
-			
-			// Article
-			'<module:\w+>/<controller:\w+>/<t:[\w\-]+>-<id:\d+>/<category:\d+>'		=> '<module>/<controller>/index',			
-			'<module:\w+>/<controller:\w+>/<t:[\w\-]+>/<category:\d+>'				=> '<module>/<controller>/index',
-			'<module:\w+>/<controller:\w+>/<t:[\w\-]+>-<id:\d+>'					=> '<module>/<controller>/index',
-			'<module:\w+>/<controller:\w+>/<id:\d+>'								=> '<module>/<controller>/index',
-			'<module:\w+>/<controller:\w+>'											=> '<module>/<controller>/index',
-			
-			'<module:\w+>/<controller:\w+>/view/<t:[\w\-]+>-<id:\d+>/<photo:\d+>'		=> '<module>/<controller>/view',
-			'<module:\w+>/<controller:\w+>/view/<t:[\w\-]+>-<id:\d+>'					=> '<module>/<controller>/view',
-			
-			'<module:\w+>/<controller:\w+>/<action:\w+>/<t:[\w\-]+>-<id:\d+>'		=> '<module>/<controller>/<action>',
-			'<module:\w+>/<controller:\w+>/<action:\w+>/<id:\d+>'					=> '<module>/<controller>/<action>',
-			'<module:\w+>/<controller:\w+>/<action:\w+>'							=> '<module>/<controller>/<action>',
-			'<module:\w+>/<controller:\w+>'											=> '<module>/<controller>',
-			
+			'<slug:[\w\-]+>-<id:\d+>'											=> 'page/view',
+			//'<slug:[\w\-]+>'													=> 'page/view',
+			// module condition
+			'<module:\w+>/<controller:\w+>/<action:\w+>'						=> '<module>/<controller>/<action>',
 			//controller condition
-			'<controller:\w+>/<t:[\w\-]+>-<id:\d+>/<category:\d+>'					=> '<controller>/index',			
-			'<controller:\w+>/<t:[\w\-]+>/<category:\d+>'							=> '<controller>/index',
-			'<controller:\w+>/<t:[\w\-]+>-<id:\d+>'									=> '<controller>/index',
-			'<controller:\w+>/<id:\d+>'												=> '<controller>/index',
-			'<controller:\w+>'														=> '<controller>/index',
-			
-			'<controller:\w+>/view/<t:[\w\-]+>-<id:\d+>/<photo:\d+>'					=> '<controller>/view',
-			'<controller:\w+>/view/<t:[\w\-]+>-<id:\d+>'								=> '<controller>/view',
-			
-			'<controller:\w+>/<action:\w+>/<t:[\w\-]+>-<id:\d+>'				=> '<controller>/<action>',
-			'<controller:\w+>/<action:\w+>/<id:\d+>'							=> '<controller>/<action>',
 			'<controller:\w+>/<action:\w+>'										=> '<controller>/<action>',
-			//'<controller:\w+>/<action:\w+>'									=> '<controller>/<action>',
-			'<controller:\w+>'													=> '<controller>', 
 		);
 
 		/**
@@ -108,13 +82,13 @@ class Ommu extends CApplicationComponent
 		$default = OmmuPlugins::model()->findByAttributes(array('defaults' => 1), array(
 			'select' => 'folder',
 		));
-		if(($default == null) || ($default->folder == '-') || ($default->actived == '2')) {
+		if($default == null || ($default != null && ($default->folder == '-' || $default->actived == '2'))) {
 			$rules[''] = 'site/index';
 
 		} else {
-			$url = $default->folder != '-' ? $default->folder : 'site/index';
-			Yii::app()->defaultController = trim($url);
-			$rules[''] =  trim($url);
+			$folder = $default->folder != '-' ? $default->folder : 'site/index';
+			Yii::app()->defaultController = trim($folder);
+			$rules[''] =  trim($folder);
 		}
 
 		/**
@@ -122,15 +96,30 @@ class Ommu extends CApplicationComponent
 		 * and then merge all array back to $rules.
 		 */
 		$module = OmmuPlugins::model()->findAll(array(
-			'select'    => 'folder',
-			'condition' => 'actived != 0',
-		));
+			'select'    => 'actived, folder, search',
+			'condition' => 'actived = :actived',
+			'params' => array(
+				':actived' => '1',
+			),
+		));		
 
 		$moduleRules  = array();
 		$sliceRules   = $this->getRulePos($rules);
 		if($module !== null) {
 			foreach($module as $key => $val) {
-				$moduleRules[$val->folder] = $val->folder;
+				if($val->search == '1') {
+$moduleRules[$val->folder] 																= $val->folder;
+$moduleRules[$val->folder] 																= $val->folder.'/site/index';
+$moduleRules[$val->folder.'/<slug:[\w\-]+>-<id:\d+>'] 									= $val->folder.'/site/view';								// slug-id
+//$moduleRules[$val->folder.'/<slug:[\w\-]+>'] 											= $val->folder.'/site/view';								// slug
+$moduleRules[$val->folder.'/<controller:[a-zA-Z\/]+>/<slug:[\w\-]+>-<id:\d+>'] 			= $val->folder.'/<controller>/view';						// slug-id
+//$moduleRules[$val->folder.'/<controller:[a-zA-Z\/]+>/<slug:[\w\-]+>'] 					= $val->folder.'/<controller>/view';						// slug
+$moduleRules[$val->folder.'/<controller:[a-zA-Z\/]+>/<category:\d+>/<slug:[\w\-]+>'] 	= $val->folder.'/<controller>/index';						// category/slug
+//$moduleRules[$val->folder.'/<controller:[a-zA-Z\/]+>/<slug:[\w\-]+>'] 					= $val->folder.'/<controller>/index';						// slug
+$moduleRules[$val->folder.'/<controller:[a-zA-Z\/]+>/<action:\w+>/<slug:[\w\-]+>-<id:\d+>'] 		= $val->folder.'/<controller>/<action>';		// slug-id
+$moduleRules[$val->folder.'/<controller:[a-zA-Z\/]+>/<action:\w+>/<category:\d+>/<slug:[\w\-]+>'] 	= $val->folder.'/<controller>/<action>';		// category/slug
+//$moduleRules[$val->folder.'/<controller:[a-zA-Z\/]+>/<action:\w+>/<slug:[\w\-]+>'] 					= $val->folder.'/<controller>/<action>';		// slug
+				}
 			}
 		}
 		$rules = array_merge($sliceRules['before'], $moduleRules, $sliceRules['after']);
@@ -141,7 +130,7 @@ class Ommu extends CApplicationComponent
 				'showScriptName' => false,
 				'rules' => $rules,
 			),
-		));
+		));		
 
 		Yii::setPathOfAlias('modules', Yii::app()->basePath.DIRECTORY_SEPARATOR.'modules');
 		
@@ -179,9 +168,8 @@ class Ommu extends CApplicationComponent
 				'profile:last_name'=>$meta->facebook_profile_lastname,
 				'profile:username'=>$meta->facebook_profile_username,
 			);	
-		} else {
+		} else
 			$arrayFacebook = array();
-		}
 		
 		// Twitter mata tags
 		if($meta->twitter_card == 1) {
@@ -244,8 +232,8 @@ class Ommu extends CApplicationComponent
 					'place:location:latitude'=>$point[0],
 					'place:location:longitude'=>$point[1],
 					'business:contact_data:street_address'=>$meta->office_place.', '.$meta->office_village.', '.$meta->office_district,
-					'business:contact_data:country_name'=>$meta->view_meta->country,					
-					'business:contact_data:locality'=>$meta->view_meta->city,
+					'business:contact_data:country_name'=>$meta->view->country_name,			
+					'business:contact_data:locality'=>$meta->view->city_name,
 					'business:contact_data:region'=>$meta->office_district,
 					'business:contact_data:postal_code'=>$meta->office_zipcode,
 					'business:contact_data:email'=>$meta->office_email,
@@ -275,7 +263,8 @@ class Ommu extends CApplicationComponent
 	 *
 	 * @return string theme name
 	 */
-	public function getDefaultTheme() {
+	public function getDefaultTheme() 
+	{
 		$theme = OmmuThemes::model()->find(array(
 			'select'    => 'folder',
 			'condition' => 'group_page= :group AND default_theme= "1"',
@@ -294,24 +283,23 @@ class Ommu extends CApplicationComponent
 	 * @param array $rules
 	 * @return array
 	 */
-	public function getRulePos($rules) {
+	public static function getRulePos($rules) {
 		$result = 1;
 		$before = array();
 		$after  = array();
 
 		foreach($rules as $key => $val) {
-			if($key == '<controller:\w+>')
+			if($key == '<module:\w+>/<controller:\w+>/<action:\w+>')
 				break;
 			$result++;
 		}
 
 		$i = 1;
 		foreach($rules as $key => $val) {
-			if($i < $result) {
+			if($i < $result)
 				$before[$key] = $val;
-			}elseif($i >= $pos) {
+			elseif($i >= $pos)
 				$after[$key]  = $val;
-			}
 			$i++;
 		}
 

@@ -2,7 +2,7 @@
 /**
  * SiteController
  * @var $this SiteController
- * version: 1.1.0
+ * version: 1.2.0
  * Reference start
  *
  * TOC :
@@ -17,8 +17,8 @@
  *	performAjaxValidation
  *
  * @author Putra Sudaryanto <putra@sudaryanto.id>
- * @copyright Copyright (c) 2012 Ommu Platform (ommu.co)
- * @link https://github.com/oMMu/Ommu-Core
+ * @copyright Copyright (c) 2012 Ommu Platform (opensource.ommu.co)
+ * @link https://github.com/ommu/Core
  * @contact (+62)856-299-4114
  *
  *----------------------------------------------------------------------------------------------------------
@@ -97,7 +97,7 @@ class SiteController extends Controller
 	public function actionError()
 	{
 		$this->pageGuest = true;
-		$this->adsSidebar = false;
+		$this->sidebarShow = false;
 		if($error=Yii::app()->errorHandler->error)
 		{
 			if(Yii::app()->request->isAjaxRequest)
@@ -117,8 +117,7 @@ class SiteController extends Controller
 	{		 
 		// renders the view file 'protected/views/site/index.php'
 		// using the default layout 'protected/views/layouts/main.php'
-
-		//$this->ownerId = 2;
+		
 		$setting = OmmuSettings::model()->findByPk(1,array(
 			'select' => 'online, construction_date',
 		));
@@ -134,8 +133,8 @@ class SiteController extends Controller
 				$render = 'application.webs.site.front_index';
 			} */
 			
-			$this->adsSidebar = false;
-			$this->pageTitle = 'Home';
+			$this->sidebarShow = false;
+			$this->pageTitle = Yii::t('phrase', 'Home');
 			$this->pageDescription = '';
 			$this->pageMeta = '';
 			$this->render('application.webs.site.front_index', array(
@@ -150,11 +149,15 @@ class SiteController extends Controller
 	 */
 	public function actionLogin()
 	{
+		$setting = OmmuSettings::model()->findByPk(1, array(
+			'select'=>'site_type',
+		));
+		
 		if(!Yii::app()->user->isGuest)
 			$this->redirect(array('site/index'));
 
 		else {
-			if(OmmuSettings::getInfo('site_type') == 1)
+			if($setting->site_type == 1)
 				$this->redirect(Yii::app()->createUrl('users/account'));
 			else
 				$this->redirect(Yii::app()->createUrl('users/admin'));
@@ -188,24 +191,15 @@ class SiteController extends Controller
 	public function actionAnalytics()
 	{
 		$model = OmmuSettings::model()->findByPk(1,array(
-			'select' => 'site_url, analytic, analytic_id',
+			'select' => 'site_url, analytic, analytic_id, analytic_profile_id',
 		));
 		
-		$this->pageTitle = 'Analytics';
+		$this->pageTitleShow = true;		
+		$this->pageTitle = Yii::t('phrase', 'Statistik');
 		$this->pageDescription = '';
 		$this->pageMeta = '';
 		$this->render('application.webs.site.front_analytics', array(
 			'model'=>$model,
 		));
-	}
-	
-	/* About */
-	public function actionAbout()
-	{		
-		$this->adsSidebar = false;
-		$this->pageTitle = 'About COE';
-		$this->pageDescription = '';
-		$this->pageMeta = '';
-		$this->render('application.webs.site.front_about');
 	}
 }

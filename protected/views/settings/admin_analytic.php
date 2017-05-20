@@ -4,11 +4,11 @@
  * @var $this SettingsController
  * @var $model OmmuSettings
  * @var $form CActiveForm
- * version: 1.1.0
+ * version: 1.2.0
  *
  * @author Putra Sudaryanto <putra@sudaryanto.id>
- * @copyright Copyright (c) 2012 Ommu Platform (ommu.co)
- * @link https://github.com/oMMu/Ommu-Core
+ * @copyright Copyright (c) 2012 Ommu Platform (opensource.ommu.co)
+ * @link https://github.com/ommu/Core
  * @contact (+62)856-299-4114
  *
  */
@@ -45,12 +45,23 @@
 
 		<div class="clearfix">
 			<label>
-				<?php echo $model->getAttributeLabel('analytic_id');?>
+				<?php echo $model->getAttributeLabel('analytic_id');?> <span class="required">*</span>
 				<span><?php echo Yii::t('phrase', 'Enter the Website Profile ID to use Google Analytics.');?></span>
 			</label>
 			<div class="desc">
 				<?php echo $form->textField($model,'analytic_id',array('maxlength'=>32)); ?>
 				<?php echo $form->error($model,'analytic_id'); ?>
+				<?php /*<div class="small-px silent"></div>*/?>
+			</div>
+		</div>
+
+		<div class="clearfix">
+			<label>
+				<?php echo $model->getAttributeLabel('analytic_profile_id');?> <span class="required">*</span>
+			</label>
+			<div class="desc">
+				<?php echo $form->textField($model,'analytic_profile_id',array('maxlength'=>32)); ?>
+				<?php echo $form->error($model,'analytic_profile_id'); ?>
 				<?php /*<div class="small-px silent"></div>*/?>
 			</div>
 		</div>

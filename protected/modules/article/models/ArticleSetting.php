@@ -1,9 +1,11 @@
 <?php
 /**
  * ArticleSetting
+ * version: 0.0.1
+ *
  * @author Putra Sudaryanto <putra@sudaryanto.id>
- * @copyright Copyright (c) 2012 Ommu Platform (ommu.co)
- * @link https://github.com/oMMu/Ommu-Articles
+ * @copyright Copyright (c) 2012 Ommu Platform (opensource.ommu.co)
+ * @link https://github.com/ommu/Articles
  * @contact (+62)856-299-4114
  *
  * This is the template for generating the model class of a specified table.
@@ -27,12 +29,14 @@
  * @property string $meta_description
  * @property string $type_active
  * @property integer $headline
+ * @property integer $headline_limit
+ * @property string $headline_category
  * @property integer $media_limit
  * @property integer $media_resize
  * @property string $media_resize_size
  * @property string $media_view_size
  * @property string $media_file_type
- * @property string $download_file_type
+ * @property string $upload_file_type
  * @property string $modified_date
  * @property string $modified_id
  */
@@ -69,13 +73,14 @@ class ArticleSetting extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('license, permission, meta_keyword, meta_description, type_active, headline, media_limit, media_resize', 'required'),
-			array('permission, headline, media_limit, media_resize, modified_id', 'numerical', 'integerOnly'=>true),
+			array('license, permission, meta_keyword, meta_description, type_active, headline, headline_limit, media_limit, media_resize, media_file_type, upload_file_type', 'required'),
+			array('permission, headline, headline_limit, media_limit, media_resize, modified_id', 'numerical', 'integerOnly'=>true),
 			array('license', 'length', 'max'=>32),
-			array('media_resize_size, media_view_size, media_file_type, upload_file_type', 'safe'),
+			array('headline_limit', 'length', 'max'=>3),
+			array('headline_category, media_resize_size, media_view_size, media_file_type, upload_file_type', 'safe'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('id, license, permission, meta_keyword, meta_description, type_active, headline, media_limit, media_resize, media_resize_size, media_view_size, media_file_type, upload_file_type, modified_date, modified_id,
+			array('id, license, permission, meta_keyword, meta_description, type_active, headline, headline_limit, headline_category, media_limit, media_resize, media_resize_size, media_view_size, media_file_type, upload_file_type, modified_date, modified_id,
 				modified_search', 'safe', 'on'=>'search'),
 		);
 	}
@@ -88,7 +93,7 @@ class ArticleSetting extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'modified_relation' => array(self::BELONGS_TO, 'Users', 'modified_id'),
+			'modified' => array(self::BELONGS_TO, 'Users', 'modified_id'),
 		);
 	}
 
@@ -104,7 +109,9 @@ class ArticleSetting extends CActiveRecord
 			'meta_keyword' => Yii::t('attribute', 'Meta Keyword'),
 			'meta_description' => Yii::t('attribute', 'Meta Description'),
 			'type_active' => Yii::t('attribute', 'Type Active'),
-			'headline' => Yii::t('attribute', 'Headline Limit'),
+			'headline' => Yii::t('attribute', 'Headline'),
+			'headline_limit' => Yii::t('attribute', 'Headline Limit'),
+			'headline_category' => Yii::t('attribute', 'Headline Category'),
 			'media_limit' => Yii::t('attribute', 'Media Limit'),
 			'media_resize' => Yii::t('attribute', 'Media Resize'),
 			'media_resize_size' => Yii::t('attribute', 'Media Resize Size'),
@@ -130,8 +137,8 @@ class ArticleSetting extends CActiveRecord
 		
 		// Custom Search
 		$criteria->with = array(
-			'modified_relation' => array(
-				'alias'=>'modified_relation',
+			'modified' => array(
+				'alias'=>'modified',
 				'select'=>'displayname'
 			),
 		);
@@ -143,17 +150,19 @@ class ArticleSetting extends CActiveRecord
 		$criteria->compare('t.meta_description',$this->meta_description,true);
 		$criteria->compare('t.type_active',$this->type_active);
 		$criteria->compare('t.headline',$this->headline);
+		$criteria->compare('t.headline_limit',$this->headline_limit);
+		$criteria->compare('t.headline_category',$this->headline_category,true);
 		$criteria->compare('t.media_limit',$this->media_limit);
 		$criteria->compare('t.media_resize',$this->media_resize);
-		$criteria->compare('t.media_resize_size',$this->media_resize_size);
-		$criteria->compare('t.media_view_size',$this->media_view_size);
-		$criteria->compare('t.media_file_type',$this->media_file_type);
-		$criteria->compare('t.upload_file_type',$this->upload_file_type);
+		$criteria->compare('t.media_resize_size',$this->media_resize_size,true);
+		$criteria->compare('t.media_view_size',$this->media_view_size,true);
+		$criteria->compare('t.media_file_type',$this->media_file_type,true);
+		$criteria->compare('t.upload_file_type',$this->upload_file_type,true);
 		if($this->modified_date != null && !in_array($this->modified_date, array('0000-00-00 00:00:00', '0000-00-00')))
 			$criteria->compare('date(t.modified_date)',date('Y-m-d', strtotime($this->modified_date)));
 		$criteria->compare('t.modified_id',$this->modified_id);
 		
-		$criteria->compare('modified_relation.displayname',strtolower($this->modified_search), true);
+		$criteria->compare('modified.displayname',strtolower($this->modified_search), true);
 
 		if(!isset($_GET['ArticleSetting_sort']))
 			$criteria->order = 't.id DESC';
@@ -188,6 +197,8 @@ class ArticleSetting extends CActiveRecord
 			$this->defaultColumns[] = 'meta_description';
 			$this->defaultColumns[] = 'type_active';
 			$this->defaultColumns[] = 'headline';
+			$this->defaultColumns[] = 'headline_limit';
+			$this->defaultColumns[] = 'headline_category';
 			$this->defaultColumns[] = 'media_limit';
 			$this->defaultColumns[] = 'media_resize';
 			$this->defaultColumns[] = 'media_resize_size';
@@ -212,6 +223,8 @@ class ArticleSetting extends CActiveRecord
 			$this->defaultColumns[] = 'meta_description';
 			$this->defaultColumns[] = 'type_active';
 			$this->defaultColumns[] = 'headline';
+			$this->defaultColumns[] = 'headline_limit';
+			$this->defaultColumns[] = 'headline_category';
 			$this->defaultColumns[] = 'media_limit';
 			$this->defaultColumns[] = 'media_resize';
 			$this->defaultColumns[] = 'media_resize_size';
@@ -221,7 +234,7 @@ class ArticleSetting extends CActiveRecord
 			$this->defaultColumns[] = 'modified_date';
 			$this->defaultColumns[] = array(
 				'name' => 'modified_search',
-				'value' => '$data->modified_relation->displayname',
+				'value' => '$data->modified->displayname',
 			);
 		}
 		parent::afterConstruct();
@@ -230,20 +243,34 @@ class ArticleSetting extends CActiveRecord
 	/**
 	 * User get information
 	 */
-	public static function getInfo($column, $type=null)
+	public static function getInfo($column=null)
 	{
-		if($type != null && $type == 'many') {
-			$model = self::model()->findByPk(1,array(
-				'select' => $column
-			));
-			return $model;
-		
-		} else {
+		if($column != null) {
 			$model = self::model()->findByPk(1,array(
 				'select' => $column
 			));
 			return $model->$column;
+		
+		} else {
+			$model = self::model()->findByPk(1);
+			return $model;
 		}
+	}
+
+	/**
+	 * User get information
+	 */
+	public static function getHeadlineCategory()
+	{
+		$setting = self::model()->findByPk(1, array(
+			'select' => 'headline_category',
+		));
+		
+		$headline_category = unserialize($setting->headline_category);
+		if(empty($headline_category))
+			$headline_category = array();
+		
+		return $headline_category;		
 	}
 
 	/**
@@ -278,11 +305,18 @@ class ArticleSetting extends CActiveRecord
 	 */
 	protected function beforeValidate() {
 		if(parent::beforeValidate()) {
+			if($this->headline == 1) {
+				if($this->headline_limit != '' && $this->headline_limit <= 0)
+					$this->addError('headline_limit', Yii::t('phrase', 'Headline Limit lebih besar dari 0'));
+				if($this->headline_category == '')
+					$this->addError('headline_category', Yii::t('phrase', 'Headline Category cannot be blank.'));
+			}
+			
 			if($this->media_limit != '' && $this->media_limit <= 0)
 				$this->addError('media_limit', Yii::t('phrase', 'Photo Limit lebih besar dari 0'));
 			
 			if($this->media_resize == 1 && ($this->media_resize_size['width'] == '' || $this->media_resize_size['height'] == ''))
-				$this->addError('media_resize_size', Yii::t('attribute', 'Media Resize cannot be blank.'));
+				$this->addError('media_resize_size', Yii::t('phrase', 'Media Resize cannot be blank.'));
 			
 			if($this->media_view_size['large']['width'] == '' || $this->media_view_size['large']['height'] == '')
 				$this->addError('media_view_size[large]', Yii::t('phrase', 'Large Size cannot be blank.'));
@@ -306,6 +340,7 @@ class ArticleSetting extends CActiveRecord
 	protected function beforeSave() {
 		if(parent::beforeSave()) {
 			$this->type_active = serialize($this->type_active);
+			$this->headline_category = serialize($this->headline_category);
 			$this->media_resize_size = serialize($this->media_resize_size);
 			$this->media_view_size = serialize($this->media_view_size);
 			$this->media_file_type = serialize(Utility::formatFileType($this->media_file_type));

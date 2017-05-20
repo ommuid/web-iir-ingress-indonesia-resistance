@@ -4,10 +4,11 @@
  * @var $this AdminController
  * @var $model Reports
  * @var $form CActiveForm
+ * version: 0.0.1
  *
  * @author Putra Sudaryanto <putra@sudaryanto.id>
- * @copyright Copyright (c) 2014 Ommu Platform (ommu.co)
- * @link https://github.com/oMMu/Ommu-Report
+ * @copyright Copyright (c) 2014 Ommu Platform (opensource.ommu.co)
+ * @link https://github.com/ommu/Report
  * @contact (+62)856-299-4114
  *
  */
@@ -24,13 +25,18 @@
 		</li>
 
 		<li>
+			<?php echo $model->getAttributeLabel('status'); ?><br/>
+			<?php echo $form->textField($model,'status'); ?>
+		</li>
+
+		<li>
 			<?php echo $model->getAttributeLabel('cat_id'); ?><br/>
 			<?php echo $form->textField($model,'cat_id'); ?>
 		</li>
 
 		<li>
-			<?php echo $model->getAttributeLabel('status'); ?><br/>
-			<?php echo $form->textField($model,'status'); ?>
+			<?php echo $model->getAttributeLabel('user_id'); ?><br/>
+			<?php echo $form->textField($model,'user_id',array('size'=>11,'maxlength'=>11)); ?>
 		</li>
 
 		<li>
@@ -39,8 +45,8 @@
 		</li>
 
 		<li>
-			<?php echo $model->getAttributeLabel('body'); ?><br/>
-			<?php echo $form->textArea($model,'body',array('rows'=>6, 'cols'=>50)); ?>
+			<?php echo $model->getAttributeLabel('report_body'); ?><br/>
+			<?php echo $form->textArea($model,'report_body',array('rows'=>6, 'cols'=>50)); ?>
 		</li>
 
 		<li>
@@ -54,8 +60,28 @@
 		</li>
 
 		<li>
-			<?php echo $model->getAttributeLabel('user_id'); ?><br/>
-			<?php echo $form->textField($model,'user_id',array('size'=>11,'maxlength'=>11)); ?>
+			<?php echo $model->getAttributeLabel('report_message'); ?><br/>
+			<?php echo $form->textField($model,'report_message',array('size'=>20,'maxlength'=>20)); ?>
+		</li>
+
+		<li>
+			<?php echo $model->getAttributeLabel('resolved_date'); ?><br/>
+			<?php echo $form->textField($model,'resolved_date'); ?>
+		</li>
+
+		<li>
+			<?php echo $model->getAttributeLabel('resolved_id'); ?><br/>
+			<?php echo $form->textField($model,'resolved_id',array('size'=>20,'maxlength'=>20)); ?>
+		</li>
+
+		<li>
+			<?php echo $model->getAttributeLabel('unresolved_date'); ?><br/>
+			<?php echo $form->textField($model,'unresolved_date'); ?>
+		</li>
+
+		<li>
+			<?php echo $model->getAttributeLabel('unresolved_id'); ?><br/>
+			<?php echo $form->textField($model,'unresolved_id',array('size'=>20,'maxlength'=>20)); ?>
 		</li>
 
 		<li class="submit">

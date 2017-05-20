@@ -218,6 +218,22 @@ div.notifier.login .dialog-box .dialog-header,
 div.notifier #login fieldset div.clearfix label {
 	display: none;
 }
+div.notifier.login .oauth,
+div.notifier.login .oauth * {
+	font-size: 14px;
+	line-height: 18px;
+	text-shadow: 0 1px 0 #104266;
+}
+div.notifier.login .oauth {
+	padding: 15px 10px 10px 10px;
+	text-align: center;
+	color: #ccc;	
+}
+div.notifier.login .oauth a {
+	color: #477DAE;
+	color: #f0f0f0;	
+}
+
 div.notifier #login fieldset {
 	display: table;
 	border-top: none;
@@ -585,6 +601,7 @@ div.body .sidebar .table {
 	color: #666;
 	text-decoration: none;
 }
+.body .sidebar .menu .submenu li.submenu-show > a,
 .body .sidebar .menu .submenu li.selected a,
 .body .sidebar .menu .submenu li a.active {
 	font-weight: bold;
@@ -1178,6 +1195,23 @@ footer .powered {
 #admin .recent {
 	width: 270px;
 }
+#admin .wall h3,
+#admin .recent h3 {
+	margin: 0 0 15px 0;
+	padding: 0 0 10px 0;
+	border-bottom: 3px solid #ccc;
+	font-size: 16px;
+	line-height: 22px;
+}
+#admin .wall .box h3 {
+	padding: 10px 15px 10px 15px;
+}
+#admin .wall h3 span,
+#admin .recent h3 span {
+	display: block;
+	font-size: 14px;
+	line-height: 20px;
+}
 
 /* Wall Post */
 #admin form#ommu-walls-form {
@@ -1206,6 +1240,12 @@ footer .powered {
 }
 
 /* Wall List-View */
+#admin .wall .box {
+	margin: 0 0 25px 0;
+}
+#admin .wall .box:last-child {
+	margin: 0 0 0 0;
+}
 #admin .wall .list-view {}
 #admin .wall .list-view .items.wall {
 	display: block;
@@ -1355,17 +1395,11 @@ footer .powered {
 #admin .oauth:last-child {
 	margin: 0 0 0 0;
 }
-#admin .oauth h3 {
-	margin: 0 0 15px 0;
-	padding: 0 0 10px 0;
-	border-bottom: 3px solid #ccc;
-	font-size: 16px;
-	line-height: 16px;
-}
 #admin .oauth div.box {
 	-webkit-box-shadow: none;
 	-moz-box-shadow: none;
 	box-shadow: none;
+	background: none;
 }
 #admin .oauth div.box ul {
 	display: block;
@@ -1390,6 +1424,16 @@ footer .powered {
 }
 #admin .oauth div.box ul li a:hover {
 	background: #aaa;	
+}
+
+/* Statistic */
+#admin .ga-visitor #chart-line-container,
+#admin .ga-week .Chartjs,
+#admin .ga-years .Chartjs {
+	-webkit-box-shadow: 0px 0px 2px 0px #acaeaf;
+	-moz-box-shadow: 0px 0px 2px 0px #acaeaf;
+	box-shadow: 0px 0px 2px 0px #acaeaf;
+	background: #fff;
 }
 
 /* =Responsive

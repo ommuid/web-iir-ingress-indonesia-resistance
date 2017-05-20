@@ -11,20 +11,20 @@
  *	Index
  *	Password
  *	Manage
+ *	Add
  *	Edit
  *	View
  *	Delete
- *	Enabled
+ *	Enable
  *	Verify
  *
  *	LoadModel
  *	performAjaxValidation
  *
  * @author Putra Sudaryanto <putra@sudaryanto.id>
- * @copyright Copyright (c) 2016 Ommu Platform (ommu.co)
- * @created date 25 February 2016, 15:47 WIB
- * @link http://company.ommu.co
- * @contect (+62)856-299-4114
+ * @copyright Copyright (c) 2012 Ommu Platform (opensource.ommu.co)
+ * @link https://github.com/ommu/Users
+ * @contact (+62)856-299-4114
  *
  *----------------------------------------------------------------------------------------------------------
  */
@@ -48,12 +48,10 @@ class AdminController extends Controller
 				$arrThemes = Utility::getCurrentTemplate('admin');
 				Yii::app()->theme = $arrThemes['folder'];
 				$this->layout = $arrThemes['layout'];
-			} else {
-				$this->redirect(Yii::app()->createUrl('site/login'));
-			}
-		} else {
+			} else
+				throw new CHttpException(404, Yii::t('phrase', 'The requested page does not exist.'));
+		} else
 			$this->redirect(Yii::app()->createUrl('site/login'));
-		}
 	}
 
 	/**
@@ -86,12 +84,12 @@ class AdminController extends Controller
 				//'expression'=>'isset(Yii::app()->user->level) && (Yii::app()->user->level != 1)',
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('edit','password'),
+				'actions'=>array('edit','password','photo'),
 				'users'=>array('@'),
 				'expression'=>'isset(Yii::app()->user->level) && in_array(Yii::app()->user->level, array(1,2))',
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('manage','add','delete','enabled'),
+				'actions'=>array('manage','add','delete','enable','verify'),
 				'users'=>array('@'),
 				'expression'=>'isset(Yii::app()->user->level) && (Yii::app()->user->level == 1)',
 			),
@@ -145,7 +143,7 @@ class AdminController extends Controller
 			}
 			Yii::app()->end();
 		}
-		
+
 		$this->dialogDetail = true;
 		$this->dialogGroundUrl = Yii::app()->createUrl('admin/dashboard');
 		$this->dialogWidth = 500;
@@ -156,6 +154,78 @@ class AdminController extends Controller
 		$this->render('admin_password',array(
 			'model'=>$model,
 		));
+	}
+
+
+	/**
+	 * Creates a new model.
+	 * If creation is successful, the browser will be redirected to the 'view' page.
+	 */
+	public function actionPhoto($id=null) 
+	{
+		$condition = 1;
+		if($id == null) {
+			$condition = 0;
+			$id = Yii::app()->user->id;
+		}
+		
+		$model = Users::model()->findByPk($id);
+		$photo_exts = unserialize($model->level->photo_exts);
+		if(empty($photo_exts))
+			$photo_exts = array();
+		
+		if(!$model->getErrors())
+			$photos = $model->photos;
+		
+		if($condition == 0) {
+			$user_path = 'public/users/'.$id;
+			if(!file_exists($user_path)) {
+				mkdir($user_path, 0755, true);
+
+				// Add File in User Folder (index.php)
+				$newFile = $user_path.'/index.php';
+				$FileHandle = fopen($newFile, 'w');
+			} else
+				@chmod($user_path, 0755, true);
+			
+			$userPhoto = CUploadedFile::getInstanceByName('namaFile');
+			$fileName = time().'_'.Utility::getUrlTitle($model->displayname).'.'.strtolower($userPhoto->extensionName);
+			if($userPhoto->saveAs($user_path.'/'.$fileName)) {
+				if(Users::model()->updateByPk($model->user_id, array('photos'=>$fileName,'update_date'=>date('Y-m-d H:i:s')))) {
+					if($photos != '')
+						rename($user_path.'/'.$photos, 'public/users/verwijderen/'.$model->user_id.'_'.$photos);
+					echo CJSON::encode(array(
+						'id' => 'div.account a.photo img',
+						'image' => Utility::getTimThumb(Yii::app()->request->baseUrl.'/public/users/'.$model->user_id.'/'.$fileName, 82, 82, 1),
+					));					
+				}
+			}
+			
+		} else {
+			// Uncomment the following line if AJAX validation is needed
+			$this->performAjaxValidation($model);
+
+			if(isset($_POST['Users'])) {
+				$model->attributes=$_POST['Users'];
+				
+				if($model->save()) {
+					Yii::app()->user->setFlash('success', Yii::t('phrase', 'Users success updated.'));
+					$this->redirect(array('manage'));
+				}
+			}
+			
+			$this->dialogDetail = true;
+			$this->dialogGroundUrl = $condition == 1 ? Yii::app()->controller->createUrl('manage') : Yii::app()->createUrl('admin/dashboard');
+			$this->dialogWidth = 600;
+
+			$this->pageTitle = 'Photo Users';
+			$this->pageDescription = '';
+			$this->pageMeta = '';
+			$this->render('admin_photo',array(
+				'model'=>$model,
+				'photo_exts'=>$photo_exts,
+			));
+		}
 	}
 
 	/**
@@ -179,8 +249,8 @@ class AdminController extends Controller
 		}
 		$columns = $model->getGridColumn($columnTemp);
 
-		$this->pageTitle = 'Users Manage';
-		$this->pageDescription = '';
+		$this->pageTitle = Yii::t('phrase', 'Manage Administrator');
+		$this->pageDescription = Yii::t('phrase', 'Your social network can have more than one administrator. This is useful if you want to have a staff of admins who maintain your social network. However, the first admin to be created (upon installation) is the "superadmin" and cannot be deleted. The superadmin can create and delete other admin accounts. All admin accounts on your system are listed below.');
 		$this->pageMeta = '';
 		$this->render('admin_manage',array(
 			'model'=>$model,
@@ -208,7 +278,7 @@ class AdminController extends Controller
 		if(isset($_POST['Users'])) {
 			$model->attributes=$_POST['Users'];
 			$model->scenario = 'formAdd';
-			
+
 			$jsonError = CActiveForm::validate($model);
 			if(strlen($jsonError) > 2) {
 				echo $jsonError;
@@ -220,21 +290,21 @@ class AdminController extends Controller
 							'type' => 5,
 							'get' => Yii::app()->controller->createUrl('manage'),
 							'id' => 'partial-users',
-							'msg' => '<div class="errorSummary success"><strong>Users success created.</strong></div>',
+							'msg' => '<div class="errorSummary success"><strong>'.Yii::t('phrase', 'Administrator success created.').'</strong></div>',
 						));
 					} else {
 						print_r($model->getErrors());
 					}
 				}
 			}
-			Yii::app()->end();			
+			Yii::app()->end();
 		}
 		
 		$this->dialogDetail = true;
 		$this->dialogGroundUrl = Yii::app()->controller->createUrl('manage');
 		$this->dialogWidth = 600;
-
-		$this->pageTitle = 'Create Users';
+		
+		$this->pageTitle = Yii::t('phrase', 'Add Administrator');
 		$this->pageDescription = '';
 		$this->pageMeta = '';
 		$this->render('admin_add',array(
@@ -248,12 +318,13 @@ class AdminController extends Controller
 	 * If update is successful, the browser will be redirected to the 'view' page.
 	 * @param integer $id the ID of the model to be updated
 	 */
-	public function actionEdit() 
+	public function actionEdit($id=null) 
 	{
-		if(isset($_GET['id']))
-			$id = $_GET['id'];
-		else 
+		$condition = 1;
+		if($id == null) {
+			$condition = 0;
 			$id = Yii::app()->user->id;
+		}
 		
 		$model=$this->loadModel($id);
 		$setting = OmmuSettings::model()->findByPk(1, array(
@@ -266,7 +337,7 @@ class AdminController extends Controller
 		if(isset($_POST['Users'])) {
 			$model->attributes=$_POST['Users'];
 			$model->scenario = 'formEdit';
-			
+
 			$jsonError = CActiveForm::validate($model);
 			if(strlen($jsonError) > 2) {
 				echo $jsonError;
@@ -276,23 +347,23 @@ class AdminController extends Controller
 					if($model->save()) {
 						echo CJSON::encode(array(
 							'type' => 5,
-							'get' => Yii::app()->controller->createUrl('manage'),
+							'get' => $condition == 1 ? Yii::app()->controller->createUrl('manage') : Yii::app()->createUrl('admin/dashboard'),
 							'id' => 'partial-users',
-							'msg' => '<div class="errorSummary success"><strong>Users success updated.</strong></div>',
+							'msg' => '<div class="errorSummary success"><strong>'.Yii::t('phrase', 'Administrator success updated.').'</strong></div>',
 						));
 					} else {
 						print_r($model->getErrors());
 					}
 				}
 			}
-			Yii::app()->end();			
+			Yii::app()->end();
 		}
 		
 		$this->dialogDetail = true;
-		$this->dialogGroundUrl = isset($_GET['id']) ? Yii::app()->controller->createUrl('manage') : Yii::app()->createUrl('admin/dashboard');
+		$this->dialogGroundUrl = $condition == 1 ? Yii::app()->controller->createUrl('manage') : Yii::app()->createUrl('admin/dashboard');
 		$this->dialogWidth = 600;
-
-		$this->pageTitle = 'Update Users';
+		
+		$this->pageTitle = Yii::t('phrase', 'Update Administrator : {displayname}', array('{displayname}'=>$model->displayname));
 		$this->pageDescription = '';
 		$this->pageMeta = '';
 		$this->render('admin_edit',array(
@@ -338,18 +409,18 @@ class AdminController extends Controller
 						'type' => 5,
 						'get' => Yii::app()->controller->createUrl('manage'),
 						'id' => 'partial-users',
-						'msg' => '<div class="errorSummary success"><strong>Users success deleted.</strong></div>',
+						'msg' => '<div class="errorSummary success"><strong>'.Yii::t('phrase', 'Administrator success deleted.').'</strong></div>',
 					));
 				}
 				Yii::app()->end();
 			}
 		}
-		
+
 		$this->dialogDetail = true;
 		$this->dialogGroundUrl = Yii::app()->controller->createUrl('manage');
 		$this->dialogWidth = 350;
 
-		$this->pageTitle = 'Users Delete.';
+		$this->pageTitle = Yii::t('phrase', 'Delete Administrator');
 		$this->pageDescription = '';
 		$this->pageMeta = '';
 		$this->render('admin_delete');
@@ -360,7 +431,7 @@ class AdminController extends Controller
 	 * If deletion is successful, the browser will be redirected to the 'admin' page.
 	 * @param integer $id the ID of the model to be deleted
 	 */
-	public function actionEnabled($id) 
+	public function actionEnable($id) 
 	{
 		$model=$this->loadModel($id);
 		if($model->enabled == 1) {
@@ -429,7 +500,7 @@ class AdminController extends Controller
 						'type' => 5,
 						'get' => Yii::app()->controller->createUrl('manage'),
 						'id' => 'partial-users',
-						'msg' => '<div class="errorSummary success"><strong>'.Yii::t('phrase', 'User success deleted.').'</strong></div>',
+						'msg' => '<div class="errorSummary success"><strong>'.Yii::t('phrase', 'Administrator success updated.').'</strong></div>',
 					));
 				}
 			}

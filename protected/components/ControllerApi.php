@@ -2,11 +2,12 @@
 /**
  * ControllerApi is the customized base controller api class.
  * All controller api classes for this application should extend from this base class.
+ * version: 1.2.0
  * 
  * @author Putra Sudaryanto <putra@sudaryanto.id>
- * @copyright Copyright (c) 2016 Ommu Platform (ommu.co)
- * @link https://github.com/oMMu/Ommu-Core
- * @contect (+62)856-299-4114
+ * @copyright Copyright (c) 2016 Ommu Platform (opensource.ommu.co)
+ * @link https://github.com/ommu/Core
+ * @contact (+62)856-299-4114
  *
  */
 

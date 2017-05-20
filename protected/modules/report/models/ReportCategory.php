@@ -1,9 +1,11 @@
 <?php
 /**
  * ReportCategory
+ * version: 0.0.1
+ *
  * @author Putra Sudaryanto <putra@sudaryanto.id>
- * @copyright Copyright (c) 2014 Ommu Platform (ommu.co)
- * @link https://github.com/oMMu/Ommu-Report
+ * @copyright Copyright (c) 2014 Ommu Platform (opensource.ommu.co)
+ * @link https://github.com/ommu/Report
  * @contact (+62)856-299-4114
  *
  * This is the template for generating the model class of a specified table.
@@ -22,8 +24,6 @@
  * The followings are the available columns in table 'ommu_report_category':
  * @property integer $cat_id
  * @property integer $publish
- * @property integer $dependency
- * @property integer $orders
  * @property string $name
  * @property string $desc
  * @property string $creation_date
@@ -41,8 +41,11 @@ class ReportCategory extends CActiveRecord
 	public $description;
 	
 	// Variable Search
+	public $report_search;
+	public $report_resolved_search;
+	public $report_all_search;
 	public $creation_search;
-	public $modified_search;
+	public $modified_search;	
 
 	/**
 	 * Returns the static model of the specified AR class.
@@ -72,17 +75,17 @@ class ReportCategory extends CActiveRecord
 		return array(
 			array('
 				title, description', 'required'),
-			array('publish, dependency, orders, creation_id, modified_id', 'numerical', 'integerOnly'=>true),
+			array('publish, creation_id, modified_id', 'numerical', 'integerOnly'=>true),
 			array('name, desc', 'length', 'max'=>11),
 			array('
 				title', 'length', 'max'=>32),
 			array('
 				description', 'length', 'max'=>128),
-			array('dependency', 'safe'),
+			array('', 'safe'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('cat_id, publish, dependency, orders, name, desc, creation_date, creation_id, modified_date, modified_id,
-				title, description, creation_search, modified_search', 'safe', 'on'=>'search'),
+			array('cat_id, publish, name, desc, creation_date, creation_id, modified_date, modified_id,
+				title, description, report_search, report_resolved_search, report_all_search, creation_search, modified_search', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -94,10 +97,12 @@ class ReportCategory extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'view_cat' => array(self::BELONGS_TO, 'ViewReportCategory', 'cat_id'),
-			'creation_relation' => array(self::BELONGS_TO, 'Users', 'creation_id'),
-			'modified_relation' => array(self::BELONGS_TO, 'Users', 'modified_id'),
-			'report' => array(self::HAS_MANY, 'Reports', 'cat_id'),
+			'view' => array(self::BELONGS_TO, 'ViewReportCategory', 'cat_id'),
+			'title' => array(self::BELONGS_TO, 'OmmuSystemPhrase', 'name'),
+			'description' => array(self::BELONGS_TO, 'OmmuSystemPhrase', 'desc'),
+			'creation' => array(self::BELONGS_TO, 'Users', 'creation_id'),
+			'modified' => array(self::BELONGS_TO, 'Users', 'modified_id'),
+			'reports' => array(self::HAS_MANY, 'Reports', 'cat_id'),
 		);
 	}
 
@@ -109,8 +114,6 @@ class ReportCategory extends CActiveRecord
 		return array(
 			'cat_id' => Yii::t('attribute', 'Category'),
 			'publish' => Yii::t('attribute', 'Publish'),
-			'dependency' => Yii::t('attribute', 'Parent'),
-			'orders' => Yii::t('attribute', 'Order'),
 			'name' => Yii::t('attribute', 'Category'),
 			'desc' => Yii::t('attribute', 'Description'),
 			'creation_date' => Yii::t('attribute', 'Creation'),
@@ -119,6 +122,9 @@ class ReportCategory extends CActiveRecord
 			'modified_id' => Yii::t('attribute', 'Modified'),
 			'title' => Yii::t('attribute', 'Category'),
 			'description' => Yii::t('attribute', 'Description'),
+			'report_search' => Yii::t('attribute', 'Report'),
+			'report_resolved_search' => Yii::t('attribute', 'Resolved'),
+			'report_all_search' => Yii::t('attribute', 'All'),
 			'creation_search' => Yii::t('attribute', 'Creation'),
 			'modified_search' => Yii::t('attribute', 'Modified'),
 		);
@@ -134,6 +140,35 @@ class ReportCategory extends CActiveRecord
 		// should not be searched.
 
 		$criteria=new CDbCriteria;
+		
+		// Custom Search
+		$defaultLang = OmmuLanguages::getDefault('code');
+		if(isset(Yii::app()->session['language']))
+			$language = Yii::app()->session['language'];
+		else 
+			$language = $defaultLang;
+		
+		$criteria->with = array(
+			'view' => array(
+				'alias'=>'view',
+			),
+			'title' => array(
+				'alias'=>'title',
+				'select'=>$language,
+			),
+			'description' => array(
+				'alias'=>'description',
+				'select'=>$language,
+			),
+			'creation' => array(
+				'alias'=>'creation',
+				'select'=>'displayname',
+			),
+			'modified' => array(
+				'alias'=>'modified',
+				'select'=>'displayname',
+			),
+		);
 
 		$criteria->compare('cat_id',$this->cat_id);
 		if(isset($_GET['type']) && $_GET['type'] == 'publish') {
@@ -146,8 +181,6 @@ class ReportCategory extends CActiveRecord
 			$criteria->addInCondition('t.publish',array(0,1));
 			$criteria->compare('t.publish',$this->publish);
 		}
-		$criteria->compare('dependency',$this->dependency);
-		$criteria->compare('orders',$this->orders);
 		$criteria->compare('name',$this->name);
 		$criteria->compare('desc',$this->desc);
 		if($this->creation_date != null && !in_array($this->creation_date, array('0000-00-00 00:00:00', '0000-00-00')))
@@ -157,25 +190,13 @@ class ReportCategory extends CActiveRecord
 			$criteria->compare('date(t.modified_date)',date('Y-m-d', strtotime($this->modified_date)));
 		$criteria->compare('t.modified_id',$this->modified_id);
 		
-		// Custom Search
-		$criteria->with = array(
-			'view_cat' => array(
-				'alias'=>'view_cat',
-				'select'=>'category_name, category_desc'
-			),
-			'creation_relation' => array(
-				'alias'=>'creation_relation',
-				'select'=>'displayname',
-			),
-			'modified_relation' => array(
-				'alias'=>'modified_relation',
-				'select'=>'displayname',
-			),
-		);
-		$criteria->compare('view_cat.category_name',strtolower($this->title), true);
-		$criteria->compare('view_cat.category_desc',strtolower($this->description), true);
-		$criteria->compare('creation_relation.displayname',strtolower($this->creation_search), true);
-		$criteria->compare('modified_relation.displayname',strtolower($this->modified_search), true);
+		$criteria->compare('title.'.$language,strtolower($this->title), true);
+		$criteria->compare('description.'.$language,strtolower($this->description), true);
+		$criteria->compare('view.reports',strtolower($this->report_search), true);
+		$criteria->compare('view.report_resolved',strtolower($this->report_resolved_search), true);
+		$criteria->compare('view.report_all',strtolower($this->report_all_search), true);
+		$criteria->compare('creation.displayname',strtolower($this->creation_search), true);
+		$criteria->compare('modified.displayname',strtolower($this->modified_search), true);
 		
 		if(!isset($_GET['ReportCategory_sort']))
 			$criteria->order = 't.cat_id DESC';
@@ -205,8 +226,6 @@ class ReportCategory extends CActiveRecord
 		}else {
 			//$this->defaultColumns[] = 'cat_id';
 			$this->defaultColumns[] = 'publish';
-			$this->defaultColumns[] = 'dependency';
-			$this->defaultColumns[] = 'orders';
 			$this->defaultColumns[] = 'name';
 			$this->defaultColumns[] = 'desc';
 			$this->defaultColumns[] = 'creation_date';
@@ -236,16 +255,66 @@ class ReportCategory extends CActiveRecord
 				'value' => '$this->grid->dataProvider->pagination->currentPage*$this->grid->dataProvider->pagination->pageSize + $row+1'
 			);
 			$this->defaultColumns[] = array(
-				'name' => 'dependency',
-				'value' => '$data->dependency != 0 ? Phrase::trans(ReportCategory::model()->findByPk($data->dependency)->name, 2) : \'-\'',
-			);
-			$this->defaultColumns[] = array(
 				'name' => 'title',
-				'value' => 'Phrase::trans($data->name, 2)',
+				'value' => 'Phrase::trans($data->name)',
 			);
 			$this->defaultColumns[] = array(
 				'name' => 'description',
-				'value' => 'Phrase::trans($data->desc, 2)',
+				'value' => 'Phrase::trans($data->desc)',
+			);
+			$this->defaultColumns[] = array(
+				'name' => 'report_search',
+				'value' => 'CHtml::link($data->view->reports ? $data->view->reports : 0, Yii::app()->controller->createUrl("o/admin/manage",array(\'category\'=>$data->cat_id,\'status\'=>0)))',
+				'htmlOptions' => array(
+					'class' => 'center',
+				),
+				'type' => 'raw',
+			);
+			$this->defaultColumns[] = array(
+				'name' => 'report_resolved_search',
+				'value' => 'CHtml::link($data->view->report_resolved ? $data->view->report_resolved : 0, Yii::app()->controller->createUrl("o/admin/manage",array(\'category\'=>$data->cat_id,\'status\'=>1)))',
+				'htmlOptions' => array(
+					'class' => 'center',
+				),
+				'type' => 'raw',
+			);
+			$this->defaultColumns[] = array(
+				'name' => 'report_all_search',
+				'value' => 'CHtml::link($data->view->report_all ? $data->view->report_all : 0, Yii::app()->controller->createUrl("o/admin/manage",array(\'category\'=>$data->cat_id)))',
+				'htmlOptions' => array(
+					'class' => 'center',
+				),
+				'type' => 'raw',
+			);
+			$this->defaultColumns[] = array(
+				'name' => 'creation_search',
+				'value' => '$data->creation->displayname',
+			);
+			$this->defaultColumns[] = array(
+				'name' => 'creation_date',
+				'value' => 'Utility::dateFormat($data->creation_date)',
+				'htmlOptions' => array(
+					'class' => 'center',
+				),
+				'filter' => Yii::app()->controller->widget('application.components.system.CJuiDatePicker', array(
+					'model'=>$this, 
+					'attribute'=>'creation_date', 
+					'language' => 'en',
+					'i18nScriptFile' => 'jquery-ui-i18n.min.js',
+					//'mode'=>'datetime',
+					'htmlOptions' => array(
+						'id' => 'creation_date_filter',
+					),
+					'options'=>array(
+						'showOn' => 'focus',
+						'dateFormat' => 'dd-mm-yy',
+						'showOtherMonths' => true,
+						'selectOtherMonths' => true,
+						'changeMonth' => true,
+						'changeYear' => true,
+						'showButtonPanel' => true,
+					),
+				), true),
 			);
 			if(!isset($_GET['type'])) {
 				$this->defaultColumns[] = array(
@@ -253,6 +322,10 @@ class ReportCategory extends CActiveRecord
 					'value' => 'Utility::getPublish(Yii::app()->controller->createUrl("publish",array("id"=>$data->cat_id)), $data->publish, 1)',
 					'htmlOptions' => array(
 						'class' => 'center',
+					),
+					'filter'=>array(
+						1=>Yii::t('phrase', 'Yes'),
+						0=>Yii::t('phrase', 'No'),
 					),
 					'type' => 'raw',
 				);
@@ -283,7 +356,7 @@ class ReportCategory extends CActiveRecord
 		$items = array();
 		if($model != null) {
 			foreach($model as $key => $val) {
-				$items[$val->cat_id] = Phrase::trans($val->name, 2);
+				$items[$val->cat_id] = Phrase::trans($val->name);
 			}
 			return $items;
 		} else {
@@ -296,17 +369,9 @@ class ReportCategory extends CActiveRecord
 	 */
 	protected function beforeValidate() {
 		if(parent::beforeValidate()) {		
-			if($this->isNewRecord) {
-				$model = self::model()->findAll(array(
-					//'select' => 'dependency',
-					'condition' => 'dependency = :id',
-					'params' => array(
-						':id' => $this->dependency,
-					)
-				));
-				$this->orders = count($model) + 1;
+			if($this->isNewRecord)
 				$this->creation_id = Yii::app()->user->id;	
-			} else
+			else
 				$this->modified_id = Yii::app()->user->id;
 		}
 		return true;
@@ -315,16 +380,26 @@ class ReportCategory extends CActiveRecord
 	/**
 	 * before save attributes
 	 */
-	protected function beforeSave() {
+	protected function beforeSave() 
+	{
+		$currentAction = strtolower(Yii::app()->controller->id.'/'.Yii::app()->controller->action->id);
+		$location = Utility::getUrlTitle($currentAction);
+		
 		if(parent::beforeSave()) {
-			if($this->isNewRecord) {
-				$location = strtolower(Yii::app()->controller->module->id.'/'.Yii::app()->controller->id);
+			if($this->isNewRecord || (!$this->isNewRecord && $this->name == 0)) {
 				$title=new OmmuSystemPhrase;
 				$title->location = $location.'_title';
 				$title->en_us = $this->title;
 				if($title->save())
 					$this->name = $title->phrase_id;
-
+				
+			} else {
+				$title = OmmuSystemPhrase::model()->findByPk($this->name);
+				$title->en_us = $this->title;
+				$title->save();
+			}
+			
+			if($this->isNewRecord || (!$this->isNewRecord && $this->desc == 0)) {
 				$desc=new OmmuSystemPhrase;
 				$desc->location = $location.'_description';
 				$desc->en_us = $this->description;
@@ -332,10 +407,6 @@ class ReportCategory extends CActiveRecord
 					$this->desc = $desc->phrase_id;
 				
 			} else {
-				$title = OmmuSystemPhrase::model()->findByPk($this->name);
-				$title->en_us = $this->title;
-				$title->save();
-
 				$desc = OmmuSystemPhrase::model()->findByPk($this->desc);
 				$desc->en_us = $this->description;
 				$desc->save();

@@ -4,11 +4,12 @@
  * @var $this HistoryController
  * @var $model UserHistoryPassword
  * @var $form CActiveForm
+ * version: 0.0.1
  *
  * @author Putra Sudaryanto <putra@sudaryanto.id>
- * @copyright Copyright (c) 2015 Ommu Platform (ommu.co)
- * @link https://github.com/oMMu/Ommu-Users
- * @contect (+62)856-299-4114
+ * @copyright Copyright (c) 2015 Ommu Platform (opensource.ommu.co)
+ * @link https://github.com/ommu/Users
+ * @contact (+62)856-299-4114
  *
  */
 
@@ -18,7 +19,7 @@
 	);
 ?>
 
-<div id="partial-user-history-login">
+<div id="partial-user-history-password">
 	<?php //begin.Messages ?>
 	<div id="ajax-message">
 	<?php
@@ -35,9 +36,10 @@
 		<?php 
 			$columnData   = $columns;
 			$this->widget('application.components.system.OGridView', array(
-				'id'=>'user-history-login-grid',
+				'id'=>'user-history-password-grid',
 				'dataProvider'=>$model->search(),
 				'filter'=>$model,
+				'afterAjaxUpdate' => 'reinstallDatePicker',
 				'columns' => $columnData,
 				'pager' => array('header' => ''),
 			));

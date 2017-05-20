@@ -8,7 +8,7 @@
 		<ul>
 		<?php 
 		foreach($model as $key => $val) {?>
-			<li><a href="<?php echo Yii::app()->createUrl('article/'.$controller.'/view', array('id'=>$val->article_id, 't'=>Utility::getUrlTitle($val->title)))?>" title="<?php echo $val->title;?>"><?php echo $val->title;?></a></li>
+			<li><a href="<?php echo Yii::app()->createUrl('article/'.$controller.'/view', array('id'=>$val->article_id, 'slug'=>Utility::getUrlTitle($val->title)))?>" title="<?php echo $val->title;?>"><?php echo $val->title;?></a></li>
 		<?php }?>
 		</ul>
 	</div>

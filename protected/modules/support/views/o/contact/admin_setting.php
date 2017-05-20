@@ -1,13 +1,14 @@
 <?php
 /**
- * Ommu Meta (ommu-meta)
- * @var $this MetaController
- * @var $model OmmuMeta
+ * Support Contacts (support-contacts)
+ * @var $this ContactsController
+ * @var $model SupportContacts
  * @var $form CActiveForm
+ * version: 0.2.1
  *
  * @author Putra Sudaryanto <putra@sudaryanto.id>
- * @copyright Copyright (c) 2012 Ommu Platform (ommu.co)
- * @link https://github.com/oMMu/Ommu-Support
+ * @copyright Copyright (c) 2012 Ommu Platform (opensource.ommu.co)
+ * @link https://github.com/ommu/Support
  * @contact (+62)856-299-4114
  *
  */

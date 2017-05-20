@@ -4,10 +4,11 @@
  * @var $this MediaController
  * @var $model ArticleMedia
  * @var $form CActiveForm
+ * version: 0.0.1
  *
  * @author Putra Sudaryanto <putra@sudaryanto.id>
- * @copyright Copyright (c) 2012 Ommu Platform (ommu.co)
- * @link https://github.com/oMMu/Ommu-Articles
+ * @copyright Copyright (c) 2012 Ommu Platform (opensource.ommu.co)
+ * @link https://github.com/ommu/Articles
  * @contact (+62)856-299-4114
  *
  */
@@ -26,11 +27,6 @@
 		<li>
 			<?php echo $model->getAttributeLabel('article_id'); ?><br/>
 			<?php echo $form->textField($model,'article_id',array('size'=>11,'maxlength'=>11)); ?>
-		</li>
-
-		<li>
-			<?php echo $model->getAttributeLabel('orders'); ?><br/>
-			<?php echo $form->textField($model,'orders'); ?>
 		</li>
 
 		<li>

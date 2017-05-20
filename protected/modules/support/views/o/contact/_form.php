@@ -4,11 +4,11 @@
  * @var $this ContactsController
  * @var $model SupportContacts
  * @var $form CActiveForm
- * @var $form CActiveForm
+ * version: 0.2.1
  *
  * @author Putra Sudaryanto <putra@sudaryanto.id>
- * @copyright Copyright (c) 2012 Ommu Platform (ommu.co)
- * @link https://github.com/oMMu/Ommu-Support
+ * @copyright Copyright (c) 2012 Ommu Platform (opensource.ommu.co)
+ * @link https://github.com/ommu/Support
  * @contact (+62)856-299-4114
  *
  */
@@ -24,36 +24,34 @@
 	<fieldset>
 
 		<?php 
-		if($model->cat->publish != 2) {
-			$category = SupportContactCategory::getCategory(1, 'contact');
-			if(!empty($category)) {?>
+		if($model->cat->publish != 2) {?>
 			<div class="clearfix">
 				<label><?php echo $model->getAttributeLabel('cat_id');?> <span class="required">*</span></label>
 				<div class="desc">
-					<?php echo $form->dropDownList($model,'cat_id', $category, array('prompt'=>'')); ?>
+					<?php
+					if($model->isNewRecord) {
+						$category = SupportContactCategory::getCategory(1, 'contact');
+						if($category != null)
+							echo $form->dropDownList($model,'cat_id', $category, array('prompt'=>''));
+						else
+							echo $form->dropDownList($model,'cat_id', array('prompt'=>Yii::t('phrase', 'No Parent')));
+					} else {?>
+						<strong><?php echo Phrase::trans($model->cat->name); ?></strong>
+					<?php }?>
 					<?php echo $form->error($model,'cat_id'); ?>
 				</div>
 			</div>
-		<?php }
-		}?>
-		
-		<div class="clearfix">
-			<?php echo $form->labelEx($model,'contact_icon'); ?>
-			<div class="desc">
-			<?php echo $form->textField($model,'contact_icon', array('maxlength'=>32,'class'=>'span-7')); ?>
-				<?php echo $form->error($model,'contact_icon'); ?>
-			</div>
-		</div>
+		<?php }?>
 
 		<div class="clearfix">
 			<?php if($model->cat->publish != '2') {?>
-				<label><?php echo $model->getAttributeLabel('value');?> <span class="required">*</span></label>
+				<label><?php echo $model->getAttributeLabel('contact_name');?> <span class="required">*</span></label>
 			<?php } else {?>
-				<label><?php echo Phrase::trans($model->cat->name, 2);?> <span class="required">*</span></label>
+				<label><?php echo Phrase::trans($model->cat->name);?> <span class="required">*</span></label>
 			<?php }?>
 			<div class="desc">
-				<?php echo $form->textArea($model,'value',array('rows'=>6, 'cols'=>50, 'class'=>'span-11 smaller')); ?>
-				<?php echo $form->error($model,'value'); ?>
+				<?php echo $form->textArea($model,'contact_name',array('rows'=>6, 'cols'=>50, 'class'=>'span-11 smaller')); ?>
+				<?php echo $form->error($model,'contact_name'); ?>
 			</div>
 		</div>
 

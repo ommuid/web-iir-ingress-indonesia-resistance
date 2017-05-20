@@ -4,12 +4,12 @@
  * @var $this AdminController
  * @var $model Users
  * @var $form CActiveForm
+ * version: 0.0.1
  *
  * @author Putra Sudaryanto <putra@sudaryanto.id>
- * @copyright Copyright (c) 2016 Ommu Platform (ommu.co)
- * @created date 25 February 2016, 15:47 WIB
- * @link http://company.ommu.co
- * @contect (+62)856-299-4114
+ * @copyright Copyright (c) 2012 Ommu Platform (opensource.ommu.co)
+ * @link https://github.com/ommu/Users
+ * @contact (+62)856-299-4114
  *
  */
 ?>
@@ -20,6 +20,7 @@
 	//'htmlOptions' => array('enctype' => 'multipart/form-data')
 )); ?>
 <div class="dialog-content">
+
 	<fieldset>
 
 		<?php if(isset($_GET['id'])) {?>
@@ -35,13 +36,31 @@
 		<?php //begin.Messages ?>
 
 		<div class="clearfix">
-			<?php echo $form->labelEx($model,'displayname'); ?>
+			<label><?php echo $model->getAttributeLabel('first_name')?> <span class="required">*</span></label>
+			<div class="desc">
+				<?php echo $form->textField($model,'first_name',array('maxlength'=>32,'class'=>'span-7')); ?>
+				<?php echo $form->error($model,'first_name'); ?>
+			</div>
+		</div>
+
+		<div class="clearfix">
+			<label><?php echo $model->getAttributeLabel('last_name')?> <span class="required">*</span></label>
+			<div class="desc">
+				<?php echo $form->textField($model,'last_name',array('maxlength'=>32,'class'=>'span-7')); ?>
+				<?php echo $form->error($model,'last_name'); ?>
+			</div>
+		</div>
+
+		<?php if(!$model->isNewRecord) {?>
+		<div class="clearfix">
+			<label><?php echo $model->getAttributeLabel('displayname')?> <span class="required">*</span></label>
 			<div class="desc">
 				<?php echo $form->textField($model,'displayname',array('maxlength'=>64,'class'=>'span-7')); ?>
 				<?php echo $form->error($model,'displayname'); ?>
 				<?php /*<div class="small-px silent"></div>*/?>
 			</div>
 		</div>
+		<?php }?>
 
 		<?php if($setting->signup_username == 1) {?>
 		<div class="clearfix">
@@ -54,7 +73,7 @@
 		<?php }?>
 
 		<div class="clearfix">
-			<?php echo $form->labelEx($model,'email'); ?>
+			<label><?php echo $model->getAttributeLabel('email')?> <span class="required">*</span></label>
 			<div class="desc">
 				<?php echo $form->textField($model,'email',array('maxlength'=>32,'class'=>'span-7')); ?>
 				<?php echo $form->error($model,'email'); ?>
@@ -66,9 +85,8 @@
 		<div class="clearfix">
 			<?php echo $form->labelEx($model,'photos'); ?>
 			<div class="desc">
-				<?php echo $form->textArea($model,'photos',array('rows'=>6, 'cols'=>50, 'class'=>'span-10 smaller')); ?>
+				<?php echo $form->fileField($model,'photos'); ?>
 				<?php echo $form->error($model,'photos'); ?>
-				<div class="small-px silent"><?php echo Yii::t('phrase', 'Inputkan alamat url photo Anda.<br/>contoh: http://ommu.co/putrasudaryanto.jpg');?></div>
 			</div>
 		</div>
 		<?php }?>

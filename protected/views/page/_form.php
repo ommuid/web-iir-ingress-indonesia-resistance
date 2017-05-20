@@ -4,11 +4,11 @@
  * @var $this PageController
  * @var $model OmmuPages
  * @var $form CActiveForm
- * version: 1.1.0
+ * version: 1.2.0
  *
  * @author Putra Sudaryanto <putra@sudaryanto.id>
- * @copyright Copyright (c) 2012 Ommu Platform (ommu.co)
- * @link https://github.com/oMMu/Ommu-Core
+ * @copyright Copyright (c) 2012 Ommu Platform (opensource.ommu.co)
+ * @link https://github.com/ommu/Core
  * @contact (+62)856-299-4114
  *
  */
@@ -43,24 +43,26 @@ EOP;
 			<div class="left">
 
 				<div class="clearfix">
-					<?php echo $form->labelEx($model,'title'); ?>
+					<?php echo $form->labelEx($model,'title_i'); ?>
 					<div class="desc">
 						<?php
-						$model->title = Phrase::trans($model->name, 2);
-						echo $form->textField($model,'title',array('maxlength'=>256,'class'=>'span-6')); ?>
-						<?php echo $form->error($model,'title'); ?>
+							if(!$model->getErrors())
+						$model->title_i = Phrase::trans($model->name);
+						echo $form->textField($model,'title_i',array('maxlength'=>256,'class'=>'span-6')); ?>
+						<?php echo $form->error($model,'title_i'); ?>
 					</div>
 				</div>
 				
 				<div class="clearfix">
-					<?php echo $form->labelEx($model,'quotes'); ?>
+					<?php echo $form->labelEx($model,'quote_i'); ?>
 					<div class="desc">
 						<?php 
-						$model->quotes = Phrase::trans($model->quote, 2);
+						if(!$model->getErrors())
+							$model->quote_i = Phrase::trans($model->quote);
 						//echo $form->textArea($model,'body',array('rows'=>6, 'cols'=>50, 'class'=>'span-10 small'));
 						$this->widget('application.extensions.imperavi.ImperaviRedactorWidget', array(
 							'model'=>$model,
-							'attribute'=>quotes,
+							'attribute'=>quote_i,
 							// Redactor options
 							'options'=>array(
 								//'lang'=>'fi',
@@ -75,19 +77,20 @@ EOP;
 							),
 						)); ?>
 						<span class="small-px">Note : add {$quote} in description static pages</span>
-						<?php echo $form->error($model,'quotes'); ?>
+						<?php echo $form->error($model,'quote_i'); ?>
 					</div>
 				</div>
 
 				<div class="clearfix">
-					<?php echo $form->labelEx($model,'description'); ?>
+					<?php echo $form->labelEx($model,'description_i'); ?>
 					<div class="desc">
 						<?php
-						$model->description = Phrase::trans($model->desc, 2);
-						//echo $form->textArea($model,'description',array('rows'=>6, 'cols'=>50));
+						if(!$model->getErrors())
+							$model->description_i = Phrase::trans($model->desc);
+						//echo $form->textArea($model,'description_i',array('rows'=>6, 'cols'=>50));
 						$this->widget('application.extensions.imperavi.ImperaviRedactorWidget', array(
 							'model'=>$model,
-							'attribute'=>description,
+							'attribute'=>description_i,
 							// Redactor options
 							'options'=>array(
 								//'lang'=>'fi',
@@ -104,16 +107,16 @@ EOP;
 								'fullscreen' => array('js' => array('fullscreen.js')),
 							),
 						)); ?>
-						<?php echo $form->error($model,'description'); ?>
+						<?php echo $form->error($model,'description_i'); ?>
 					</div>
 				</div>
 
 				<?php /*<div class="clearfix">
-					<?php echo $form->labelEx($model,'description'); ?>
+					<?php echo $form->labelEx($model,'description_i'); ?>
 					<div class="desc">
 						<?php
-						$model->description = Phrase::trans($model->desc, 2);
-						//echo $form->textArea($model,'description',array('rows'=>6, 'cols'=>50));
+						$model->description_i = Phrase::trans($model->desc);
+						//echo $form->textArea($model,'description_i',array('rows'=>6, 'cols'=>50));
 						$options = array(
 							'lang' => 'en',
 							'buttons' => array('html', '|', 'bold', 'italic', '|',
@@ -123,10 +126,10 @@ EOP;
 						);
 						$this->widget('application.extensions.imperavi-redactor.ImperaviRedactorWidget', array(
 							'model'=>$model,
-							'attribute'=>'description',
+							'attribute'=>'description_i',
 							'options'   => $options
 						)); ?>
-						<?php echo $form->error($model,'description'); ?>
+						<?php echo $form->error($model,'description_i'); ?>
 					</div>
 				</div> */?>
 
@@ -151,12 +154,12 @@ EOP;
 					</div>
 					<div id="media" <?php echo $model->media_show == 0 ? 'class="hide"' : '';?>>
 						<?php if($model->media != '') {
-							$model->old_media = $model->media;
-							echo $form->hiddenField($model,'old_media');
-							$images = Yii::app()->request->baseUrl.'/public/page/'.$model->old_media;
+							$model->old_media_i = $model->media;
+							echo $form->hiddenField($model,'old_media_i');
+							$images = Yii::app()->request->baseUrl.'/public/page/'.$model->old_media_i;
 						?>
 							<div class="clearfix">
-								<?php echo $form->labelEx($model,'old_media'); ?>
+								<?php echo $form->labelEx($model,'old_media_i'); ?>
 								<div class="desc">
 									<img src="<?php echo Utility::getTimThumb($images, 320, 150, 1);?>" alt="">
 								</div>

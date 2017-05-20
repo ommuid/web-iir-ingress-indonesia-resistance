@@ -1,9 +1,11 @@
 <?php
 /**
  * BannerCategory
+ * version: 0.0.1
+ *
  * @author Putra Sudaryanto <putra@sudaryanto.id>
- * @copyright Copyright (c) 2014 Ommu Platform (ommu.co)
- * @link https://github.com/oMMu/Ommu-Banner
+ * @copyright Copyright (c) 2014 Ommu Platform (opensource.ommu.co)
+ * @link https://github.com/ommu/Banner
  * @contact (+62)856-299-4114
  *
  * This is the template for generating the model class of a specified table.
@@ -22,11 +24,11 @@
  * The followings are the available columns in table 'ommu_banner_category':
  * @property integer $cat_id
  * @property integer $publish
- * @property integer $orders
  * @property string $name
  * @property string $desc
- * @property string $media_size
- * @property integer $limit
+ * @property string $banner_code
+ * @property string $banner_size
+ * @property integer $banner_limit
  * @property string $creation_date
  * @property string $creation_id
  * @property string $modified_date
@@ -38,14 +40,27 @@
 class BannerCategory extends CActiveRecord
 {
 	public $defaultColumns = array();
-	public $title;
-	public $description;
-	public $media_size_width;
-	public $media_size_height;
+	public $title_i;
+	public $description_i;
 	
 	// Variable Search
 	public $creation_search;
 	public $modified_search;
+
+	/**
+	 * Behaviors for this model
+	 */
+	public function behaviors() 
+	{
+		return array(
+			'sluggable' => array(
+				'class'=>'ext.yii-behavior-sluggable.SluggableBehavior',
+				'columns' => array('title.en_us'),
+				'unique' => true,
+				'update' => true,
+			),
+		);
+	}
 
 	/**
 	 * Returns the static model of the specified AR class.
@@ -74,23 +89,20 @@ class BannerCategory extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('
-				title, description, media_size_width, media_size_height', 'required'),
-			array('publish, orders, limit', 'numerical', 'integerOnly'=>true),
-			array('
-				media_size_width, media_size_height', 'length', 'max'=>4),
-			array('media_size', 'length', 'max'=>9),
+			array('banner_limit,
+				title_i, description_i', 'required'),
+			array('publish, banner_limit', 'numerical', 'integerOnly'=>true),
+			array('banner_limit', 'length', 'max'=>2),
 			array('name, desc, creation_id, modified_id', 'length', 'max'=>11),
+			array('cat_code,
+				title_i', 'length', 'max'=>32),
 			array('
-				title', 'length', 'max'=>32),
-			array('
-				description', 'length', 'max'=>64),
-			array('name, desc, orders, media_size, limit, creation_id, modified_id,
-				media_size_width, media_size_height', 'safe'),
+				description_i', 'length', 'max'=>64),
+			array('cat_code, banner_size, banner_limit', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('cat_id, publish, orders, name, desc, media_size, limit, creation_date, creation_id, modified_date, modified_id,
-				title, description, creation_search, modified_search', 'safe', 'on'=>'search'),
+			array('cat_id, publish, name, desc, cat_code, banner_size, banner_limit, creation_date, creation_id, modified_date, modified_id,
+				title_i, description_i, creation_search, modified_search', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -102,9 +114,11 @@ class BannerCategory extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'view_cat' => array(self::BELONGS_TO, 'ViewBannerCategory', 'cat_id'),
-			'creation_relation' => array(self::BELONGS_TO, 'Users', 'creation_id'),
-			'modified_relation' => array(self::BELONGS_TO, 'Users', 'modified_id'),
+			'view' => array(self::BELONGS_TO, 'ViewBannerCategory', 'cat_id'),
+			'title' => array(self::BELONGS_TO, 'OmmuSystemPhrase', 'name'),
+			'description' => array(self::BELONGS_TO, 'OmmuSystemPhrase', 'desc'),
+			'creation' => array(self::BELONGS_TO, 'Users', 'creation_id'),
+			'modified' => array(self::BELONGS_TO, 'Users', 'modified_id'),
 			'banners' => array(self::HAS_MANY, 'Banners', 'cat_id'),
 		);
 	}
@@ -117,21 +131,19 @@ class BannerCategory extends CActiveRecord
 		return array(
 			'cat_id' => Yii::t('attribute', 'Category'),
 			'publish' => Yii::t('attribute', 'Publish'),
-			'orders' => Yii::t('attribute', 'Orders'),
 			'name' => Yii::t('attribute', 'Title'),
 			'desc' => Yii::t('attribute', 'Description'),
-			'media_size' => Yii::t('attribute', 'Media Size'),
-			'limit' => Yii::t('attribute', 'Banner Limit'),
+			'cat_code' => Yii::t('attribute', 'Code'),
+			'banner_size' => Yii::t('attribute', 'Banner Size'),
+			'banner_limit' => Yii::t('attribute', 'Banner Limit'),
 			'creation_date' => Yii::t('attribute', 'Creation Date'),
 			'creation_id' => Yii::t('attribute', 'Creation'),
 			'modified_date' => Yii::t('attribute', 'Modified Date'),
 			'modified_id' => Yii::t('attribute', 'Modified'),
-			'title' => Yii::t('attribute', 'Title'),
-			'description' => Yii::t('attribute', 'Description'),
+			'title_i' => Yii::t('attribute', 'Title'),
+			'description_i' => Yii::t('attribute', 'Description'),
 			'creation_search' => Yii::t('attribute', 'Creation'),
 			'modified_search' => Yii::t('attribute', 'Modified'),
-			'media_size_width' => Yii::t('attribute', 'Width'),
-			'media_size_height' => Yii::t('attribute', 'Height'),
 		);
 	}
 
@@ -152,6 +164,35 @@ class BannerCategory extends CActiveRecord
 		// @todo Please modify the following code to remove attributes that should not be searched.
 
 		$criteria=new CDbCriteria;
+		
+		// Custom Search
+		$defaultLang = OmmuLanguages::getDefault('code');
+		if(isset(Yii::app()->session['language']))
+			$language = Yii::app()->session['language'];
+		else 
+			$language = $defaultLang;
+		
+		$criteria->with = array(
+			'view' => array(
+				'alias'=>'view',
+			),
+			'title' => array(
+				'alias'=>'title',
+				'select'=>$language,
+			),
+			'description' => array(
+				'alias'=>'description',
+				'select'=>$language,
+			),
+			'creation' => array(
+				'alias'=>'creation',
+				'select'=>'displayname'
+			),
+			'modified' => array(
+				'alias'=>'modified',
+				'select'=>'displayname'
+			),
+		);
 
 		$criteria->compare('t.cat_id',$this->cat_id);
 		if(isset($_GET['type']) && $_GET['type'] == 'publish')
@@ -164,11 +205,11 @@ class BannerCategory extends CActiveRecord
 			$criteria->addInCondition('t.publish',array(0,1));
 			$criteria->compare('t.publish',$this->publish);
 		}
-		$criteria->compare('t.orders',$this->orders);
 		$criteria->compare('t.name',$this->name,true);
 		$criteria->compare('t.desc',$this->desc,true);
-		$criteria->compare('t.media_size',$this->media_size,true);
-		$criteria->compare('t.limit',$this->limit);
+		$criteria->compare('t.cat_code',strtolower($this->cat_code),true);
+		$criteria->compare('t.banner_size',$this->banner_size,true);
+		$criteria->compare('t.banner_limit',$this->banner_limit);
 		if($this->creation_date != null && !in_array($this->creation_date, array('0000-00-00 00:00:00', '0000-00-00')))
 			$criteria->compare('date(t.creation_date)',date('Y-m-d', strtotime($this->creation_date)));
 		$criteria->compare('t.creation_id',$this->creation_id,true);
@@ -176,25 +217,10 @@ class BannerCategory extends CActiveRecord
 			$criteria->compare('date(t.modified_date)',date('Y-m-d', strtotime($this->modified_date)));
 		$criteria->compare('t.modified_id',$this->modified_id,true);
 		
-		// Custom Search
-		$criteria->with = array(
-			'view_cat' => array(
-				'alias'=>'view_cat',
-				//'select'=>'category_name, category_desc, banners'
-			),
-			'creation_relation' => array(
-				'alias'=>'creation_relation',
-				'select'=>'displayname'
-			),
-			'modified_relation' => array(
-				'alias'=>'modified_relation',
-				'select'=>'displayname'
-			),
-		);
-		$criteria->compare('view_cat.category_name',strtolower($this->title), true);
-		$criteria->compare('view_cat.category_desc',strtolower($this->description), true);
-		$criteria->compare('creation_relation.displayname',strtolower($this->creation_search), true);
-		$criteria->compare('modified_relation.displayname',strtolower($this->modified_search), true);
+		$criteria->compare('title.'.$language,strtolower($this->title_i), true);
+		$criteria->compare('description.'.$language,strtolower($this->description_i), true);
+		$criteria->compare('creation.displayname',strtolower($this->creation_search), true);
+		$criteria->compare('modified.displayname',strtolower($this->modified_search), true);
 
 		if(!isset($_GET['BannerCategory_sort']))
 			$criteria->order = 't.cat_id DESC';
@@ -227,11 +253,11 @@ class BannerCategory extends CActiveRecord
 		} else {
 			//$this->defaultColumns[] = 'cat_id';
 			$this->defaultColumns[] = 'publish';
-			$this->defaultColumns[] = 'orders';
 			$this->defaultColumns[] = 'name';
 			$this->defaultColumns[] = 'desc';
-			$this->defaultColumns[] = 'media_size';
-			$this->defaultColumns[] = 'limit';
+			$this->defaultColumns[] = 'cat_code';
+			$this->defaultColumns[] = 'banner_size';
+			$this->defaultColumns[] = 'banner_limit';
 			$this->defaultColumns[] = 'creation_date';
 			$this->defaultColumns[] = 'creation_id';
 			$this->defaultColumns[] = 'modified_date';
@@ -259,52 +285,61 @@ class BannerCategory extends CActiveRecord
 				'value' => '$this->grid->dataProvider->pagination->currentPage*$this->grid->dataProvider->pagination->pageSize + $row+1'
 			);
 			$this->defaultColumns[] = array(
-				'name' => 'title',
-				'value' => 'Phrase::trans($data->name, 2)',
+				'name' => 'cat_code',
+				'value' => '$data->cat_code',
+				'htmlOptions' => array(
+					'class' => 'center',
+				),
 			);
 			$this->defaultColumns[] = array(
-				'name' => 'description',
-				'value' => 'Phrase::trans($data->desc, 2)',
+				'name' => 'title_i',
+				'value' => 'Phrase::trans($data->name)',
 			);
+			/*
 			$this->defaultColumns[] = array(
-				'name' => 'media_size',
-				'value' => 'BannerCategory::getPreviewSize($data->media_size)',
+				'name' => 'description_i',
+				'value' => 'Phrase::trans($data->desc)',
+			);
+			*/
+			$this->defaultColumns[] = array(
+				'name' => 'banner_size',
+				'value' => 'BannerCategory::getPreviewSize($data->banner_size)',
 				'htmlOptions' => array(
 					'class' => 'center',
 				),
 			);
 			$this->defaultColumns[] = array(
 				'header' => Yii::t('phrase', 'Limit'),
-				'name' => 'limit',
-				'value' => '$data->limit',
+				'name' => 'banner_limit',
+				'value' => '$data->banner_limit',
 				'htmlOptions' => array(
 					'class' => 'center',
 				),
 			);
 			$this->defaultColumns[] = array(
 				'header' => 'Publish',
-				'value' => '$data->view_cat->banner_publish > $data->limit ? $data->limit."/".$data->view_cat->banner_publish : $data->view_cat->banner_publish',
+				'value' => '$data->view->banners > $data->banner_limit ? $data->banner_limit."/".$data->view->banners : $data->view->banners',
 				'htmlOptions' => array(
 					'class' => 'center',
 				),
 			);
 			$this->defaultColumns[] = array(
 				'header' => 'Pending',
-				'value' => '$data->view_cat->banner_pending',
+				'value' => '$data->view->banner_pending',
 				'htmlOptions' => array(
 					'class' => 'center',
 				),
 			);
 			$this->defaultColumns[] = array(
 				'header' => 'Expired',
-				'value' => '$data->view_cat->banner_expired',
+				'value' => '$data->view->banner_expired',
 				'htmlOptions' => array(
 					'class' => 'center',
 				),
 			);
 			$this->defaultColumns[] = array(
 				'header' => 'Total',
-				'value' => '$data->view_cat->banners',
+				'value' => '$data->view->banner_all',
 				'htmlOptions' => array(
 					'class' => 'center',
 				),
@@ -312,7 +347,7 @@ class BannerCategory extends CActiveRecord
 			/*
 			$this->defaultColumns[] = array(
 				'name' => 'creation_search',
-				'value' => '$data->creation_relation->displayname',
+				'value' => '$data->creation->displayname',
 			);
 			$this->defaultColumns[] = array(
 				'name' => 'creation_date',
@@ -320,11 +355,11 @@ class BannerCategory extends CActiveRecord
 				'htmlOptions' => array(
 					'class' => 'center',
 				),
-				'filter' => Yii::app()->controller->widget('zii.widgets.jui.CJuiDatePicker', array(
+				'filter' => Yii::app()->controller->widget('application.components.system.CJuiDatePicker', array(
 					'model'=>$this,
 					'attribute'=>'creation_date',
-					'language' => 'ja',
-					'i18nScriptFile' => 'jquery.ui.datepicker-en.js',
+					'language' => 'en',
+					'i18nScriptFile' => 'jquery-ui-i18n.min.js',
 					//'mode'=>'datetime',
 					'htmlOptions' => array(
 						'id' => 'creation_date_filter',
@@ -345,7 +380,7 @@ class BannerCategory extends CActiveRecord
 				$this->defaultColumns[] = array(
 					'header'=>'Status',
 					'name' => 'publish',
-					'value' => 'Utility::getPublish(Yii::app()->controller->createUrl("publish",array("id"=>$data->cat_id)), $data->publish, 1)',
+					'value' => 'Utility::getPublish(Yii::app()->controller->createUrl("o/category/publish",array("id"=>$data->cat_id)), $data->publish, 1)',
 					'htmlOptions' => array(
 						'class' => 'center',
 					),
@@ -386,14 +421,14 @@ class BannerCategory extends CActiveRecord
 		
 		$criteria=new CDbCriteria;
 		if($publish != null)
-			$criteria->compare('t.publish',$publish);
+			$criteria->compare('publish',$publish);
 		
 		$model = self::model()->findAll($criteria);
 
 		$items = array();
 		if($model != null) {
 			foreach($model as $key => $val) {
-				$items[$val->cat_id] = Phrase::trans($val->name, 2);
+				$items[$val->cat_id] = Phrase::trans($val->name);
 			}
 			return $items;
 		} else {
@@ -404,10 +439,10 @@ class BannerCategory extends CActiveRecord
 	/**
 	 * BannerCategory get information
 	 */
-	public static function getPreviewSize($size)
+	public static function getPreviewSize($banner_size)
 	{
-		$bannerSize = explode(',', $size);
-		return $bannerSize[0].' x '.$bannerSize[1];
+		$bannerSize = unserialize($banner_size);
+		return $bannerSize['width'].' x '.$bannerSize['height'];
 	}
 
 	/**
@@ -416,11 +451,13 @@ class BannerCategory extends CActiveRecord
 	protected function beforeValidate() {
 		$controller = strtolower(Yii::app()->controller->id);
 		if(parent::beforeValidate()) {	
-			if($this->isNewRecord) {
-				//$this->orders = 0;
+			if($this->isNewRecord)
 				$this->creation_id = Yii::app()->user->id;			
-			} else
+			else
 				$this->modified_id = Yii::app()->user->id;
+			
+			if($this->banner_size['width'] == '' || $this->banner_size['height'] == '')
+				$this->addError('banner_size', Yii::t('phrase', 'Banner Size cannot be blank.'));
 		}
 		return true;
 	}
@@ -428,34 +465,46 @@ class BannerCategory extends CActiveRecord
 	/**
 	 * before save attributes
 	 */
-	protected function beforeSave() {
+	protected function beforeSave() 
+	{
+		$action = strtolower(Yii::app()->controller->action->id);
+		$currentAction = strtolower(Yii::app()->controller->id.'/'.Yii::app()->controller->action->id);
+		$location = Utility::getUrlTitle($currentAction);
+		
 		if(parent::beforeSave()) {
-			//Media Name and Description
-			if($this->isNewRecord) {
-				$location = strtolower(Yii::app()->controller->module->id.'/'.Yii::app()->controller->id);
+			if($this->isNewRecord || (!$this->isNewRecord && $this->name == 0)) {
 				$title=new OmmuSystemPhrase;
-				$title->location = $location.'_title';
-				$title->en_us = $this->title;
+				$title->location = $location.'_title_i';
+				$title->en_us = $this->title_i;
 				if($title->save())
 					$this->name = $title->phrase_id;
-
+				
+				$this->slug = Utility::getUrlTitle($this->title_i);	
+				
+			} else {
+				$title = OmmuSystemPhrase::model()->findByPk($this->name);
+				$title->en_us = $this->title_i;
+				$title->save();
+			}
+			
+			if($this->isNewRecord || (!$this->isNewRecord && $this->desc == 0)) {
 				$desc=new OmmuSystemPhrase;
-				$desc->location = $location.'_description';
-				$desc->en_us = $this->description;
+				$desc->location = $location.'_description_i';
+				$desc->en_us = $this->description_i;
 				if($desc->save())
 					$this->desc = $desc->phrase_id;
 				
 			} else {
-				$title = OmmuSystemPhrase::model()->findByPk($this->name);
-				$title->en_us = $this->title;
-				$title->save();
-
 				$desc = OmmuSystemPhrase::model()->findByPk($this->desc);
-				$desc->en_us = $this->description;
+				$desc->en_us = $this->description_i;
 				$desc->save();
 			}
-			//Media Size
-			$this->media_size = $this->media_size_width.','.$this->media_size_height;
+			
+			if($action != 'publish') {
+				$this->cat_code = Utility::getUrlTitle(strtolower(trim($this->title_i)));
+				//Media Size
+				$this->banner_size = serialize($this->banner_size);
+			}
 		}
 		return true;
 	}

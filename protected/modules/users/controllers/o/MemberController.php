@@ -11,20 +11,20 @@
  *	Index
  *	Suggest
  *	Manage
+ *	Add
  *	Edit
  *	View
  *	Delete
- *	Enabled
+ *	Enable
  *	Verify
  *
  *	LoadModel
  *	performAjaxValidation
  *
  * @author Putra Sudaryanto <putra@sudaryanto.id>
- * @copyright Copyright (c) 2016 Ommu Platform (ommu.co)
- * @created date 25 February 2016, 15:47 WIB
- * @link http://company.ommu.co
- * @contect (+62)856-299-4114
+ * @copyright Copyright (c) 2012 Ommu Platform (opensource.ommu.co)
+ * @link https://github.com/ommu/Users
+ * @contact (+62)856-299-4114
  *
  *----------------------------------------------------------------------------------------------------------
  */
@@ -48,12 +48,10 @@ class MemberController extends Controller
 				$arrThemes = Utility::getCurrentTemplate('admin');
 				Yii::app()->theme = $arrThemes['folder'];
 				$this->layout = $arrThemes['layout'];
-			} else {
-				$this->redirect(Yii::app()->createUrl('site/login'));
-			}
-		} else {
+			} else
+				throw new CHttpException(404, Yii::t('phrase', 'The requested page does not exist.'));
+		} else
 			$this->redirect(Yii::app()->createUrl('site/login'));
-		}
 	}
 
 	/**
@@ -86,7 +84,7 @@ class MemberController extends Controller
 				//'expression'=>'isset(Yii::app()->user->level) && (Yii::app()->user->level != 1)',
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('manage','add','edit','view','delete','enabled','verify'),
+				'actions'=>array('manage','add','edit','view','delete','enable','verify'),
 				'users'=>array('@'),
 				'expression'=>'isset(Yii::app()->user->level) && in_array(Yii::app()->user->level, array(1,2))',
 			),
@@ -159,8 +157,8 @@ class MemberController extends Controller
 		}
 		$columns = $model->getGridColumn($columnTemp);
 
-		$this->pageTitle = 'Users Manage';
-		$this->pageDescription = '';
+		$this->pageTitle = Yii::t('phrase', 'Managa Users');
+		$this->pageDescription = Yii::t('phrase', 'This page lists all of the users that exist on your social network. For more information about a specific user, click on the "edit" link in its row. Click the "login" link to login as a specific user. Use the filter fields to find specific users based on your criteria. To view all users on your system, leave all the filter fields blank.');
 		$this->pageMeta = '';
 		$this->render('admin_manage',array(
 			'model'=>$model,
@@ -186,7 +184,7 @@ class MemberController extends Controller
 		if(isset($_POST['Users'])) {
 			$model->attributes=$_POST['Users'];
 			$model->scenario = 'formAdd';
-			
+
 			$jsonError = CActiveForm::validate($model);
 			if(strlen($jsonError) > 2) {
 				echo $jsonError;
@@ -198,21 +196,21 @@ class MemberController extends Controller
 							'type' => 5,
 							'get' => Yii::app()->controller->createUrl('manage'),
 							'id' => 'partial-users',
-							'msg' => '<div class="errorSummary success"><strong>Users success created.</strong></div>',
+							'msg' => '<div class="errorSummary success"><strong>'.Yii::t('phrase', 'User success created.').'</strong></div>',
 						));
 					} else {
 						print_r($model->getErrors());
 					}
 				}
 			}
-			Yii::app()->end();			
+			Yii::app()->end();
 		}
-		
+
 		$this->dialogDetail = true;
 		$this->dialogGroundUrl = Yii::app()->controller->createUrl('manage');
 		$this->dialogWidth = 600;
 
-		$this->pageTitle = 'Create Users';
+		$this->pageTitle = Yii::t('phrase', 'Add User');
 		$this->pageDescription = '';
 		$this->pageMeta = '';
 		$this->render('admin_add',array(
@@ -239,7 +237,7 @@ class MemberController extends Controller
 		if(isset($_POST['Users'])) {
 			$model->attributes=$_POST['Users'];
 			$model->scenario = 'formEdit';
-			
+
 			$jsonError = CActiveForm::validate($model);
 			if(strlen($jsonError) > 2) {
 				echo $jsonError;
@@ -251,7 +249,7 @@ class MemberController extends Controller
 							'type' => 5,
 							'get' => Yii::app()->controller->createUrl('manage'),
 							'id' => 'partial-users',
-							'msg' => '<div class="errorSummary success"><strong>Users success updated.</strong></div>',
+							'msg' => '<div class="errorSummary success"><strong>'.Yii::t('phrase', 'User success updated.').'</strong></div>',
 						));
 					} else {
 						print_r($model->getErrors());
@@ -260,12 +258,12 @@ class MemberController extends Controller
 			}
 			Yii::app()->end();
 		}
-		
+
 		$this->dialogDetail = true;
 		$this->dialogGroundUrl = Yii::app()->controller->createUrl('manage');
 		$this->dialogWidth = 600;
 
-		$this->pageTitle = 'Update Users';
+		$this->pageTitle = Yii::t('phrase', 'Update User : {displayname}', array('{displayname}'=>$model->displayname));
 		$this->pageDescription = '';
 		$this->pageMeta = '';
 		$this->render('admin_edit',array(
@@ -311,7 +309,7 @@ class MemberController extends Controller
 						'type' => 5,
 						'get' => Yii::app()->controller->createUrl('manage'),
 						'id' => 'partial-users',
-						'msg' => '<div class="errorSummary success"><strong>Users success deleted.</strong></div>',
+						'msg' => '<div class="errorSummary success"><strong>'.Yii::t('phrase', 'User success deleted.').'</strong></div>',
 					));
 				}
 			}
@@ -321,7 +319,7 @@ class MemberController extends Controller
 			$this->dialogGroundUrl = Yii::app()->controller->createUrl('manage');
 			$this->dialogWidth = 350;
 
-			$this->pageTitle = 'Users Delete.';
+			$this->pageTitle = Yii::t('phrase', 'Delete User');
 			$this->pageDescription = '';
 			$this->pageMeta = '';
 			$this->render('admin_delete');
@@ -333,7 +331,7 @@ class MemberController extends Controller
 	 * If deletion is successful, the browser will be redirected to the 'admin' page.
 	 * @param integer $id the ID of the model to be deleted
 	 */
-	public function actionEnabled($id) 
+	public function actionEnable($id) 
 	{
 		$model=$this->loadModel($id);
 		if($model->enabled == 1) {

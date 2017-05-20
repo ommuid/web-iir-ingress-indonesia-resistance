@@ -3,6 +3,11 @@
 class BannerModule extends CWebModule
 {
 	public $defaultController = 'site';
+	
+	// getAssetsUrl()
+	//	return the URL for this module's assets, performing the publish operation
+	//	the first time, and caching the result for subsequent use.
+	private $_assetsUrl;
 
 	public function init() {
 		// this method is called when the module is being created
@@ -14,6 +19,14 @@ class BannerModule extends CWebModule
 			'banner.components.*',
 		));
 	}
+ 
+	public function getAssetsUrl()
+	{
+		if ($this->_assetsUrl === null)
+			$this->_assetsUrl = Yii::app()->getAssetManager()->publish(Yii::getPathOfAlias('banner.assets'));
+		
+		return $this->_assetsUrl;
+	}
 
 	public function beforeControllerAction($controller, $action) {
 		if(parent::beforeControllerAction($controller, $action)) {
@@ -22,6 +35,7 @@ class BannerModule extends CWebModule
 			//list public controller in this module
 			$publicControllers = array(
 				'site',
+				'api/site',
 			);
 			
 			// pake ini untuk set theme per action di controller..

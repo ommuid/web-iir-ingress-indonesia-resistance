@@ -17,9 +17,9 @@
  *	performAjaxValidation
  *
  * @author Putra Sudaryanto <putra@sudaryanto.id>
- * @copyright Copyright (c) 2012 Ommu Platform (ommu.co)
- * @link https://github.com/oMMu/Ommu-Articles
- * @contect (+62)856-299-4114
+ * @copyright Copyright (c) 2012 Ommu Platform (opensource.ommu.co)
+ * @link https://github.com/ommu/Articles
+ * @contact (+62)856-299-4114
  *
  *----------------------------------------------------------------------------------------------------------
  */
@@ -43,12 +43,10 @@ class TagController extends Controller
 				$arrThemes = Utility::getCurrentTemplate('admin');
 				Yii::app()->theme = $arrThemes['folder'];
 				$this->layout = $arrThemes['layout'];
-			} else {
-				$this->redirect(Yii::app()->createUrl('site/login'));
-			}
-		} else {
+			} else
+				throw new CHttpException(404, Yii::t('phrase', 'The requested page does not exist.'));
+		} else
 			$this->redirect(Yii::app()->createUrl('site/login'));
-		}
 	}
 
 	/**
@@ -154,7 +152,7 @@ class TagController extends Controller
 		if(isset($_POST['article_id'], $_POST['tag_id'], $_POST['tag'])) {
 			$model->article_id = $_POST['article_id'];
 			$model->tag_id = $_POST['tag_id'];
-			$model->body = $_POST['tag'];
+			$model->tag_input = $_POST['tag'];
 
 			if($model->save()) {
 				if(isset($_GET['type']) && $_GET['type'] == 'article')
@@ -162,7 +160,7 @@ class TagController extends Controller
 				else 
 					$url = Yii::app()->controller->createUrl('delete',array('id'=>$model->id));
 				echo CJSON::encode(array(
-					'data' => '<div>'.$model->tag_TO->body.'<a href="'.$url.'" title="'.Yii::t('phrase', 'Delete').'">'.Yii::t('phrase', 'Delete').'</a></div>',
+					'data' => '<div>'.$model->tag->body.'<a href="'.$url.'" title="'.Yii::t('phrase', 'Delete').'">'.Yii::t('phrase', 'Delete').'</a></div>',
 				));
 			}
 		}
@@ -181,7 +179,7 @@ class TagController extends Controller
 			// we only allow deletion via POST request
 			if(isset($id)) {
 				$model->delete();
-				if(isset($_GET['type']) && $_GET['type'] == 'article') {
+				if((isset($_GET['type']) && $_GET['type'] == 'article') || isset($_GET['c'])) {
 					echo CJSON::encode(array(
 						'type' => 4,
 					));
@@ -198,8 +196,14 @@ class TagController extends Controller
 		} else {
 			if(isset($_GET['type']) && $_GET['type'] == 'article')
 				$url = Yii::app()->controller->createUrl('o/admin/edit', array('id'=>$model->article_id));
-			else
-				$url = Yii::app()->controller->createUrl('manage');
+			else {
+				if(isset($_GET['c']) && count($_GET) > 2)
+					$url = Yii::app()->controller->createUrl($_GET['c'].'/'.$_GET['d'].'/edit', array('id'=>$model->article_id));
+				else if(isset($_GET['c']))
+					$url = Yii::app()->controller->createUrl($_GET['c'].'/edit', array('id'=>$model->article_id));
+				else
+					$url = Yii::app()->controller->createUrl('manage');
+			}
 			
 			$this->dialogDetail = true;
 			$this->dialogGroundUrl = $url;

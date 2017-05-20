@@ -4,7 +4,7 @@
  * @var $this SettingsController
  * @var $model OmmuSettings
  * @var $form CActiveForm
- * version: 1.1.0
+ * version: 1.2.0
  * Reference start
  *
  * TOC :
@@ -18,8 +18,8 @@
  *	performAjaxValidation
  *
  * @author Putra Sudaryanto <putra@sudaryanto.id>
- * @copyright Copyright (c) 2012 Ommu Platform (ommu.co)
- * @link https://github.com/oMMu/Ommu-Core
+ * @copyright Copyright (c) 2012 Ommu Platform (opensource.ommu.co)
+ * @link https://github.com/ommu/Core
  * @contact (+62)856-299-4114
  *
  *----------------------------------------------------------------------------------------------------------
@@ -44,12 +44,10 @@ class SettingsController extends Controller
 				$arrThemes = Utility::getCurrentTemplate('admin');
 				Yii::app()->theme = $arrThemes['folder'];
 				$this->layout = $arrThemes['layout'];
-			} else {
+			} else
 				throw new CHttpException(404, Yii::t('phrase', 'The requested page does not exist.'));
-			}
-		} else {
+		} else
 			$this->redirect(Yii::app()->createUrl('site/login'));
-		}
 	}
 
 	/**
@@ -109,7 +107,9 @@ class SettingsController extends Controller
 	 */
 	public function actionGeneral() 
 	{
-		$model=$this->loadModel(1);
+		$model = OmmuSettings::model()->findByPk(1);
+		if($model == null)
+			$model=new OmmuSettings;
 
 		// Uncomment the following line if AJAX validation is needed
 		$this->performAjaxValidation($model);
@@ -163,7 +163,9 @@ class SettingsController extends Controller
 	 */
 	public function actionBanned() 
 	{
-		$model=$this->loadModel(1);
+		$model = OmmuSettings::model()->findByPk(1);
+		if($model == null)
+			$model=new OmmuSettings;
 
 		// Uncomment the following line if AJAX validation is needed
 		$this->performAjaxValidation($model);
@@ -219,7 +221,9 @@ class SettingsController extends Controller
 	 */
 	public function actionSignup() 
 	{
-		$model=$this->loadModel(1);
+		$model = OmmuSettings::model()->findByPk(1);
+		if($model == null)
+			$model=new OmmuSettings;
 
 		// Uncomment the following line if AJAX validation is needed
 		$this->performAjaxValidation($model);
@@ -273,13 +277,16 @@ class SettingsController extends Controller
 	 */
 	public function actionAnalytic() 
 	{
-		$model=$this->loadModel(1);
+		$model = OmmuSettings::model()->findByPk(1);
+		if($model == null)
+			$model=new OmmuSettings;
 
 		// Uncomment the following line if AJAX validation is needed
 		$this->performAjaxValidation($model);
 
 		if(isset($_POST['OmmuSettings'])) {
 			$model->attributes=$_POST['OmmuSettings'];
+			$model->scenario = 'analytic';
 
 			$jsonError = CActiveForm::validate($model);
 			if(strlen($jsonError) > 2) {

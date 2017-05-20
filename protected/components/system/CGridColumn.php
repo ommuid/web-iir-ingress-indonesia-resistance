@@ -1,11 +1,16 @@
 <?php
 /**
  * CGridColumn class file.
+ * version: 1.2.0
  *
  * @author Qiang Xue <qiang.xue@gmail.com>
  * @link http://www.yiiframework.com/
  * @copyright 2008-2013 Yii Software LLC
  * @license http://www.yiiframework.com/license/
+ * 
+ * @modify Putra Sudaryanto <putra@sudaryanto.id>
+ * @contact (+62)856-299-4114
+ *
  */
 
 /**

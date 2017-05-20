@@ -1,9 +1,11 @@
 <?php
 /**
  * UserNewsletter
+ * version: 0.0.1
+ *
  * @author Putra Sudaryanto <putra@sudaryanto.id>
- * @copyright Copyright (c) 2012 Ommu Platform (ommu.co)
- * @link https://github.com/oMMu/Ommu-Users
+ * @copyright Copyright (c) 2012 Ommu Platform (opensource.ommu.co)
+ * @link https://github.com/ommu/Users
  * @contact (+62)856-299-4114
  *
  * This is the template for generating the model class of a specified table.
@@ -20,13 +22,16 @@
  * This is the model class for table "ommu_user_newsletter".
  *
  * The followings are the available columns in table 'ommu_user_newsletter':
- * @property string $id
+ * @property string $newsletter_id
+ * @property integer $status
  * @property string $user_id
  * @property string $email
- * @property integer $subscribe
  * @property string $subscribe_date
- * @property string $unsubscribe_date
- * @property string $unsubscribe_ip
+ * @property string $subscribe_id
+ * @property string $modified_date
+ * @property string $modified_id
+ * @property string $updated_date
+ * @property string $updated_ip
  */
 class UserNewsletter extends CActiveRecord
 {
@@ -35,6 +40,8 @@ class UserNewsletter extends CActiveRecord
 	
 	// Variable Search
 	public $user_search;
+	public $subscribe_search;
+	public $modified_search;
 
 	/**
 	 * Returns the static model of the specified AR class.
@@ -63,18 +70,18 @@ class UserNewsletter extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('email', 'required'),
-			array('subscribe,
+			array('status,
 				unsubscribe', 'numerical', 'integerOnly'=>true),
-			array('user_id', 'length', 'max'=>11),
+			array('user_id, subscribe_id, modified_id', 'length', 'max'=>11),
 			array('email', 'length', 'max'=>32),
-			array('unsubscribe_ip', 'length', 'max'=>20),
+			array('updated_ip', 'length', 'max'=>20),
 			array('email', 'email'),
-			array('user_id, subscribe, subscribe_date, unsubscribe_date, unsubscribe_ip,
+			array('status, updated_ip,
 				unsubscribe', 'safe'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('id, user_id, email, subscribe, subscribe_date, unsubscribe_date, unsubscribe_ip,
-				user_search', 'safe', 'on'=>'search'),
+			array('newsletter_id, status, user_id, email, subscribe_date, subscribe_id, modified_date, modified_id, updated_date, updated_ip,
+				user_search, subscribe_search, modified_search', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -87,6 +94,8 @@ class UserNewsletter extends CActiveRecord
 		// class name for the relations automatically generated below.
 		return array(
 			'user' => array(self::BELONGS_TO, 'Users', 'user_id'),
+			'subscribe' => array(self::BELONGS_TO, 'Users', 'subscribe_id'),
+			'modified' => array(self::BELONGS_TO, 'Users', 'modified_id'),
 		);
 	}
 
@@ -96,14 +105,19 @@ class UserNewsletter extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'id' => Yii::t('attribute', 'ID'),
+			'newsletter_id' => Yii::t('attribute', 'Newsletter'),
+			'status' => Yii::t('attribute', 'Status'),
 			'user_id' => Yii::t('attribute', 'User'),
 			'email' => Yii::t('attribute', 'Email'),
-			'subscribe' => Yii::t('attribute', 'Subscribe'),
 			'subscribe_date' => Yii::t('attribute', 'Subscribe Date'),
-			'unsubscribe_date' => Yii::t('attribute', 'Unsubscribe Date'),
-			'unsubscribe_ip' => Yii::t('attribute', 'Unsubscribe IP'),
+			'subscribe_id' => Yii::t('attribute', 'Subscribe'),
+			'modified_date' => Yii::t('attribute', 'Modified Date'),
+			'modified_id' => Yii::t('attribute', 'Modified'),
+			'updated_date' => Yii::t('attribute', 'Updated Date'),
+			'updated_ip' => Yii::t('attribute', 'Updated IP'),
 			'user_search' => Yii::t('attribute', 'User'),
+			'subscribe_search' => Yii::t('attribute', 'Subscribe'),
+			'modified_search' => Yii::t('attribute', 'Modified'),
 		);
 	}
 	
@@ -118,15 +132,28 @@ class UserNewsletter extends CActiveRecord
 
 		$criteria=new CDbCriteria;
 
-		$criteria->compare('t.id',$this->id);
-		$criteria->compare('t.user_id',$this->user_id);
+		$criteria->compare('t.newsletter_id',$this->newsletter_id);
+		$criteria->compare('t.status',$this->status);
+		if(isset($_GET['user']))
+			$criteria->compare('t.user_id',$_GET['user']);
+		else
+			$criteria->compare('t.user_id',$this->user_id);
 		$criteria->compare('t.email',$this->email,true);
-		$criteria->compare('t.subscribe',$this->subscribe);
 		if($this->subscribe_date != null && !in_array($this->subscribe_date, array('0000-00-00 00:00:00', '0000-00-00')))
 			$criteria->compare('date(t.subscribe_date)',date('Y-m-d', strtotime($this->subscribe_date)));
-		if($this->unsubscribe_date != null && !in_array($this->unsubscribe_date, array('0000-00-00 00:00:00', '0000-00-00')))
-			$criteria->compare('date(t.unsubscribe_date)',date('Y-m-d', strtotime($this->unsubscribe_date)));
-		$criteria->compare('t.unsubscribe_ip',$this->unsubscribe_ip,true);
+		if(isset($_GET['subscribe']))
+			$criteria->compare('t.subscribe_id',$_GET['subscribe']);
+		else
+			$criteria->compare('t.subscribe_id',$this->subscribe_id);
+		if($this->modified_date != null && !in_array($this->modified_date, array('0000-00-00 00:00:00', '0000-00-00')))
+			$criteria->compare('date(t.modified_date)',date('Y-m-d', strtotime($this->modified_date)));
+		if(isset($_GET['modified']))
+			$criteria->compare('t.modified_id',$_GET['modified']);
+		else
+			$criteria->compare('t.modified_id',$this->modified_id);
+		if($this->updated_date != null && !in_array($this->updated_date, array('0000-00-00 00:00:00', '0000-00-00')))
+			$criteria->compare('date(t.updated_date)',date('Y-m-d', strtotime($this->updated_date)));
+		$criteria->compare('t.updated_ip',$this->updated_ip,true);
 		
 		// Custom Search
 		$criteria->with = array(
@@ -134,11 +161,21 @@ class UserNewsletter extends CActiveRecord
 				'alias'=>'user',
 				'select'=>'displayname'
 			),
+			'subscribe' => array(
+				'alias'=>'subscribe',
+				'select'=>'displayname'
+			),
+			'modified' => array(
+				'alias'=>'modified',
+				'select'=>'displayname'
+			),
 		);
 		$criteria->compare('user.displayname',strtolower($this->user_search), true);
+		$criteria->compare('subscribe.displayname',strtolower($this->subscribe_search), true);
+		$criteria->compare('modified.displayname',strtolower($this->modified_search), true);
 		
 		if(!isset($_GET['UserNewsletter_sort']))
-			$criteria->order = 't.id DESC';
+			$criteria->order = 't.newsletter_id DESC';
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
@@ -166,13 +203,16 @@ class UserNewsletter extends CActiveRecord
 				$this->defaultColumns[] = $val;
 			}
 		}else {
-			//$this->defaultColumns[] = 'id';
+			//$this->defaultColumns[] = 'newsletter_id';
+			$this->defaultColumns[] = 'status';
 			$this->defaultColumns[] = 'user_id';
 			$this->defaultColumns[] = 'email';
-			$this->defaultColumns[] = 'subscribe';
 			$this->defaultColumns[] = 'subscribe_date';
-			$this->defaultColumns[] = 'unsubscribe_date';
-			$this->defaultColumns[] = 'unsubscribe_ip';
+			$this->defaultColumns[] = 'subscribe_id';
+			$this->defaultColumns[] = 'modified_date';
+			$this->defaultColumns[] = 'modified_id';
+			$this->defaultColumns[] = 'updated_date';
+			$this->defaultColumns[] = 'updated_ip';
 		}
 
 		return $this->defaultColumns;
@@ -201,11 +241,11 @@ class UserNewsletter extends CActiveRecord
 				'htmlOptions' => array(
 					//'class' => 'center',
 				),
-				'filter' => Yii::app()->controller->widget('zii.widgets.jui.CJuiDatePicker', array(
+				'filter' => Yii::app()->controller->widget('application.components.system.CJuiDatePicker', array(
 					'model'=>$this, 
 					'attribute'=>'subscribe_date', 
-					'language' => 'ja',
-					'i18nScriptFile' => 'jquery.ui.datepicker-en.js',
+					'language' => 'en',
+					'i18nScriptFile' => 'jquery-ui-i18n.min.js',
 					//'mode'=>'datetime',
 					'htmlOptions' => array(
 						'id' => 'subscribe_date_filter',
@@ -222,19 +262,19 @@ class UserNewsletter extends CActiveRecord
 				), true),
 			);
 			$this->defaultColumns[] = array(
-				'name' => 'unsubscribe_date',
-				'value' => '$data->unsubscribe_date == "0000-00-00 00:00:00" ? "-" : Utility::dateFormat($data->unsubscribe_date, true)',
+				'name' => 'updated_date',
+				'value' => '$data->updated_date == "0000-00-00 00:00:00" ? "-" : Utility::dateFormat($data->updated_date, true)',
 				'htmlOptions' => array(
 					//'class' => 'center',
 				),
-				'filter' => Yii::app()->controller->widget('zii.widgets.jui.CJuiDatePicker', array(
+				'filter' => Yii::app()->controller->widget('application.components.system.CJuiDatePicker', array(
 					'model'=>$this, 
-					'attribute'=>'unsubscribe_date', 
-					'language' => 'ja',
-					'i18nScriptFile' => 'jquery.ui.datepicker-en.js',
+					'attribute'=>'updated_date', 
+					'language' => 'en',
+					'i18nScriptFile' => 'jquery-ui-i18n.min.js',
 					//'mode'=>'datetime',
 					'htmlOptions' => array(
-						'id' => 'unsubscribe_date_filter',
+						'id' => 'updated_date_filter',
 					),
 					'options'=>array(
 						'showOn' => 'focus',
@@ -248,16 +288,16 @@ class UserNewsletter extends CActiveRecord
 				), true),
 			);
 			$this->defaultColumns[] = array(
-				'name' => 'unsubscribe_ip',
-				'value' => '$data->unsubscribe_ip',
+				'name' => 'updated_ip',
+				'value' => '$data->updated_ip',
 				'htmlOptions' => array(
 					//'class' => 'center',
 				),
 			);
 			$this->defaultColumns[] = array(
 				'header' => Yii::t('phrase', 'Status'),
-				'name' => 'subscribe',
-				'value' => 'Utility::getPublish(Yii::app()->controller->createUrl("unsubscribe",array("id"=>$data->id, "type"=>"admin")), $data->subscribe, 8)',
+				'name' => 'status',
+				'value' => 'Utility::getPublish(Yii::app()->controller->createUrl("subscribe",array("id"=>$data->newsletter_id)), $data->status, 8)',
 				'htmlOptions' => array(
 					'class' => 'center',
 				),
@@ -274,8 +314,9 @@ class UserNewsletter extends CActiveRecord
 	/**
 	 * before validate attributes
 	 */
-	protected function beforeValidate() {
-		$current = strtolower(Yii::app()->controller->id.'/'.Yii::app()->controller->action->id);
+	protected function beforeValidate() 
+	{
+		$controller = strtolower(Yii::app()->controller->id);
 		if(parent::beforeValidate()) {
 			if($this->isNewRecord) {
 				if($this->email != '') {
@@ -291,9 +332,14 @@ class UserNewsletter extends CActiveRecord
 							$this->addError('email', Yii::t('phrase', 'Anda Sudah terdaftar dalam newsletter.'));
 						}
 					}
-					
 				}
+				$this->subscribe_id = !Yii::app()->user->isGuest ? Yii::app()->user->id : 0;
+				
+			} else {
+				if($controller == 'o/newsletter')
+					$this->modified_id = Yii::app()->user->id;
 			}
+			$this->updated_ip = $_SERVER['REMOTE_ADDR'];
 		}
 		return true;
 	}
@@ -304,7 +350,7 @@ class UserNewsletter extends CActiveRecord
 	/*
 	protected function afterValidate() {
 		if(parent::afterValidate()) {
-			if($this->isNewRecord && $this->unsubscribe == 1 && $this->subscribe == 1) {
+			if($this->isNewRecord && $this->unsubscribe == 1 && $this->status == 1) {
 				if($this->user_id != 0) {
 					$email = $this->user->email;
 					$displayname = $this->user->displayname;
@@ -327,9 +373,6 @@ class UserNewsletter extends CActiveRecord
 	protected function beforeSave() {
 		if(parent::beforeSave()) {
 			$this->email = strtolower($this->email);
-			if(!$this->isNewRecord && $this->subscribe == 0) {
-				$this->unsubscribe_ip = $_SERVER['REMOTE_ADDR'];
-			}
 		}
 		return true;
 	}
@@ -341,22 +384,24 @@ class UserNewsletter extends CActiveRecord
 		parent::afterSave();
 		if($this->isNewRecord) {
 			// Guest Subscribe
-			if($this->user_id == 0 && $this->subscribe == 1) {
+			if($this->user_id == 0 && $this->status == 1) {
 				$message = OmmuTemplate::getMessage('user_subscribe_launching', array(
 					CHtml::encode($this->email),
 				));
 				SupportMailSetting::sendEmail($this->email, $this->email, 'Subscribe Success', $message);
 			}
 		} else {
-			if($this->subscribe == 0) {
-				// Guest Unsubscribe
-				if($this->user_id == 0) {
-					SupportMailSetting::sendEmail($this->email, $this->email, 'Unsubscribe Success', 'Unsubscribe Success');
-				// Member Unsubscribe
-				} else {
-					SupportMailSetting::sendEmail($this->user->email, $this->user->displayname, 'Unsubscribe Success', 'Unsubscribe Success');
-				}
+			// Guest Unsubscribe
+			$email = $this->email;
+			$displayname = $this->email;
+			// Member Unsubscribe
+			if($this->user_id != 0) {
+				$email = $this->user->email;
+				$displayname = $this->user->displayname;
 			}
+			
+			if($this->status == 0)
+				SupportMailSetting::sendEmail($email, $displayname, 'Unsubscribe Success', 'Unsubscribe Success');
 		}
 	}
 

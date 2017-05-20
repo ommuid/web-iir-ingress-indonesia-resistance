@@ -3,12 +3,12 @@
  * Ommu Walls (ommu-walls)
  * @var $this WallController
  * @var $model OmmuWalls
- * version: 1.1.0
+ * version: 1.2.0
  *
  * @author Putra Sudaryanto <putra@sudaryanto.id>
- * @copyright Copyright (c) 2015 Ommu Platform (ommu.co)
- * @link https://github.com/oMMu/Ommu-Core
- * @contect (+62)856-299-4114
+ * @copyright Copyright (c) 2015 Ommu Platform (opensource.ommu.co)
+ * @link https://github.com/ommu/Core
+ * @contact (+62)856-299-4114
  *
  */
  
@@ -43,13 +43,10 @@ $commentNextPager = $commentPager['nextPage'] != 0 ? Yii::app()->createUrl('wall
 <div class="sep comment-show" id="wall-<?php echo $data->wall_id;?>">
 	<div class="user">
 		<?php
-			if($data->user->photo_id == 0) {
-				$images = Utility::getTimThumb(Yii::app()->request->baseUrl.'/public/users/default.png', 60, 60, 1);
-			} else {
-				$images = Utility::getTimThumb(Yii::app()->request->baseUrl.'/public/users/'.Yii::app()->user->id.'/'.$data->user->photo->photo, 60, 60, 1);
-			}
-		?>	
-		<a href="javascript:void(0);" title="<?php echo $data->user->displayname;?>"><img src="<?php echo $images;?>" alt="<?php echo $data->user->displayname;?>"></a>
+			$image = Yii::app()->request->baseUrl.'/public/users/default.png';
+			if($data->user->photos)
+				$image = Yii::app()->request->baseUrl.'/public/users/'.Yii::app()->user->id.'/'.$data->user->photos;?>
+		<a href="javascript:void(0);" title="<?php echo $data->user->displayname;?>"><img src="<?php echo $image;?>" alt="<?php echo $data->user->displayname;?>"></a>
 	</div>
 	<div class="status">
 		<?php if($data->wall_media != '') {
@@ -82,13 +79,11 @@ $commentNextPager = $commentPager['nextPage'] != 0 ? Yii::app()->createUrl('wall
 			<?php }?>
 			<div class="comment-post">
 				<?php $user = Users::model()->findByPk(Yii::app()->user->id, array(
-					'select' => 'photo_id',
+					'select' => 'photos',
 				));
-				if($user->photo_id == 0) {
-					$userImages = Utility::getTimThumb(Yii::app()->request->baseUrl.'/public/users/default.png', 40, 40, 1);
-				} else {
-					$userImages = Utility::getTimThumb(Yii::app()->request->baseUrl.'/public/users/'.Yii::app()->user->id.'/'.$model->photo->photo, 40, 40, 1);
-				}?>
+				$userImages = Yii::app()->request->baseUrl.'/public/users/default.png';
+				if($user->photos)
+					$userImages = Yii::app()->request->baseUrl.'/public/users/'.Yii::app()->user->id.'/'.$user->photos;?>
 				<a href="javascript:void(0);" title="<?php echo Yii::app()->user->displayname;?>"><img src="<?php echo $userImages;?>" alt="<?php echo Yii::app()->user->displayname;?>"></a>
 				comment post
 			</div>

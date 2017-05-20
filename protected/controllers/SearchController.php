@@ -2,7 +2,7 @@
 /**
  * SearchController
  * @var $this SearchController
- * version: 0.0.1
+ * version: 1.2.0
  * Reference start
  *
  * TOC :
@@ -13,8 +13,8 @@
  *	performAjaxValidation
  *
  * @author Putra Sudaryanto <putra@sudaryanto.id>
- * @copyright Copyright (c) 2016 Ommu Platform (ommu.co)
- * @link https://github.com/oMMu/Ommu-Core
+ * @copyright Copyright (c) 2016 Ommu Platform (opensource.ommu.co)
+ * @link https://github.com/ommu/Core
  * @contact (+62)856-299-4114
  *
  *----------------------------------------------------------------------------------------------------------

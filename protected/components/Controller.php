@@ -2,15 +2,18 @@
 /**
  * Controller is the customized base controller class.
  * All controller classes for this application should extend from this base class.
+ * version: 1.2.0
  * 
  * @author Putra Sudaryanto <putra@sudaryanto.id>
- * @copyright Copyright (c) 2012 Ommu Platform (ommu.co)
- * @link https://github.com/oMMu/Ommu-Core
- * @contect (+62)856-299-4114
+ * @copyright Copyright (c) 2012 Ommu Platform (opensource.ommu.co)
+ * @link https://github.com/ommu/Core
+ * @contact (+62)856-299-4114
  *
  */
 
 $module = strtolower(Yii::app()->controller->module->id);
+$controller = strtolower(Yii::app()->controller->id);
+$action = strtolower(Yii::app()->controller->action->id);
 $currentAction = strtolower(Yii::app()->controller->id.'/'.Yii::app()->controller->action->id);
 $currentModule = strtolower(Yii::app()->controller->module->id.'/'.Yii::app()->controller->id);
 $currentModuleAction = strtolower(Yii::app()->controller->module->id.'/'.Yii::app()->controller->id.'/'.Yii::app()->controller->action->id);
@@ -22,6 +25,8 @@ class Controller extends CController
 	 * meaning using a single column layout. See 'protected/views/layouts/column1.php'.
 	 */
 	public $layout = 'default';
+	public $theme = '';
+	public $themeSetting = array();
 
 	/**
 	 * admin controller
@@ -65,31 +70,40 @@ class Controller extends CController
 	public $menu = array();
 
 	/**
-	 * Custom Variable
-	 *
-	 *	language condition
-	 */
-	public $langOptions = array();
-	public $lang;
-	
-	public $pageTitleShow = false;
-	public $pageDescriptionShow = false;
-	public $pageGuest = false;
-	public $dialogFixed = false;
-	public $dialogFixedClosed = array();
-	
-	public $ownerId = '';	
-	public $adsSidebar = true;
-
-	/**
 	 * @var array the breadcrumbs of the current page. The value of this property will
 	 * be assigned to {@link CBreadcrumbs::links}. Please refer to {@link CBreadcrumbs::links}
 	 * for more details on how to specify this property.
 	 */
 	public $breadcrumbs = array();
+
+	/**
+	 * Custom Variable
+	 *
+	 *	language condition
+	 *	metadata information
+	 *	show meta condition
+	 *	guest page condition
+	 */
+	
+	//language condition
+	public $langOptions = array();
+	public $lang;
+	
+	//metadata information
 	public $pageDescription;
 	public $pageMeta;
 	public $pageImage;
+	public $pageURL;
+	
+	//show meta condition
+	public $pageTitleShow = false;
+	public $pageDescriptionShow = false;
+	public $sidebarShow = true;
+	
+	//guest page condition
+	public $pageGuest = false;
+	public $dialogFixed = false;
+	public $dialogFixedClosed = array();
 
 	public function render($view, $data = null, $return = false) {
 		if ($this->beforeRender($view)) {
@@ -108,11 +122,11 @@ class Controller extends CController
 			// set language sessions
 			if(isset($_GET['lang']) && $_GET['lang'] != '')
 				Yii::app()->session['language'] = $_GET['lang'];
-		
+	
 			// guest page
 			if($this->dialogFixed == true)
 				$this->pageGuest = true;
-			
+		
 			// registers all meta tags
 			if(!Yii::app()->request->isAjaxRequest) {
 				$meta = OmmuMeta::model()->findByPk(1,array(
@@ -127,30 +141,17 @@ class Controller extends CController
 				if($meta->twitter_on == 1)
 					Yii::app()->meta->renderTwitterMetaTags();
 			}
-			
+		
 			// unset session user_id (after register)
 			if(isset(Yii::app()->session['signup_user_id']) && ($currentModule != 'users/signup' || $currentModuleAction == 'users/signup/success'))
 				unset(Yii::app()->session['signup_user_id']);
-			
+		
 			// set theme is active
-			if(!Yii::app()->request->isAjaxRequest) {
+			/* if(!Yii::app()->request->isAjaxRequest) {
 				Yii::app()->session['theme_active'] = Yii::app()->theme->name;
 				if($this->dialogDetail == true)
 					Yii::app()->session['current_url'] = $this->dialogGroundUrl;
-			}
-			
-			// Set owner and user info
-			if (empty($this->ownerId)) {
-				$owner = !Yii::app()->user->isGuest ? 'Hi, '.Yii::app()->user->displayname : 'Hi, Guest';
-				Yii::app()->params['owner_id'] = '';
-			} else {
-				$user = Users::model()->findByPk($this->ownerId, array(
-					'select' => 'displayname',
-				));
-				$owner = $user->displayname;
-				Yii::app()->params['owner_id'] = $this->ownerId;
-			}
-			Yii::app()->params['owner'] = $owner;
+			} */			
 			
 			parent::render($view, $data, $return);
 		}
@@ -164,20 +165,23 @@ class Controller extends CController
 		$model = OmmuSettings::model()->findByPk(1,array(
 			'select' => 'site_title, site_keywords, site_description'
 		));
+		
+		// Ommu custom description and keyword
+		$pageDescription = $this->pageDescription;
+		if(empty($this->pageDescription))
+			$pageDescription = ucfirst(strtolower($model->site_description));
+		
+		$pageMeta = $this->pageMeta;
+		if(!empty($this->pageMeta)) {
+			if($model->site_keywords && $model->site_keywords != '-')
+				$pageMeta = $model->site_keywords.', '.$pageMeta;
+		} else
+			$pageMeta = $model->site_keywords;
+		
 		if(!Yii::app()->request->isAjaxRequest) {
 			if(parent::beforeRender($view)) {
-				// Ommu custom description and keyword
-				if (!empty($this->pageDescription))
-					$description = $this->pageDescription;
-				else
-					$description = $model->site_description;
-				Yii::app()->clientScript->registerMetaTag(Utility::hardDecode($description), 'description');
-		
-				if (!empty($this->pageMeta))
-					$keywords = $model->site_keywords.','.$this->pageMeta;
-				else
-					$keywords = $model->site_keywords;
-				Yii::app()->clientScript->registerMetaTag(Utility::hardDecode($keywords), 'keywords');
+				Yii::app()->clientScript->registerMetaTag(Utility::hardDecode($pageDescription), 'description');
+				Yii::app()->clientScript->registerMetaTag(Utility::hardDecode(strtolower($pageMeta)), 'keywords');
 				
 				/**
 				 * Facebook open graph and all custom metatags
@@ -194,9 +198,9 @@ class Controller extends CController
 				Yii::app()->meta->googlePlusTags['description'] = 
 				Yii::app()->meta->facebookTags['og:description'] = 
 				Yii::app()->meta->twitterTags['twitter:description'] = 
-				ucfirst(strtolower($description));
+				ucfirst(strtolower($this->pageDescription));
 				// image
-				if (!empty($this->pageImage)) {
+				if(!empty($this->pageImage)) {
 					Yii::app()->meta->facebookTags['og:image'] = 
 					Yii::app()->meta->googlePlusTags['image'] = 
 					Yii::app()->meta->twitterTags['twitter:image:src'] = 
@@ -208,10 +212,29 @@ class Controller extends CController
 			}
 			
 		} else {
-			$this->pageDescription = $this->pageDescription != '' ? ucfirst(strtolower($this->pageDescription)) : $model->site_description;
-			$this->pageMeta = $this->pageMeta != '' ? $model->site_keywords.', '.$this->pageMeta : $model->site_keywords;
+			$this->pageDescription = $pageDescription;
+			$this->pageMeta = $pageMeta;			
 		}
-		$this->pageTitle = $this->pageTitle != '' ? $this->pageTitle : 'Titlenya Lupa..';
+		$this->pageTitle = $this->pageTitle ? $this->pageTitle : 'Titlenya Lupa..';
+				
+		// set page URL information
+		$this->pageURL = Utility::getProtocol().'://'.Yii::app()->request->serverName.Yii::app()->request->url;	
+			
+		// set page Image information
+		if($this->pageImage == null) {
+			$metaImage = OmmuMeta::getInfo('meta_image');
+			$metaImage = $metaImage != '' ? $metaImage : 'meta_default.png';
+			$metaImagePath = Yii::app()->request->baseUrl.'/public/'.$metaImage;
+			$this->pageImage = $metaImagePath;
+		}
+	
+		// set theme settings
+		if($this->theme == null)
+			$theme = $this->theme = Yii::app()->theme->name;
+		$themeInfo = Utility::getArrayFromYML(Yii::getPathOfAlias('webroot.themes.'.$theme).'/'.$theme.'.yaml');
+		$themeSetting = $themeInfo['settings'];
+		$this->themeSetting = $themeSetting;
+		
 		return true;
 	}
 	
@@ -221,7 +244,7 @@ class Controller extends CController
 	public function actionError()
 	{
 		$this->pageGuest = true;
-		$this->adsSidebar = false;
+		$this->sidebarShow = false;
 		if($error=Yii::app()->errorHandler->error)
 		{
 			if(Yii::app()->request->isAjaxRequest)

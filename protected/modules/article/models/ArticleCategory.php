@@ -1,9 +1,11 @@
 <?php
 /**
  * ArticleCategory
+ * version: 0.0.1
+ *
  * @author Putra Sudaryanto <putra@sudaryanto.id>
- * @copyright Copyright (c) 2012 Ommu Platform (ommu.co)
- * @link https://github.com/oMMu/Ommu-Articles
+ * @copyright Copyright (c) 2012 Ommu Platform (opensource.ommu.co)
+ * @link https://github.com/ommu/Articles
  * @contact (+62)856-299-4114
  *
  * This is the template for generating the model class of a specified table.
@@ -22,10 +24,10 @@
  * The followings are the available columns in table 'ommu_article_category':
  * @property integer $cat_id
  * @property integer $publish
- * @property integer $dependency
- * @property integer $orders
+ * @property integer $parent
  * @property string $name
  * @property string $desc
+ * @property string $single_photo
  * @property string $creation_date
  * @property string $creation_id
  * @property string $modified_date
@@ -37,12 +39,27 @@
 class ArticleCategory extends CActiveRecord
 {
 	public $defaultColumns = array();
-	public $title;
-	public $description;
+	public $title_i;
+	public $description_i;
 	
 	// Variable Search
 	public $creation_search;
 	public $modified_search;
+
+	/**
+	 * Behaviors for this model
+	 */
+	public function behaviors() 
+	{
+		return array(
+			'sluggable' => array(
+				'class'=>'ext.yii-behavior-sluggable.SluggableBehavior',
+				'columns' => array('title.en_us'),
+				'unique' => true,
+				'update' => true,
+			),
+		);
+	}
 
 	/**
 	 * Returns the static model of the specified AR class.
@@ -71,17 +88,17 @@ class ArticleCategory extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('
-				title, description', 'required'),
-			array('publish, dependency, orders, creation_id, modified_id', 'numerical', 'integerOnly'=>true),
+				title_i, description_i', 'required'),
+			array('publish, parent, single_photo, creation_id, modified_id', 'numerical', 'integerOnly'=>true),
 			array('name, desc, creation_id, modified_id', 'length', 'max'=>11),
 			array('
-				title', 'length', 'max'=>32),
+				title_i', 'length', 'max'=>32),
 			array('
-				description', 'length', 'max'=>128),
+				description_i', 'length', 'max'=>128),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('cat_id, publish, dependency, orders, name, desc, creation_date, creation_id, modified_date, modified_id,
-				title, description, creation_search, modified_search', 'safe', 'on'=>'search'),
+			array('cat_id, publish, parent, name, desc, single_photo, creation_date, creation_id, modified_date, modified_id,
+				title_i, description_i, creation_search, modified_search', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -94,8 +111,11 @@ class ArticleCategory extends CActiveRecord
 		// class name for the relations automatically generated below.
 		return array(
 			'view' => array(self::BELONGS_TO, 'ViewArticleCategory', 'cat_id'),
-			'creation_relation' => array(self::BELONGS_TO, 'Users', 'creation_id'),
-			'modified_relation' => array(self::BELONGS_TO, 'Users', 'modified_id'),
+			'title' => array(self::BELONGS_TO, 'OmmuSystemPhrase', 'name'),
+			'description' => array(self::BELONGS_TO, 'OmmuSystemPhrase', 'desc'),
+			'creation' => array(self::BELONGS_TO, 'Users', 'creation_id'),
+			'modified' => array(self::BELONGS_TO, 'Users', 'modified_id'),
+			'articles' => array(self::BELONGS_TO, 'Articles', 'article_id'),
 		);
 	}
 
@@ -107,16 +127,16 @@ class ArticleCategory extends CActiveRecord
 		return array(
 			'cat_id' => Yii::t('attribute', 'Category'),
 			'publish' => Yii::t('attribute', 'Publish'),
-			'dependency' => Yii::t('attribute', 'Parent'),
-			'orders' => Yii::t('attribute', 'Orders'),
+			'parent' => Yii::t('attribute', 'Parent'),
 			'name' => Yii::t('attribute', 'Category'),
 			'desc' => Yii::t('attribute', 'Description'),
-			'title' => Yii::t('attribute', 'Category'),
-			'description' => Yii::t('attribute', 'Description'),
+			'single_photo' => Yii::t('attribute', 'Single Photo'),
 			'creation_date' => Yii::t('attribute', 'Creation Date'),
 			'creation_id' => Yii::t('attribute', 'Creation'),
 			'modified_date' => Yii::t('attribute', 'Modified Date'),
 			'modified_id' => Yii::t('attribute', 'Modified'),
+			'title_i' => Yii::t('attribute', 'Category'),
+			'description_i' => Yii::t('attribute', 'Description'),
 			'creation_search' => Yii::t('attribute', 'Creation'),
 			'modified_search' => Yii::t('attribute', 'Modified'),
 		);
@@ -134,17 +154,30 @@ class ArticleCategory extends CActiveRecord
 		$criteria=new CDbCriteria;
 		
 		// Custom Search
+		$defaultLang = OmmuLanguages::getDefault('code');
+		if(isset(Yii::app()->session['language']))
+			$language = Yii::app()->session['language'];
+		else 
+			$language = $defaultLang;
+		
 		$criteria->with = array(
 			'view' => array(
 				'alias'=>'view',
-				'select'=>'category_name, category_desc, articles'
 			),
-			'creation_relation' => array(
-				'alias'=>'creation_relation',
+			'title' => array(
+				'alias'=>'title',
+				'select'=>$language,
+			),
+			'description' => array(
+				'alias'=>'description',
+				'select'=>$language,
+			),
+			'creation' => array(
+				'alias'=>'creation',
 				'select'=>'displayname'
 			),
-			'modified_relation' => array(
-				'alias'=>'modified_relation',
+			'modified' => array(
+				'alias'=>'modified',
 				'select'=>'displayname'
 			),
 		);
@@ -160,10 +193,10 @@ class ArticleCategory extends CActiveRecord
 			$criteria->addInCondition('t.publish',array(0,1));
 			$criteria->compare('t.publish',$this->publish);
 		}
-		$criteria->compare('t.dependency',$this->dependency);
-		$criteria->compare('t.orders',$this->orders);
-		$criteria->compare('t.name',$this->name,true);
-		$criteria->compare('t.desc',$this->desc,true);
+		$criteria->compare('t.parent',$this->parent);
+		$criteria->compare('t.name',$this->name);
+		$criteria->compare('t.desc',$this->desc);
+		$criteria->compare('t.single_photo',$this->single_photo);
 		if($this->creation_date != null && !in_array($this->creation_date, array('0000-00-00 00:00:00', '0000-00-00')))
 			$criteria->compare('date(t.creation_date)',date('Y-m-d', strtotime($this->creation_date)));
 		$criteria->compare('t.creation_id',$this->creation_id);
@@ -171,10 +204,10 @@ class ArticleCategory extends CActiveRecord
 			$criteria->compare('date(t.modified_date)',date('Y-m-d', strtotime($this->modified_date)));
 		$criteria->compare('t.modified_id',$this->modified_id);
 		
-		$criteria->compare('view.category_name',strtolower($this->title), true);
-		$criteria->compare('view.category_desc',strtolower($this->description), true);
-		$criteria->compare('creation_relation.displayname',strtolower($this->creation_search), true);
-		$criteria->compare('modified_relation.displayname',strtolower($this->modified_search), true);
+		$criteria->compare('title.'.$language,strtolower($this->title_i), true);
+		$criteria->compare('description.'.$language,strtolower($this->description_i), true);
+		$criteria->compare('creation.displayname',strtolower($this->creation_search), true);
+		$criteria->compare('modified.displayname',strtolower($this->modified_search), true);
 
 		if(!isset($_GET['ArticleCategory_sort']))
 			$criteria->order = 't.cat_id DESC';
@@ -204,10 +237,10 @@ class ArticleCategory extends CActiveRecord
 		}else {
 			//$this->defaultColumns[] = 'cat_id';
 			$this->defaultColumns[] = 'publish';
-			$this->defaultColumns[] = 'dependency';
-			$this->defaultColumns[] = 'orders';
+			$this->defaultColumns[] = 'parent';
 			$this->defaultColumns[] = 'name';
 			$this->defaultColumns[] = 'desc';
+			$this->defaultColumns[] = 'single_photo';
 			$this->defaultColumns[] = 'creation_date';
 			$this->defaultColumns[] = 'creation_id';
 			$this->defaultColumns[] = 'modified_date';
@@ -235,20 +268,20 @@ class ArticleCategory extends CActiveRecord
 				'value' => '$this->grid->dataProvider->pagination->currentPage*$this->grid->dataProvider->pagination->pageSize + $row+1'
 			);
 			$this->defaultColumns[] = array(
-				'name' => 'title',
-				'value' => 'Phrase::trans($data->name, 2)',
+				'name' => 'title_i',
+				'value' => 'Phrase::trans($data->name)',
 			);
 			$this->defaultColumns[] = array(
-				'name' => 'description',
-				'value' => 'Phrase::trans($data->desc, 2)',
+				'name' => 'description_i',
+				'value' => 'Phrase::trans($data->desc)',
 			);
 			$this->defaultColumns[] = array(
-				'name' => 'dependency',
-				'value' => '$data->dependency != 0 ? Phrase::trans(ArticleCategory::model()->findByPk($data->dependency)->name, 2) : "-"',
+				'name' => 'parent',
+				'value' => '$data->parent != 0 ? Phrase::trans(ArticleCategory::model()->findByPk($data->parent)->name) : "-"',
 			);
 			$this->defaultColumns[] = array(
-				'header' => 'Count',
-				'value' => 'CHtml::link($data->view->articles.\' \'.Yii::t(\'attribute\', \'Article\'), Yii::app()->controller->createUrl("o/admin/manage",array("category"=>$data->cat_id)))',
+				'header' => Yii::t('phrase', 'Articles'),
+				'value' => 'CHtml::link($data->view->articles ? $data->view->articles : 0, Yii::app()->controller->createUrl("o/admin/manage",array("category"=>$data->cat_id)))',
 				'htmlOptions' => array(
 					'class' => 'center',
 				),
@@ -256,7 +289,7 @@ class ArticleCategory extends CActiveRecord
 			);
 			$this->defaultColumns[] = array(
 				'name' => 'creation_search',
-				'value' => '$data->creation_relation->displayname',
+				'value' => '$data->creation->displayname',
 			);
 			$this->defaultColumns[] = array(
 				'name' => 'creation_date',
@@ -264,11 +297,11 @@ class ArticleCategory extends CActiveRecord
 				'htmlOptions' => array(
 					'class' => 'center',
 				),
-				'filter' => Yii::app()->controller->widget('zii.widgets.jui.CJuiDatePicker', array(
+				'filter' => Yii::app()->controller->widget('application.components.system.CJuiDatePicker', array(
 					'model'=>$this, 
 					'attribute'=>'creation_date', 
-					'language' => 'ja',
-					'i18nScriptFile' => 'jquery.ui.datepicker-en.js',
+					'language' => 'en',
+					'i18nScriptFile' => 'jquery-ui-i18n.min.js',
 					//'mode'=>'datetime',
 					'htmlOptions' => array(
 						'id' => 'creation_date_filter',
@@ -283,6 +316,18 @@ class ArticleCategory extends CActiveRecord
 						'showButtonPanel' => true,
 					),
 				), true),
+			);
+			$this->defaultColumns[] = array(
+				'name' => 'single_photo',
+				'value' => '$data->single_photo == 1 ? Chtml::image(Yii::app()->theme->baseUrl.\'/images/icons/publish.png\') : Chtml::image(Yii::app()->theme->baseUrl.\'/images/icons/unpublish.png\')',
+				'htmlOptions' => array(
+					'class' => 'center',
+				),
+				'filter'=>array(
+					1=>Yii::t('phrase', 'Yes'),
+					0=>Yii::t('phrase', 'No'),
+				),
+				'type' => 'raw',
 			);
 			if(!isset($_GET['type'])) {
 				$this->defaultColumns[] = array(
@@ -307,41 +352,34 @@ class ArticleCategory extends CActiveRecord
 	 * 0 = unpublish
 	 * 1 = publish
 	 */
-	public static function getCategory($publish=null, $dependency=null) 
-	{		
+	public static function getCategory($publish=null, $parent=null, $type=null) 
+	{
+		$currentAction = strtolower(Yii::app()->controller->id.'/'.Yii::app()->controller->action->id);
+		
 		$criteria=new CDbCriteria;
 		if($publish != null)
-			$criteria->compare('t.publish',$publish);
-		if($dependency != null)
-			$criteria->compare('t.dependency',$dependency);
+			$criteria->compare('publish',$publish);
+		if($parent != null)
+			$criteria->compare('parent',$parent);
 		
 		$model = self::model()->findAll($criteria);
 
-		$items = array();
-		if($model != null) {
-			foreach($model as $key => $val) {
-				$items[$val->cat_id] = Phrase::trans($val->name, 2);
-			}
-			return $items;
-			
-		} else
-			return false;
-	}
-
-	/**
-	 * Get Article
-	 */
-	public static function getArticle($id, $type=null) {
-		$criteria=new CDbCriteria;
-		$criteria->compare('cat_id',$id);
-		
 		if($type == null) {
-			//$criteria->select = '';
-			$model = Articles::model()->findAll($criteria);
-		} else
-			$model = Articles::model()->count($criteria);
-		
-		return $model;
+			$items = array();
+			if($model != null) {
+				foreach($model as $key => $val) {
+					if($currentAction == 'o/setting/edit' && $val->parent != 0)
+						$items[$val->cat_id] = Phrase::trans(ArticleCategory::model()->findByPk($val->parent)->name).' / '.Phrase::trans($val->name);
+					else
+						$items[$val->cat_id] = Phrase::trans($val->name);
+				}
+				return $items;
+				
+			} else
+				return false;
+			
+		} else if($type == 'data')
+			return $model;
 	}
 
 	/**
@@ -349,10 +387,9 @@ class ArticleCategory extends CActiveRecord
 	 */
 	protected function beforeValidate() {
 		if(parent::beforeValidate()) {		
-			if($this->isNewRecord) {
-				$this->orders = 0;
+			if($this->isNewRecord)
 				$this->creation_id = Yii::app()->user->id;	
-			} else
+			else
 				$this->modified_id = Yii::app()->user->id;
 		}
 		return true;
@@ -361,30 +398,39 @@ class ArticleCategory extends CActiveRecord
 	/**
 	 * before save attributes
 	 */
-	protected function beforeSave() {
+	protected function beforeSave() 
+	{
+		$currentAction = strtolower(Yii::app()->controller->id.'/'.Yii::app()->controller->action->id);
+		$location = Utility::getUrlTitle($currentAction);
+		
 		if(parent::beforeSave()) {
-			if($this->isNewRecord) {
-				$location = strtolower(Yii::app()->controller->module->id.'/'.Yii::app()->controller->id);
+			if($this->isNewRecord || (!$this->isNewRecord && $this->name == 0)) {
 				$title=new OmmuSystemPhrase;
 				$title->location = $location.'_title';
-				$title->en_us = $this->title;
+				$title->en_us = $this->title_i;
 				if($title->save())
 					$this->name = $title->phrase_id;
-
+				
+				$this->slug = Utility::getUrlTitle($this->title_i);	
+				
+			} else {
+				$title = OmmuSystemPhrase::model()->findByPk($this->name);
+				$title->en_us = $this->title_i;
+				$title->save();
+			}
+			
+			if($this->isNewRecord || (!$this->isNewRecord && $this->desc == 0)) {
 				$desc=new OmmuSystemPhrase;
 				$desc->location = $location.'_description';
-				$desc->en_us = $this->description;
+				$desc->en_us = $this->description_i;
 				if($desc->save())
 					$this->desc = $desc->phrase_id;
 				
 			} else {
-				$title = OmmuSystemPhrase::model()->findByPk($this->name);
-				$title->en_us = $this->title;
-				$title->save();
-
 				$desc = OmmuSystemPhrase::model()->findByPk($this->desc);
-				$desc->en_us = $this->description;
+				$desc->en_us = $this->description_i;
 				$desc->save();
+				
 			}
 		}
 		return true;

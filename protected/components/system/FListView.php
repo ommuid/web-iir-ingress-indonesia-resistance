@@ -1,6 +1,7 @@
 <?php
 /**
  * CListView class file.
+ * version: 1.2.0
  *
  * @author Qiang Xue <qiang.xue@gmail.com>
  * @link http://www.yiiframework.com/
@@ -8,7 +9,7 @@
  * @license http://www.yiiframework.com/license/
  * 
  * @modify Putra Sudaryanto <putra@sudaryanto.id>
- * @contect (+62)856-299-4114
+ * @contact (+62)856-299-4114
  *
  */
 

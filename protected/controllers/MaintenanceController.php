@@ -2,7 +2,7 @@
 /**
  * MaintenanceController
  * Handle MaintenanceController
- * version: 1.1.0
+ * version: 1.2.0
  * Reference start
  *
  * TOC :
@@ -13,8 +13,8 @@
  *	performAjaxValidation
  *
  * @author Putra Sudaryanto <putra@sudaryanto.id>
- * @copyright Copyright (c) 2012 Ommu Platform (ommu.co)
- * @link https://github.com/oMMu/Ommu-Core
+ * @copyright Copyright (c) 2012 Ommu Platform (opensource.ommu.co)
+ * @link https://github.com/ommu/Core
  * @contact (+62)856-299-4114
  *
  *----------------------------------------------------------------------------------------------------------
@@ -74,10 +74,10 @@ class MaintenanceController extends Controller
 		$model = OmmuPages::model()->findByPk($id,array(
 			//'select' => '',
 		));
-		$this->pageTitle = Phrase::trans($model->name,2);
-		$this->pageDescription = Utility::shortText(Utility::hardDecode(Phrase::trans($model->desc,2)),300);
+		$this->pageTitle = Phrase::trans($model->name);
+		$this->pageDescription = Utility::shortText(Utility::hardDecode(Phrase::trans($model->desc)),300);
 		$this->pageMeta = '';
-		$this->pageImage = ($model->media != '' && $model->media_show == 1) ? Yii::app()->request->baseUrl.'/public/page/'.$model->media : '';
+		$this->pageImage = ($model->media != '' && $model->media_show == 1) ? Utility::getProtocol().'://'.Yii::app()->request->serverName.Yii::app()->request->baseUrl.'/public/page/'.$model->media : '';
 		$this->render('application.webs.maintenance.front_page',array(
 			'model'=>$model,
 		));
@@ -89,18 +89,18 @@ class MaintenanceController extends Controller
 	 */
 	public function actionFeedback()
 	{
-		$model=new SupportMails;
+		$model=new SupportFeedbacks;
 		if(!Yii::app()->user->isGuest) {
 			$user = Users::model()->findByPk(Yii::app()->user->id, array(
-				'select' => 'user_id, email, displayname, photo_id',
+				'select' => 'user_id, email, displayname, photos',
 			));
 		}
 
 		// Uncomment the following line if AJAX validation is needed
 		//$this->performAjaxValidation($model);
 
-		if(isset($_POST['SupportMails'])) {
-			$model->attributes=$_POST['SupportMails'];
+		if(isset($_POST['SupportFeedbacks'])) {
+			$model->attributes=$_POST['SupportFeedbacks'];
 			$model->scenario = 'contactus';
 
 			$jsonError = CActiveForm::validate($model);

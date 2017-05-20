@@ -4,11 +4,12 @@
  * @var $this AdminController
  * @var $model Banners
  * @var $form CActiveForm
+ * version: 0.0.1
  *
  * @author Putra Sudaryanto <putra@sudaryanto.id>
- * @copyright Copyright (c) 2014 Ommu Platform (ommu.co)
- * @link https://github.com/oMMu/Ommu-Banner
- * @contect (+62)856-299-4114
+ * @copyright Copyright (c) 2014 Ommu Platform (opensource.ommu.co)
+ * @link https://github.com/ommu/Banner
+ * @contact (+62)856-299-4114
  *
  */
 ?>
@@ -39,11 +40,6 @@
 		</li>
 
 		<li>
-			<?php echo $model->getAttributeLabel('banner_type'); ?><br/>
-			<?php echo $form->textField($model,'banner_type'); ?>
-		</li>
-
-		<li>
 			<?php echo $model->getAttributeLabel('title'); ?><br/>
 			<?php echo $form->textField($model,'title',array('size'=>60,'maxlength'=>64)); ?>
 		</li>
@@ -54,8 +50,8 @@
 		</li>
 
 		<li>
-			<?php echo $model->getAttributeLabel('media'); ?><br/>
-			<?php echo $form->textField($model,'media',array('size'=>60,'maxlength'=>128)); ?>
+			<?php echo $model->getAttributeLabel('banner_filename'); ?><br/>
+			<?php echo $form->textField($model,'banner_filename',array('size'=>60,'maxlength'=>128)); ?>
 		</li>
 
 		<li>
@@ -71,11 +67,6 @@
 		<li>
 			<?php echo $model->getAttributeLabel('view'); ?><br/>
 			<?php echo $form->textField($model,'view'); ?>
-		</li>
-
-		<li>
-			<?php echo $model->getAttributeLabel('click'); ?><br/>
-			<?php echo $form->textField($model,'click'); ?>
 		</li>
 
 		<li>

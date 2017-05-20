@@ -1,9 +1,11 @@
 <?php
 /**
  * ViewSupportContactCategory
+ * version: 0.2.1
+ *
  * @author Putra Sudaryanto <putra@sudaryanto.id>
- * @copyright Copyright (c) 2015 Ommu Platform (ommu.co)
- * @link https://github.com/oMMu/Ommu-Support
+ * @copyright Copyright (c) 2015 Ommu Platform (opensource.ommu.co)
+ * @link https://github.com/ommu/Support
  * @contact (+62)856-299-4114
  *
  * This is the template for generating the model class of a specified table.
@@ -21,7 +23,6 @@
  *
  * The followings are the available columns in table '_view_support_contact_category':
  * @property integer $cat_id
- * @property string $category_name
  * @property string $contact
  * @property string $widget
  */
@@ -65,10 +66,10 @@ class ViewSupportContactCategory extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('cat_id', 'numerical', 'integerOnly'=>true),
-			array('category_name, contact, widget', 'safe'),
+			array('contact, widget', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('cat_id, category_name, contact, widget', 'safe', 'on'=>'search'),
+			array('cat_id, contact, widget', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -90,7 +91,6 @@ class ViewSupportContactCategory extends CActiveRecord
 	{
 		return array(
 			'cat_id' => Yii::t('attribute','Cat'),
-			'category_name' => Yii::t('attribute','Category Name'),
 			'contact' => Yii::t('attribute','Contact'),
 			'widget' => Yii::t('attribute','Widget'),
 		);
@@ -115,7 +115,6 @@ class ViewSupportContactCategory extends CActiveRecord
 		$criteria=new CDbCriteria;
 
 		$criteria->compare('t.cat_id',$this->cat_id);
-		$criteria->compare('t.category_name',strtolower($this->category_name),true);
 		$criteria->compare('t.contact',$this->contact);
 		$criteria->compare('t.widget',$this->widget);
 
@@ -149,7 +148,6 @@ class ViewSupportContactCategory extends CActiveRecord
 			}
 		} else {
 			$this->defaultColumns[] = 'cat_id';
-			$this->defaultColumns[] = 'category_name';
 			$this->defaultColumns[] = 'contact';
 			$this->defaultColumns[] = 'widget';
 		}
@@ -167,7 +165,6 @@ class ViewSupportContactCategory extends CActiveRecord
 				'value' => '$this->grid->dataProvider->pagination->currentPage*$this->grid->dataProvider->pagination->pageSize + $row+1'
 			);
 			$this->defaultColumns[] = 'cat_id';
-			$this->defaultColumns[] = 'category_name';
 			$this->defaultColumns[] = 'contact';
 			$this->defaultColumns[] = 'widget';
 		}

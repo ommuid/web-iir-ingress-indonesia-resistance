@@ -1,9 +1,11 @@
 <?php
 /**
  * UserHistoryLogin 
+ * version: 0.0.1
+ *
  * @author Putra Sudaryanto <putra@sudaryanto.id>
- * @copyright Copyright (c) 2015 Ommu Platform (ommu.co)
- * @link https://github.com/oMMu/Ommu-Users
+ * @copyright Copyright (c) 2015 Ommu Platform (opensource.ommu.co)
+ * @link https://github.com/ommu/Users
  * @contact (+62)856-299-4114
  *
  * This is the template for generating the model class of a specified table.
@@ -24,6 +26,7 @@
  * @property string $user_id
  * @property string $lastlogin_date
  * @property string $lastlogin_ip
+ * @property string $lastlogin_from
  *
  * The followings are the available model relations:
  * @property OmmuUsers $user
@@ -117,17 +120,6 @@ class UserHistoryLogin extends CActiveRecord
 		// @todo Please modify the following code to remove attributes that should not be searched.
 
 		$criteria=new CDbCriteria;
-
-		$criteria->compare('t.id',$this->id,true);
-		if(isset($_GET['user'])) {
-			$criteria->compare('t.user_id',$_GET['user']);
-		} else {
-			$criteria->compare('t.user_id',$this->user_id);
-		}
-		if($this->lastlogin_date != null && !in_array($this->lastlogin_date, array('0000-00-00 00:00:00', '0000-00-00')))
-			$criteria->compare('date(t.lastlogin_date)',date('Y-m-d', strtotime($this->lastlogin_date)));
-		$criteria->compare('t.lastlogin_ip',$this->lastlogin_ip,true);
-		$criteria->compare('t.lastlogin_from',$this->lastlogin_from,true);
 		
 		// Custom Search
 		$criteria->with = array(
@@ -136,6 +128,17 @@ class UserHistoryLogin extends CActiveRecord
 				'select'=>'displayname'
 			),
 		);
+
+		$criteria->compare('t.id',$this->id,true);
+		if(isset($_GET['user']))
+			$criteria->compare('t.user_id',$_GET['user']);
+		else
+			$criteria->compare('t.user_id',$this->user_id);
+		if($this->lastlogin_date != null && !in_array($this->lastlogin_date, array('0000-00-00 00:00:00', '0000-00-00')))
+			$criteria->compare('date(t.lastlogin_date)',date('Y-m-d', strtotime($this->lastlogin_date)));
+		$criteria->compare('t.lastlogin_ip',$this->lastlogin_ip,true);
+		$criteria->compare('t.lastlogin_from',$this->lastlogin_from,true);
+		
 		$criteria->compare('user.displayname',strtolower($this->user_search), true);
 
 		if(!isset($_GET['UserHistoryLogin_sort']))
@@ -186,22 +189,27 @@ class UserHistoryLogin extends CActiveRecord
 				'header' => 'No',
 				'value' => '$this->grid->dataProvider->pagination->currentPage*$this->grid->dataProvider->pagination->pageSize + $row+1'
 			);
+			if(!isset($_GET['user'])) {
+				$this->defaultColumns[] = array(
+					'name' => 'user_search',
+					'value' => '$data->user->displayname',
+				);
+			}
 			$this->defaultColumns[] = array(
-				'name' => 'user_search',
-				'value' => '$data->user->displayname',
+				'name' => 'lastlogin_from',
+				'value' => '$data->lastlogin_from',
 			);
-			$this->defaultColumns[] = 'lastlogin_from';
 			$this->defaultColumns[] = array(
 				'name' => 'lastlogin_date',
 				'value' => 'Utility::dateFormat($data->lastlogin_date, true)',
 				'htmlOptions' => array(
-					//'class' => 'center',
+					'class' => 'center',
 				),
-				'filter' => Yii::app()->controller->widget('zii.widgets.jui.CJuiDatePicker', array(
+				'filter' => Yii::app()->controller->widget('application.components.system.CJuiDatePicker', array(
 					'model'=>$this,
 					'attribute'=>'lastlogin_date',
-					'language' => 'ja',
-					'i18nScriptFile' => 'jquery.ui.datepicker-en.js',
+					'language' => 'en',
+					'i18nScriptFile' => 'jquery-ui-i18n.min.js',
 					//'mode'=>'datetime',
 					'htmlOptions' => array(
 						'id' => 'lastlogin_date_filter',
@@ -217,7 +225,13 @@ class UserHistoryLogin extends CActiveRecord
 					),
 				), true),
 			);
-			$this->defaultColumns[] = 'lastlogin_ip';
+			$this->defaultColumns[] = array(
+				'name' => 'lastlogin_ip',
+				'value' => '$data->lastlogin_ip',
+				'htmlOptions' => array(
+					'class' => 'center',
+				),
+			);
 		}
 		parent::afterConstruct();
 	}

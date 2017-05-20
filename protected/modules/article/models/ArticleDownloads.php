@@ -4,9 +4,9 @@
  * version: 0.0.1
  *
  * @author Putra Sudaryanto <putra@sudaryanto.id>
- * @copyright Copyright (c) 2016 Ommu Platform (ommu.co)
+ * @copyright Copyright (c) 2016 Ommu Platform (opensource.ommu.co)
  * @created date 8 December 2016, 11:36 WIB
- * @link http://company.ommu.co
+ * @link https://github.com/ommu/Articles
  * @contact (+62)856-299-4114
  *
  * This is the template for generating the model class of a specified table.
@@ -65,7 +65,7 @@ class ArticleDownloads extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('article_id, user_id, download_ip', 'required'),
+			array('article_id, user_id', 'required'),
 			array('downloads', 'numerical', 'integerOnly'=>true),
 			array('article_id, user_id', 'length', 'max'=>11),
 			array('download_ip', 'length', 'max'=>20),
@@ -84,6 +84,7 @@ class ArticleDownloads extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
+			'downloads' => array(self::HAS_MANY, 'ArticleDownloadDetail', 'download_id'),
 			'article' => array(self::BELONGS_TO, 'Articles', 'article_id'),
 			'user' => array(self::BELONGS_TO, 'Users', 'user_id'),
 		);
@@ -139,7 +140,7 @@ class ArticleDownloads extends CActiveRecord
 			),
 			'user' => array(
 				'alias'=>'user',
-				'select'=>'displayname'
+				'select'=>'displayname',
 			),
 		);
 
@@ -212,23 +213,22 @@ class ArticleDownloads extends CActiveRecord
 			if(!isset($_GET['article'])) {
 				$this->defaultColumns[] = array(
 					'name' => 'article_search',
-					'value' => '$data->article->title."<br/><span>".Utility::shortText(Utility::hardDecode($data->article->body),150)."</span>"',
-					'htmlOptions' => array(
-						'class' => 'bold',
-					),
-					'type' => 'raw',
+					'value' => '$data->article->title',
+				);
+			}
+			if(!isset($_GET['user'])) {
+				$this->defaultColumns[] = array(
+					'name' => 'user_search',
+					'value' => '$data->user_id != 0 ? $data->user->displayname : "-"',
 				);
 			}
 			$this->defaultColumns[] = array(
-				'name' => 'user_search',
-				'value' => '$data->user_id != 0 ? $data->user->displayname : "-"',
-			);
-			$this->defaultColumns[] = array(
 				'name' => 'downloads',
-				'value' => '$data->downloads',
+				'value' => 'CHtml::link($data->downloads, Yii::app()->controller->createUrl("o/downloaddetail/manage",array(\'download\'=>$data->download_id)))',
 				'htmlOptions' => array(
 					'class' => 'center',
 				),
+				'type' => 'raw',
 			);
 			$this->defaultColumns[] = array(
 				'name' => 'download_date',
@@ -236,11 +236,11 @@ class ArticleDownloads extends CActiveRecord
 				'htmlOptions' => array(
 					'class' => 'center',
 				),
-				'filter' => Yii::app()->controller->widget('zii.widgets.jui.CJuiDatePicker', array(
+				'filter' => Yii::app()->controller->widget('application.components.system.CJuiDatePicker', array(
 					'model'=>$this,
 					'attribute'=>'download_date',
-					'language' => 'ja',
-					'i18nScriptFile' => 'jquery.ui.datepicker-en.js',
+					'language' => 'en',
+					'i18nScriptFile' => 'jquery-ui-i18n.min.js',
 					//'mode'=>'datetime',
 					'htmlOptions' => array(
 						'id' => 'download_date_filter',
@@ -285,14 +285,35 @@ class ArticleDownloads extends CActiveRecord
 	}
 
 	/**
+	 * User get information
+	 */
+	public static function insertDownload($article_id)
+	{
+		$criteria=new CDbCriteria;
+		$criteria->select = 'download_id, article_id, user_id, downloads';
+		$criteria->compare('article_id', $article_id);
+		$criteria->compare('user_id', !Yii::app()->user->isGuest ? Yii::app()->user->id : '0');
+		$findDownload = self::model()->find($criteria);
+		
+		if($findDownload != null)
+			self::model()->updateByPk($findDownload->download_id, array('downloads'=>$findDownload->downloads + 1, 'download_ip'=>$_SERVER['REMOTE_ADDR']));
+		
+		else {
+			$download=new ArticleDownloads;
+			$download->article_id = $article_id;
+			$download->save();
+		}
+	}
+
+	/**
 	 * before validate attributes
 	 */
 	protected function beforeValidate() {
-		if(parent::beforeValidate()) {		
-			if($this->isNewRecord) {
+		if(parent::beforeValidate()) {
+			if($this->isNewRecord)
 				$this->user_id = !Yii::app()->user->isGuest ? Yii::app()->user->id : 0;
-				$this->download_ip = $_SERVER['REMOTE_ADDR'];
-			}		
+			
+			$this->download_ip = $_SERVER['REMOTE_ADDR'];
 		}
 		return true;
 	}

@@ -1,6 +1,7 @@
 <?php
 /**
  * CDataColumn class file.
+ * version: 1.2.0
  *
  * @author Qiang Xue <qiang.xue@gmail.com>
  * @link http://www.yiiframework.com/
@@ -8,7 +9,7 @@
  * @license http://www.yiiframework.com/license/
  * 
  * @modify Putra Sudaryanto <putra@sudaryanto.id>
- * @contect (+62)856-299-4114
+ * @contact (+62)856-299-4114
  *
  */
 
@@ -110,7 +111,7 @@ class CDataColumn extends CGridColumn
 		elseif($this->filter!==false && $this->grid->filter!==null && $this->name!==null && strpos($this->name,'.')===false)
 		{
 			if(is_array($this->filter))
-				return CHtml::activeDropDownList($this->grid->filter, $this->name, $this->filter, array('id'=>false, 'prompt'=>''));
+				return CHtml::activeDropDownList($this->grid->filter, $this->name, $this->filter, array('id'=>false,'prompt'=>''));
 			elseif($this->filter===null)
 				return CHtml::activeTextField($this->grid->filter, $this->name, array('id'=>false, 'placeholder'=>'filter'));
 		}

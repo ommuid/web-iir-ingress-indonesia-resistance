@@ -4,13 +4,36 @@
  * @var $this SettingController
  * @var $model ArticleSetting
  * @var $form CActiveForm
+ * version: 0.0.1
  *
  * @author Putra Sudaryanto <putra@sudaryanto.id>
- * @copyright Copyright (c) 2012 Ommu Platform (ommu.co)
- * @link https://github.com/oMMu/Ommu-Articles
+ * @copyright Copyright (c) 2012 Ommu Platform (opensource.ommu.co)
+ * @link https://github.com/ommu/Articles
  * @contact (+62)856-299-4114
  *
  */
+
+	$cs = Yii::app()->getClientScript();
+$js=<<<EOP
+	$('input[name="ArticleSetting[media_resize]"]').on('change', function() {
+		var id = $(this).val();
+		if(id == '1') {
+			$('div#resize_size').slideDown();
+		} else {
+			$('div#resize_size').slideUp();
+		}
+	});
+	
+	$('select#ArticleSetting_headline').on('change', function() {
+		var id = $(this).val();
+		if(id == '1') {
+			$('div#headline').slideDown();
+		} else {
+			$('div#headline').slideUp();
+		}
+	});
+EOP;
+	$cs->registerScript('js', $js, CClientScript::POS_END);
 ?>
 
 <?php $form=$this->beginWidget('application.components.system.OActiveForm', array(
@@ -51,7 +74,10 @@
 			<?php echo $form->labelEx($model,'permission'); ?>
 			<div class="desc">
 				<span class="small-px"><?php echo Yii::t('phrase', 'Select whether or not you want to let the public (visitors that are not logged-in) to view the following sections of your social network. In some cases (such as Profiles, Blogs, and Albums), if you have given them the option, your users will be able to make their pages private even though you have made them publically viewable here. For more permissions settings, please visit the General Settings page.');?></span>
-				<?php echo $form->radioButtonList($model, 'permission', array(
+				<?php 
+				if($model->isNewRecord && !$model->getErrors())
+					$model->permission = 1;
+				echo $form->radioButtonList($model, 'permission', array(
 					1 => Yii::t('phrase', 'Yes, the public can view articles unless they are made private.'),
 					0 => Yii::t('phrase', 'No, the public cannot view articles.'),
 				)); ?>
@@ -82,10 +108,10 @@
 				if(!$model->getErrors())
 					$model->type_active = unserialize($model->type_active);
 				echo $form->checkBoxList($model,'type_active', array(
-					'1=Standard' => Yii::t('phrase', 'Standard'),
-					'2=Video' => Yii::t('phrase', 'Video'),
-					//'3=Audio' => Yii::t('phrase', 'Audio'),
-					'4=Quote' => Yii::t('phrase', 'Quote'),
+					'standard=Standard' => Yii::t('phrase', 'Standard'),
+					'video=Video' => Yii::t('phrase', 'Video'),
+					//'audio=Audio' => Yii::t('phrase', 'Audio'),
+					'quote=Quote' => Yii::t('phrase', 'Quote'),
 				)); ?>
 				<?php echo $form->error($model,'type_active'); ?>
 			</div>
@@ -94,8 +120,43 @@
 		<div class="clearfix">
 			<?php echo $form->labelEx($model,'headline'); ?>
 			<div class="desc">
-				<?php echo $form->textField($model,'headline', array('maxlength'=>1, 'class'=>'span-2')); ?>
+				<?php 
+				if($model->isNewRecord && !$model->getErrors())
+					$model->headline = 1;
+				echo $form->dropDownLIst($model,'headline', array(
+					'1' => Yii::t('phrase', 'Enable'),
+					'0' => Yii::t('phrase', 'Disable'),
+				)); ?>
 				<?php echo $form->error($model,'headline'); ?>
+			</div>
+		</div>
+		
+		<div id="headline" class="<?php echo $model->headline == 0 ? 'hide' : '';?>">
+			<div class="clearfix">
+				<?php echo $form->labelEx($model,'headline_limit'); ?>
+				<div class="desc">
+					<?php 
+					if($model->isNewRecord && !$model->getErrors())
+						$model->headline_limit = 0;
+					echo $form->textField($model,'headline_limit', array('maxlength'=>3, 'class'=>'span-2')); ?>
+					<?php echo $form->error($model,'headline_limit'); ?>
+				</div>
+			</div>
+
+			<div class="clearfix">
+				<?php echo $form->labelEx($model,'headline_category'); ?>
+				<div class="desc">
+					<?php 
+					$parent = null;
+					$category = ArticleCategory::getCategory(1, $parent);
+					if(!$model->getErrors())
+						$model->headline_category = unserialize($model->headline_category);
+					if($category != null)
+						echo $form->checkBoxList($model,'headline_category', $category);
+					else
+						echo $form->checkBoxList($model,'headline_category', array('prompt'=>Yii::t('phrase', 'No Parent'))); ?>
+					<?php echo $form->error($model,'headline_category'); ?>
+				</div>
 			</div>
 		</div>
 
@@ -111,7 +172,10 @@
 			<label><?php echo Yii::t('phrase', 'Media Setting');?> <span class="required">*</span></label>
 			<div class="desc">
 				<p><?php echo $model->getAttributeLabel('media_resize');?></p>
-				<?php echo $form->radioButtonList($model, 'media_resize', array(
+				<?php 
+				if($model->isNewRecord && !$model->getErrors())
+					$model->media_resize = 0;
+				echo $form->radioButtonList($model, 'media_resize', array(
 					0 => Yii::t('phrase', 'No, not resize media after upload.'),
 					1 => Yii::t('phrase', 'Yes, resize media after upload.'),
 				)); ?>
@@ -152,6 +216,8 @@
 					$media_file_type = unserialize($model->media_file_type);
 					if(!empty($media_file_type))
 						$model->media_file_type = Utility::formatFileType($media_file_type, false);
+					else
+						$model->media_file_type = 'jpg, png, bmp';
 				}
 				echo $form->textField($model,'media_file_type', array('class'=>'span-6')); ?>
 				<?php echo $form->error($model,'media_file_type'); ?>
@@ -167,6 +233,8 @@
 					$upload_file_type = unserialize($model->upload_file_type);
 					if(!empty($upload_file_type))
 						$model->upload_file_type = Utility::formatFileType($upload_file_type, false);
+					else
+						$model->upload_file_type = 'mp3, mp4, pdf, doc, docx';
 				}
 				echo $form->textField($model,'upload_file_type', array('class'=>'span-6')); ?>
 				<?php echo $form->error($model,'upload_file_type'); ?>

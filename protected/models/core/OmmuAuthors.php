@@ -1,11 +1,11 @@
 <?php
 /**
  * OmmuAuthors
- * version: 1.1.0
+ * version: 1.2.0
  *
  * @author Putra Sudaryanto <putra@sudaryanto.id>
- * @copyright Copyright (c) 2015 Ommu Platform (ommu.co)
- * @link https://github.com/oMMu/Ommu-Core
+ * @copyright Copyright (c) 2015 Ommu Platform (opensource.ommu.co)
+ * @link https://github.com/ommu/Core
  * @contact (+62)856-299-4114
  *
  * This is the template for generating the model class of a specified table.
@@ -28,6 +28,7 @@
  * @property string $email
  * @property string $password
  * @property string $creation_date
+ * @property string $creation_id
  * @property string $modified_date
  * @property string $modified_id
  */
@@ -37,6 +38,7 @@ class OmmuAuthors extends CActiveRecord
 	public $author_phone;
 	
 	// Variable Search
+	public $creation_search;
 	public $modified_search;
 
 	/**
@@ -74,8 +76,8 @@ class OmmuAuthors extends CActiveRecord
 				author_phone', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('author_id, publish, name, email, password, creation_date, modified_date, modified_id,
-				modified_search', 'safe', 'on'=>'search'),
+			array('author_id, publish, name, email, password, creation_date, creation_id, modified_date, modified_id,
+				creation_search, modified_search', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -87,8 +89,9 @@ class OmmuAuthors extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'modified_TO' => array(self::BELONGS_TO, 'Users', 'modified_id'),
-			'contact_MANY' => array(self::HAS_MANY, 'OmmuAuthorContact', 'author_id'),
+			'creation' => array(self::BELONGS_TO, 'Users', 'creation_id'),
+			'modified' => array(self::BELONGS_TO, 'Users', 'modified_id'),
+			'contacts' => array(self::HAS_MANY, 'OmmuAuthorContact', 'author_id'),
 		);
 	}
 
@@ -104,9 +107,11 @@ class OmmuAuthors extends CActiveRecord
 			'email' => Yii::t('attribute', 'Email'),
 			'password' => Yii::t('attribute', 'Password'),
 			'creation_date' => Yii::t('attribute', 'Creation Date'),
+			'creation_id' => Yii::t('attribute', 'Creation'),
 			'modified_date' => Yii::t('attribute', 'Modified Date'),
 			'modified_id' => Yii::t('attribute', 'Modified'),
 			'author_phone' => Yii::t('attribute', 'Author Phone'),
+			'creation_search' => Yii::t('attribute', 'Creation'),
 			'modified_search' => Yii::t('attribute', 'Modified'),
 		);
 	}
@@ -128,6 +133,18 @@ class OmmuAuthors extends CActiveRecord
 		// @todo Please modify the following code to remove attributes that should not be searched.
 
 		$criteria=new CDbCriteria;
+		
+		// Custom Search
+		$criteria->with = array(
+			'creation' => array(
+				'alias'=>'creation',
+				'select'=>'displayname'
+			),
+			'modified' => array(
+				'alias'=>'modified',
+				'select'=>'displayname'
+			),
+		);
 
 		$criteria->compare('t.author_id',$this->author_id,true);
 		if(isset($_GET['type']) && $_GET['type'] == 'publish') {
@@ -145,18 +162,13 @@ class OmmuAuthors extends CActiveRecord
 		$criteria->compare('t.password',$this->password,true);
 		if($this->creation_date != null && !in_array($this->creation_date, array('0000-00-00 00:00:00', '0000-00-00')))
 			$criteria->compare('date(t.creation_date)',date('Y-m-d', strtotime($this->creation_date)));
+		$criteria->compare('t.creation_id',$this->creation_id);
 		if($this->modified_date != null && !in_array($this->modified_date, array('0000-00-00 00:00:00', '0000-00-00')))
 			$criteria->compare('date(t.modified_date)',date('Y-m-d', strtotime($this->modified_date)));
 		$criteria->compare('t.modified_id',$this->modified_id);
 		
-		// Custom Search
-		$criteria->with = array(
-			'modified_TO' => array(
-				'alias'=>'modified_TO',
-				'select'=>'displayname'
-			),
-		);
-		$criteria->compare('modified_TO.displayname',strtolower($this->modified_search), true);
+		$criteria->compare('creation.displayname',strtolower($this->creation_search), true);
+		$criteria->compare('modified.displayname',strtolower($this->modified_search), true);
 
 		if(!isset($_GET['OmmuAuthors_sort']))
 			$criteria->order = 't.author_id DESC';
@@ -193,6 +205,7 @@ class OmmuAuthors extends CActiveRecord
 			$this->defaultColumns[] = 'email';
 			$this->defaultColumns[] = 'password';
 			$this->defaultColumns[] = 'creation_date';
+			$this->defaultColumns[] = 'creation_id';
 			$this->defaultColumns[] = 'modified_date';
 			$this->defaultColumns[] = 'modified_id';
 		}
@@ -221,16 +234,20 @@ class OmmuAuthors extends CActiveRecord
 			$this->defaultColumns[] = 'email';
 			//$this->defaultColumns[] = 'password';
 			$this->defaultColumns[] = array(
+				'name' => 'creation_search',
+				'value' => '$data->creation->displayname',
+			);
+			$this->defaultColumns[] = array(
 				'name' => 'creation_date',
 				'value' => 'Utility::dateFormat($data->creation_date)',
 				'htmlOptions' => array(
 					'class' => 'center',
 				),
-				'filter' => Yii::app()->controller->widget('zii.widgets.jui.CJuiDatePicker', array(
+				'filter' => Yii::app()->controller->widget('application.components.system.CJuiDatePicker', array(
 					'model'=>$this,
 					'attribute'=>'creation_date',
-					'language' => 'ja',
-					'i18nScriptFile' => 'jquery.ui.datepicker-en.js',
+					'language' => 'en',
+					'i18nScriptFile' => 'jquery-ui-i18n.min.js',
 					//'mode'=>'datetime',
 					'htmlOptions' => array(
 						'id' => 'creation_date_filter',
@@ -286,7 +303,9 @@ class OmmuAuthors extends CActiveRecord
 	 */
 	protected function beforeValidate() {
 		if(parent::beforeValidate()) {
-			if(!$this->isNewRecord)
+			if($this->isNewRecord)
+				$this->creation_id = Yii::app()->user->id;	
+			else
 				$this->modified_id = Yii::app()->user->id;				
 		}
 		return true;

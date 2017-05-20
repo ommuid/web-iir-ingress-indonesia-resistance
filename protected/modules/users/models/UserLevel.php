@@ -1,10 +1,11 @@
 <?php
 /**
  * UserLevel
+ * version: 0.0.1
+ *
  * @author Putra Sudaryanto <putra@sudaryanto.id>
- * @copyright Copyright (c) 2016 Ommu Platform (ommu.co)
- * @created date 24 February 2016, 17:59 WIB
- * @link http://company.ommu.co
+ * @copyright Copyright (c) 2012 Ommu Platform (opensource.ommu.co)
+ * @link https://github.com/ommu/Users
  * @contact (+62)856-299-4114
  *
  * This is the template for generating the model class of a specified table.
@@ -18,13 +19,30 @@
  *
  * --------------------------------------------------------------------------------------
  *
- * This is the model class for table "ommu_user_oauth_level".
+ * This is the model class for table "ommu_user_level".
  *
- * The followings are the available columns in table 'ommu_user_oauth_level':
+ * The followings are the available columns in table 'ommu_user_level':
  * @property integer $level_id
  * @property string $name
  * @property string $desc
  * @property integer $defaults
+ * @property integer $signup
+ * @property integer $message_allow
+ * @property integer $message_limit
+ * @property integer $profile_block
+ * @property integer $profile_search
+ * @property string $profile_privacy
+ * @property string $profile_comments
+ * @property integer $profile_style
+ * @property integer $profile_style_sample
+ * @property integer $profile_status
+ * @property integer $profile_invisible
+ * @property integer $profile_views
+ * @property integer $profile_change
+ * @property integer $profile_delete
+ * @property integer $photo_allow
+ * @property integer $photo_size
+ * @property string $photo_exts
  * @property string $creation_date
  * @property string $creation_id
  * @property string $modified_date
@@ -36,12 +54,13 @@
 class UserLevel extends CActiveRecord
 {
 	public $defaultColumns = array();
-	public $title;
-	public $description;
+	public $title_i;
+	public $description_i;
 	
 	// Variable Search
 	public $creation_search;
 	public $modified_search;
+	public $user_search;
 
 	/**
 	 * Returns the static model of the specified AR class.
@@ -59,7 +78,7 @@ class UserLevel extends CActiveRecord
 	 */
 	public function tableName()
 	{
-		return 'ommu_user_oauth_level';
+		return 'ommu_user_level';
 	}
 
 	/**
@@ -71,16 +90,18 @@ class UserLevel extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('
-				title, description', 'required'),
-			array('defaults', 'numerical', 'integerOnly'=>true),
+				title_i, description_i', 'required', 'on'=>'info'),
+			array('profile_block, profile_search, profile_privacy, profile_comments, profile_style, profile_style_sample, profile_status, profile_invisible, profile_views, profile_change, profile_delete, photo_allow, photo_size, photo_exts', 'required', 'on'=>'user'),
+			array('message_allow, message_limit', 'required', 'on'=>'message'),
+			array('defaults, signup, message_allow, profile_block, profile_search, profile_style, profile_style_sample, profile_status, profile_invisible, profile_views, profile_change, profile_delete, photo_allow', 'numerical', 'integerOnly'=>true),
 			array('name, desc, creation_id, modified_id', 'length', 'max'=>11),
 			array('
-				title', 'length', 'max'=>32),
-			array('modified_date', 'safe'),
+				title_i', 'length', 'max'=>32),
+			array('', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('level_id, name, desc, defaults, creation_date, creation_id, modified_date, modified_id,
-				title, description, creation_search, modified_search', 'safe', 'on'=>'search'),
+			array('level_id, name, desc, defaults, signup, message_allow, message_limit, profile_block, profile_search, profile_privacy, profile_comments, profile_style, profile_style_sample, profile_status, profile_invisible, profile_views, profile_change, profile_delete, photo_allow, photo_size, photo_exts, creation_date, creation_id, modified_date, modified_id,
+				title_i, description_i, creation_search, modified_search, user_search', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -92,12 +113,12 @@ class UserLevel extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
+			'view' => array(self::BELONGS_TO, 'ViewUserLevel', 'level_id'),
 			'title' => array(self::BELONGS_TO, 'OmmuSystemPhrase', 'name'),
 			'description' => array(self::BELONGS_TO, 'OmmuSystemPhrase', 'desc'),
-			'creation_TO' => array(self::BELONGS_TO, 'Users', 'creation_id'),
-			'modified_TO' => array(self::BELONGS_TO, 'Users', 'modified_id'),
-			'view_level' => array(self::BELONGS_TO, 'ViewUserLevel', 'level_id'),
-			//'ommuUsers_relation' => array(self::HAS_MANY, 'OmmuUsers', 'level_id'),
+			'creation' => array(self::BELONGS_TO, 'Users', 'creation_id'),
+			'modified' => array(self::BELONGS_TO, 'Users', 'modified_id'),
+			'users' => array(self::HAS_MANY, 'Users', 'level_id'),
 		);
 	}
 
@@ -107,18 +128,36 @@ class UserLevel extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'level_id' => 'Level',
-			'name' => 'Name',
-			'desc' => 'Desc',
-			'defaults' => 'Defaults',
-			'creation_date' => 'Creation Date',
-			'creation_id' => 'Creation',
-			'modified_date' => 'Modified Date',
-			'modified_id' => 'Modified',
-			'title' => 'Title',
-			'description' => 'Description',
-			'creation_search' => 'Creation',
-			'modified_search' => 'Modified',
+			'level_id' => Yii::t('attribute', 'Level'),
+			'name' => Yii::t('attribute', 'Name'),
+			'desc' => Yii::t('attribute', 'Description'),
+			'defaults' => Yii::t('attribute', 'Defaults'),
+			'signup' => Yii::t('attribute', 'Signup'),
+			'message_allow' => Yii::t('attribute', 'Can users block other users?'),
+			'message_limit' => Yii::t('attribute', 'Message Limit'),
+			'profile_block' => Yii::t('attribute', 'Can users block other users?'),
+			'profile_search' => Yii::t('attribute', 'Search Privacy Options'),
+			'profile_privacy' => Yii::t('attribute', 'Profile Privacy'),
+			'profile_comments' => Yii::t('attribute', 'Profile Comments'),
+			'profile_style' => Yii::t('attribute', 'Default'),
+			'profile_style_sample' => Yii::t('attribute', 'Profile Style Sample'),
+			'profile_status' => Yii::t('attribute', 'Allow profile status messages?'),
+			'profile_invisible' => Yii::t('attribute', 'Allow users to go invisible?'),
+			'profile_views' => Yii::t('attribute', 'Allow users to see who viewed their profile?'),
+			'profile_change' => Yii::t('attribute', 'Allow username change?'),
+			'profile_delete' => Yii::t('attribute', 'Allow account deletion?'),
+			'photo_allow' => Yii::t('attribute', 'Allow User Photos?'),
+			'photo_size' => Yii::t('attribute', 'Photo Size'),
+			'photo_exts' => Yii::t('attribute', 'Photo Exts'),
+			'creation_date' => Yii::t('attribute', 'Creation Date'),
+			'creation_id' => Yii::t('attribute', 'Creation'),
+			'modified_date' => Yii::t('attribute', 'Modified Date'),
+			'modified_id' => Yii::t('attribute', 'Modified'),
+			'title_i' => Yii::t('attribute', 'Name'),
+			'description_i' => Yii::t('attribute', 'Description'),
+			'creation_search' => Yii::t('attribute', 'Creation'),
+			'modified_search' => Yii::t('attribute', 'Modified'),
+			'user_search' => Yii::t('attribute', 'Users'),
 		);
 	}
 
@@ -139,11 +178,57 @@ class UserLevel extends CActiveRecord
 		// @todo Please modify the following code to remove attributes that should not be searched.
 
 		$criteria=new CDbCriteria;
+		
+		// Custom Search
+		$defaultLang = OmmuLanguages::getDefault('code');
+		if(isset(Yii::app()->session['language']))
+			$language = Yii::app()->session['language'];
+		else 
+			$language = $defaultLang;
+		
+		$criteria->with = array(
+			'view' => array(
+				'alias'=>'view',
+			),
+			'title' => array(
+				'alias'=>'title',
+				'select'=>$language,
+			),
+			'description' => array(
+				'alias'=>'description',
+				'select'=>$language,
+			),
+			'creation' => array(
+				'alias'=>'creation',
+				'select'=>'displayname',
+			),
+			'modified' => array(
+				'alias'=>'modified',
+				'select'=>'displayname',
+			),
+		);
 
 		$criteria->compare('t.level_id',$this->level_id);
-		$criteria->compare('t.name',strtolower($this->name),true);
-		$criteria->compare('t.desc',strtolower($this->desc),true);
+		$criteria->compare('t.name',$this->name);
+		$criteria->compare('t.desc',$this->desc);
 		$criteria->compare('t.defaults',$this->defaults);
+		$criteria->compare('t.signup',$this->signup);
+		$criteria->compare('t.message_allow',$this->message_allow);
+		$criteria->compare('t.message_limit',strtolower($this->message_limit),true);
+		$criteria->compare('t.profile_block',$this->profile_block);
+		$criteria->compare('t.profile_search',$this->profile_search);
+		$criteria->compare('t.profile_privacy',strtolower($this->profile_privacy),true);
+		$criteria->compare('t.profile_comments',strtolower($this->profile_comments),true);
+		$criteria->compare('t.profile_style',$this->profile_style);
+		$criteria->compare('t.profile_style_sample',$this->profile_style_sample);
+		$criteria->compare('t.profile_status',$this->profile_status);
+		$criteria->compare('t.profile_invisible',$this->profile_invisible);
+		$criteria->compare('t.profile_views',$this->profile_views);
+		$criteria->compare('t.profile_change',$this->profile_change);
+		$criteria->compare('t.profile_delete',$this->profile_delete);
+		$criteria->compare('t.photo_allow',$this->photo_allow);
+		$criteria->compare('t.photo_size',strtolower($this->photo_size),true);
+		$criteria->compare('t.photo_exts',$this->photo_exts,true);
 		if($this->creation_date != null && !in_array($this->creation_date, array('0000-00-00 00:00:00', '0000-00-00')))
 			$criteria->compare('date(t.creation_date)',date('Y-m-d', strtotime($this->creation_date)));
 		if(isset($_GET['creation']))
@@ -157,25 +242,11 @@ class UserLevel extends CActiveRecord
 		else
 			$criteria->compare('t.modified_id',$this->modified_id);
 		
-		// Custom Search
-		$criteria->with = array(
-			'view_level' => array(
-				'alias'=>'view_level',
-				'select'=>'level_name, level_desc, oauths'
-			),
-			'creation_TO' => array(
-				'alias'=>'creation_TO',
-				'select'=>'displayname',
-			),
-			'modified_TO' => array(
-				'alias'=>'modified_TO',
-				'select'=>'displayname',
-			),
-		);
-		$criteria->compare('view_level.level_name',strtolower($this->title), true);
-		$criteria->compare('view_level.level_desc',strtolower($this->description), true);
-		$criteria->compare('creation_TO.displayname',strtolower($this->creation_search), true);
-		$criteria->compare('modified_TO.displayname',strtolower($this->modified_search), true);
+		$criteria->compare('title.'.$language,strtolower($this->title_i), true);
+		$criteria->compare('description.'.$language,strtolower($this->description_i), true);
+		$criteria->compare('creation.displayname',strtolower($this->creation_search), true);
+		$criteria->compare('modified.displayname',strtolower($this->modified_search), true);
+		$criteria->compare('view.users',$this->user_search);
 
 		if(!isset($_GET['UserLevel_sort']))
 			$criteria->order = 't.level_id DESC';
@@ -210,6 +281,23 @@ class UserLevel extends CActiveRecord
 			$this->defaultColumns[] = 'name';
 			$this->defaultColumns[] = 'desc';
 			$this->defaultColumns[] = 'defaults';
+			$this->defaultColumns[] = 'signup';
+			$this->defaultColumns[] = 'message_allow';
+			$this->defaultColumns[] = 'message_limit';
+			$this->defaultColumns[] = 'profile_block';
+			$this->defaultColumns[] = 'profile_search';
+			$this->defaultColumns[] = 'profile_privacy';
+			$this->defaultColumns[] = 'profile_comments';
+			$this->defaultColumns[] = 'profile_style';
+			$this->defaultColumns[] = 'profile_style_sample';
+			$this->defaultColumns[] = 'profile_status';
+			$this->defaultColumns[] = 'profile_invisible';
+			$this->defaultColumns[] = 'profile_views';
+			$this->defaultColumns[] = 'profile_change';
+			$this->defaultColumns[] = 'profile_delete';
+			$this->defaultColumns[] = 'photo_allow';
+			$this->defaultColumns[] = 'photo_size';
+			$this->defaultColumns[] = 'photo_exts';
 			$this->defaultColumns[] = 'creation_date';
 			$this->defaultColumns[] = 'creation_id';
 			$this->defaultColumns[] = 'modified_date';
@@ -229,20 +317,24 @@ class UserLevel extends CActiveRecord
 				'value' => '$this->grid->dataProvider->pagination->currentPage*$this->grid->dataProvider->pagination->pageSize + $row+1'
 			);
 			$this->defaultColumns[] = array(
-				'name' => 'title',
-				'value' => 'Phrase::trans($data->name, 2)',
+				'name' => 'title_i',
+				'value' => 'Phrase::trans($data->name)',
 			);
 			$this->defaultColumns[] = array(
-				'name' => 'description',
-				'value' => 'Phrase::trans($data->desc, 2)',
+				'name' => 'description_i',
+				'value' => 'Phrase::trans($data->desc)',
 			);
 			$this->defaultColumns[] = array(
-				'header' => 'Users',
-				'value' => '$data->level_id != 1 ? CHtml::link($data->view_level->oauths." ".Yii::t(\'phrase\', \'User\'), Yii::app()->controller->createUrl("o/member/manage",array("level"=>$data->level_id))) : CHtml::link($data->view_level->oauths." ".Yii::t(\'phrase\', \'User\'), Yii::app()->controller->createUrl("o/admin/manage",array("level"=>$data->level_id)))',
+				'name' => 'user_search',
+				'value' => 'CHtml::link($data->view->users ? $data->view->users : 0, $data->level_id != 1 ? Yii::app()->controller->createUrl("o/member/manage",array("level"=>$data->level_id)) : Yii::app()->controller->createUrl("o/admin/manage",array("level"=>$data->level_id)))',
 				'htmlOptions' => array(
 					'class' => 'center',
 				),
 				'type' => 'raw',
+			);
+			$this->defaultColumns[] = array(
+				'name' => 'creation_search',
+				'value' => '$data->creation->displayname',
 			);
 			$this->defaultColumns[] = array(
 				'name' => 'creation_date',
@@ -250,11 +342,11 @@ class UserLevel extends CActiveRecord
 				'htmlOptions' => array(
 					'class' => 'center',
 				),
-				'filter' => Yii::app()->controller->widget('zii.widgets.jui.CJuiDatePicker', array(
+				'filter' => Yii::app()->controller->widget('application.components.system.CJuiDatePicker', array(
 					'model'=>$this,
 					'attribute'=>'creation_date',
-					'language' => 'ja',
-					'i18nScriptFile' => 'jquery.ui.datepicker-en.js',
+					'language' => 'en',
+					'i18nScriptFile' => 'jquery-ui-i18n.min.js',
 					//'mode'=>'datetime',
 					'htmlOptions' => array(
 						'id' => 'creation_date_filter',
@@ -271,23 +363,17 @@ class UserLevel extends CActiveRecord
 				), true),
 			);
 			$this->defaultColumns[] = array(
-				'name' => 'creation_search',
-				'value' => '$data->creation_TO->displayname',
+				'name' => 'defaults',
+				'value' => '$data->defaults == 1 ? Chtml::image(Yii::app()->theme->baseUrl.\'/images/icons/publish.png\') : Utility::getPublish(Yii::app()->controller->createUrl("default",array("id"=>$data->level_id)), $data->defaults, 6)',
+				'htmlOptions' => array(
+					'class' => 'center',
+				),
+				'filter'=>array(
+					1=>Yii::t('phrase', 'Yes'),
+					0=>Yii::t('phrase', 'No'),
+				),
+				'type' => 'raw',
 			);
-			if(!isset($_GET['type'])) {
-				$this->defaultColumns[] = array(
-					'name' => 'defaults',
-					'value' => 'Utility::getPublish(Yii::app()->controller->createUrl("default",array("id"=>$data->level_id)), $data->defaults, 6)',
-					'htmlOptions' => array(
-						'class' => 'center',
-					),
-					'filter'=>array(
-						1=>Yii::t('phrase', 'Yes'),
-						0=>Yii::t('phrase', 'No'),
-					),
-					'type' => 'raw',
-				);
-			}
 		}
 		parent::afterConstruct();
 	}
@@ -310,43 +396,47 @@ class UserLevel extends CActiveRecord
 	}
 
 	//get Default
-	public static function getDefault(){
+	public static function getDefault() 
+	{
 		$model = self::model()->findByAttributes(array('defaults' => 1));
 		return $model->level_id;
 	}
 
 	//get Type Member (Except administrator)
-	public static function getTypeMember($type=null){
-		if($type == null) {
-			$model = self::model()->findAll(array(
-				'condition'=>'level_id != :level',
-				'params' => array(
-					':level' => 1,
-				),
-			));
-		} else {
-			$model = self::model()->findAll();
-		}
+	public static function getUserLevel($type=null) 
+	{
+		$criteria=new CDbCriteria;
+		if($type != null && $type == 'member')
+			$criteria->addNotInCondition('t.level_id',array(1));
+		
+		$model = self::model()->findAll($criteria);
+		
 		$items = array();
 		if($model != null) {
-			foreach($model as $key => $val) {
-				$items[$val->level_id] = Phrase::trans($val->name, 2);
-			}
+			foreach($model as $key => $val)
+				$items[$val->level_id] = Phrase::trans($val->name);
+		
 			return $items;
-		}else {
+		} else
 			return false;
-		}
 	}
 
 	/**
 	 * before validate attributes
 	 */
-	protected function beforeValidate() {
+	protected function beforeValidate() 
+	{
+		$currentAction = strtolower(Yii::app()->controller->id.'/'.Yii::app()->controller->action->id);
 		if(parent::beforeValidate()) {
 			if($this->isNewRecord)
 				$this->creation_id = Yii::app()->user->id;
 			else
 				$this->modified_id = Yii::app()->user->id;
+			
+			if($currentAction == 'o/level/user') {
+				if($this->photo_size['width'] == '' || $this->photo_size['height'] == '')
+					$this->addError('photo_size', Yii::t('phrase', 'Photo Size cannot be blank.'));
+			}
 		}
 		return true;
 	}
@@ -354,46 +444,60 @@ class UserLevel extends CActiveRecord
 	/**
 	 * before save attributes
 	 */
-	protected function beforeSave() {
+	protected function beforeSave() 
+	{
+		$currentAction = strtolower(Yii::app()->controller->id.'/'.Yii::app()->controller->action->id);
+		$location = Utility::getUrlTitle($currentAction);
+		
 		if(parent::beforeSave()) {
-			$action = strtolower(Yii::app()->controller->action->id);
-			if($this->isNewRecord) {
-				$currentAction = strtolower(Yii::app()->controller->module->id.'/'.Yii::app()->controller->id);
+			if($this->isNewRecord || (!$this->isNewRecord && $this->name == 0)) {
 				$title=new OmmuSystemPhrase;
-				$title->location = $currentAction;
-				$title->en_us = $this->title;
-				if($title->save()) {
+				$title->location = $location.'_title';
+				$title->en_us = $this->title_i;
+				if($title->save())
 					$this->name = $title->phrase_id;
-				}
-
-				$desc=new OmmuSystemPhrase;
-				$desc->location = $currentAction;
-				$desc->en_us = $this->description;
-				if($desc->save()) {
-					$this->desc = $desc->phrase_id;
-				}
 				
-			}else {
-				if($action == 'edit') {
+			} else {
+				if($currentAction == 'o/level/edit') {
 					$title = OmmuSystemPhrase::model()->findByPk($this->name);
-					$title->en_us = $this->title;
+					$title->en_us = $this->title_i;
 					$title->save();
-
-					$desc = OmmuSystemPhrase::model()->findByPk($this->desc);
-					$desc->en_us = $this->description;
-					$desc->save();
-				}
-
-				// set to default modules
-				if($this->defaults == 1) {
-					self::model()->updateAll(array(
-						'defaults' => 0,	
-					));
-					$this->defaults = 1;
 				}
 			}
+			
+			if($this->isNewRecord || (!$this->isNewRecord && $this->desc == 0)) {
+				$desc=new OmmuSystemPhrase;
+				$desc->location = $location.'_description';
+				$desc->en_us = $this->description_i;
+				if($desc->save())
+					$this->desc = $desc->phrase_id;
+
+			} else {
+				if($currentAction == 'o/level/edit') {
+					$desc = OmmuSystemPhrase::model()->findByPk($this->desc);
+					$desc->en_us = $this->description_i;
+					$desc->save();
+				}
+			}
+
+			// set to default modules
+			if($this->defaults == 1) {
+				self::model()->updateAll(array(
+					'defaults' => 0,	
+				));
+				$this->defaults = 1;
+			}
+				
+			if($currentAction == 'o/level/user') {
+				$this->profile_privacy = serialize($this->profile_privacy);
+				$this->profile_comments = serialize($this->profile_comments);
+				$this->photo_size = serialize($this->photo_size);
+				$this->photo_exts = serialize(Utility::formatFileType($this->photo_exts));
+				
+			} else if($currentAction == 'o/level/message')
+				$this->message_limit = serialize($this->message_limit);
+				
 		}
 		return true;
 	}
-
 }

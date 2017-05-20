@@ -1,5 +1,3 @@
-mklink /H "D:\htdocs\_product_resistance.web.id\protected\LICENSE" "D:\htdocs\_project_ommu_platform\LICENSE"
--------
 mklink /H "D:\htdocs\_product_resistance.web.id\timthumb.php" "D:\htdocs\_project_ommu_platform\timthumb.php"
 -------
 install
@@ -21,7 +19,6 @@ protected\components
 =======
 mklink /H "D:\htdocs\_product_resistance.web.id\protected\components\Controller.php" "D:\htdocs\_project_ommu_platform\protected\components\Controller.php"
 mklink /H "D:\htdocs\_product_resistance.web.id\protected\components\ControllerApi.php" "D:\htdocs\_project_ommu_platform\protected\components\ControllerApi.php"
-mklink /H "D:\htdocs\_product_resistance.web.id\protected\components\OauthIdentity.php" "D:\htdocs\_project_ommu_platform\protected\components\OauthIdentity.php"
 mklink /H "D:\htdocs\_product_resistance.web.id\protected\components\UserIdentity.php" "D:\htdocs\_project_ommu_platform\protected\components\UserIdentity.php"
 mklink /J "D:\htdocs\_product_resistance.web.id\protected\components\admin" "D:\htdocs\_project_ommu_platform\protected\components\admin"
 mklink /J "D:\htdocs\_product_resistance.web.id\protected\components\plugin" "D:\htdocs\_project_ommu_platform\protected\components\plugin"
@@ -64,9 +61,8 @@ mklink /J "D:\htdocs\_product_resistance.web.id\themes\ommu" "D:\htdocs\_project
 protected\modules
 =======
 ///users\\\
-mklink /J "D:\htdocs\_product_resistance.web.id\externals\users" "D:\htdocs\_project_ommu_module_users\externals\users"
-mklink /H "D:\htdocs\_product_resistance.web.id\protected\modules\users\users.yaml" "D:\htdocs\_project_ommu_module_users\modules\users\users.yaml"
 mklink /H "D:\htdocs\_product_resistance.web.id\protected\modules\users\LICENSE" "D:\htdocs\_project_ommu_module_users\modules\users\LICENSE"
+mklink /H "D:\htdocs\_product_resistance.web.id\protected\modules\users\users.yaml" "D:\htdocs\_project_ommu_module_users\modules\users\users.yaml"
 mklink /H "D:\htdocs\_product_resistance.web.id\protected\modules\users\UsersModule.php" "D:\htdocs\_project_ommu_module_users\modules\users\UsersModule.php"
 mklink /J "D:\htdocs\_product_resistance.web.id\protected\modules\users\assets" "D:\htdocs\_project_ommu_module_users\modules\users\assets"
 mklink /J "D:\htdocs\_product_resistance.web.id\protected\modules\users\components" "D:\htdocs\_project_ommu_module_users\modules\users\components"
@@ -79,9 +75,8 @@ mklink /J "D:\htdocs\_product_resistance.web.id\protected\modules\users\views\o"
 mklink /J "D:\htdocs\_product_resistance.web.id\protected\modules\users\views\admin" "D:\htdocs\_project_ommu_module_users\modules\users\views\admin"
 
 ///report\\\
-mklink /J "D:\htdocs\_product_resistance.web.id\externals\report" "D:\htdocs\_project_ommu_module_reports\externals\report"
-mklink /H "D:\htdocs\_product_resistance.web.id\protected\modules\report\report.yaml" "D:\htdocs\_project_ommu_module_reports\modules\report\report.yaml"
 mklink /H "D:\htdocs\_product_resistance.web.id\protected\modules\report\LICENSE" "D:\htdocs\_project_ommu_module_reports\modules\report\LICENSE"
+mklink /H "D:\htdocs\_product_resistance.web.id\protected\modules\report\report.yaml" "D:\htdocs\_project_ommu_module_reports\modules\report\report.yaml"
 mklink /H "D:\htdocs\_product_resistance.web.id\protected\modules\report\ReportModule.php" "D:\htdocs\_project_ommu_module_reports\modules\report\ReportModule.php"
 mklink /J "D:\htdocs\_product_resistance.web.id\protected\modules\report\assets" "D:\htdocs\_project_ommu_module_reports\modules\report\assets"
 mklink /J "D:\htdocs\_product_resistance.web.id\protected\modules\report\components" "D:\htdocs\_project_ommu_module_reports\modules\report\components"
@@ -92,9 +87,8 @@ mklink /J "D:\htdocs\_product_resistance.web.id\protected\modules\report\control
 mklink /J "D:\htdocs\_product_resistance.web.id\protected\modules\report\views\o" "D:\htdocs\_project_ommu_module_reports\modules\report\views\o"
 
 ///support\\\
-mklink /J "D:\htdocs\_product_resistance.web.id\externals\support" "D:\htdocs\_project_ommu_module_support\externals\support"
-mklink /H "D:\htdocs\_product_resistance.web.id\protected\modules\support\support.yaml" "D:\htdocs\_project_ommu_module_support\modules\support\support.yaml"
 mklink /H "D:\htdocs\_product_resistance.web.id\protected\modules\support\LICENSE" "D:\htdocs\_project_ommu_module_support\modules\support\LICENSE"
+mklink /H "D:\htdocs\_product_resistance.web.id\protected\modules\support\support.yaml" "D:\htdocs\_project_ommu_module_support\modules\support\support.yaml"
 mklink /H "D:\htdocs\_product_resistance.web.id\protected\modules\support\SupportModule.php" "D:\htdocs\_project_ommu_module_support\modules\support\SupportModule.php"
 mklink /J "D:\htdocs\_product_resistance.web.id\protected\modules\support\assets" "D:\htdocs\_project_ommu_module_support\modules\support\assets"
 mklink /J "D:\htdocs\_product_resistance.web.id\protected\modules\support\components" "D:\htdocs\_project_ommu_module_support\modules\support\components"
@@ -105,10 +99,9 @@ mklink /J "D:\htdocs\_product_resistance.web.id\protected\modules\support\contro
 mklink /J "D:\htdocs\_product_resistance.web.id\protected\modules\support\views\o" "D:\htdocs\_project_ommu_module_support\modules\support\views\o"
 
 ///article\\\
-mklink /J "D:\htdocs\_product_resistance.web.id\externals\article" "D:\htdocs\_project_ommu_module_articles\externals\article"
+mklink /H "D:\htdocs\_product_resistance.web.id\protected\modules\article\LICENSE" "D:\htdocs\_project_ommu_module_articles\modules\article\LICENSE"
 mklink /H "D:\htdocs\_product_resistance.web.id\protected\modules\article\article.yaml" "D:\htdocs\_project_ommu_module_articles\modules\article\article.yaml"
 mklink /H "D:\htdocs\_product_resistance.web.id\protected\modules\article\ArticleModule.php" "D:\htdocs\_project_ommu_module_articles\modules\article\ArticleModule.php"
-mklink /H "D:\htdocs\_product_resistance.web.id\protected\modules\article\LICENSE" "D:\htdocs\_project_ommu_module_articles\modules\article\LICENSE"
 mklink /J "D:\htdocs\_product_resistance.web.id\protected\modules\article\assets" "D:\htdocs\_project_ommu_module_articles\modules\article\assets"
 mklink /J "D:\htdocs\_product_resistance.web.id\protected\modules\article\components" "D:\htdocs\_project_ommu_module_articles\modules\article\components"
 mklink /J "D:\htdocs\_product_resistance.web.id\protected\modules\article\models" "D:\htdocs\_project_ommu_module_articles\modules\article\models"
@@ -118,10 +111,9 @@ mklink /J "D:\htdocs\_product_resistance.web.id\protected\modules\article\contro
 mklink /J "D:\htdocs\_product_resistance.web.id\protected\modules\article\views\o" "D:\htdocs\_project_ommu_module_articles\modules\article\views\o"
 
 ///banner\\\
-mklink /J "D:\htdocs\_product_resistance.web.id\externals\banner" "D:\htdocs\_project_ommu_module_banner\externals\banner"
+mklink /H "D:\htdocs\_product_resistance.web.id\protected\modules\banner\LICENSE" "D:\htdocs\_project_ommu_module_banner\modules\banner\LICENSE"
 mklink /H "D:\htdocs\_product_resistance.web.id\protected\modules\banner\banner.yaml" "D:\htdocs\_project_ommu_module_banner\modules\banner\banner.yaml"
 mklink /H "D:\htdocs\_product_resistance.web.id\protected\modules\banner\BannerModule.php" "D:\htdocs\_project_ommu_module_banner\modules\banner\BannerModule.php"
-mklink /H "D:\htdocs\_product_resistance.web.id\protected\modules\banner\LICENSE" "D:\htdocs\_project_ommu_module_banner\modules\banner\LICENSE"
 mklink /J "D:\htdocs\_product_resistance.web.id\protected\modules\banner\assets" "D:\htdocs\_project_ommu_module_banner\modules\banner\assets"
 mklink /J "D:\htdocs\_product_resistance.web.id\protected\modules\banner\components" "D:\htdocs\_project_ommu_module_banner\modules\banner\components"
 mklink /J "D:\htdocs\_product_resistance.web.id\protected\modules\banner\models" "D:\htdocs\_project_ommu_module_banner\modules\banner\models"

@@ -1,11 +1,11 @@
 <?php
 /**
  * OmmuZoneCity
- * version: 1.1.0
+ * version: 1.2.0
  *
  * @author Putra Sudaryanto <putra@sudaryanto.id>
- * @copyright Copyright (c) 2012 Ommu Platform (ommu.co)
- * @link https://github.com/oMMu/Ommu-Core
+ * @copyright Copyright (c) 2012 Ommu Platform (opensource.ommu.co)
+ * @link https://github.com/ommu/Core
  * @contact (+62)856-299-4114
  *
  * This is the template for generating the model class of a specified table.
@@ -25,7 +25,7 @@
  * @property string $city_id
  * @property integer $publish
  * @property integer $province_id
- * @property string $city
+ * @property string $city_name
  * @property string $mfdonline
  * @property integer $checked
  * @property string $creation_date
@@ -72,15 +72,15 @@ class OmmuZoneCity extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('city, mfdonline', 'required'),
+			array('city_name, mfdonline', 'required'),
 			array('publish, province_id, checked', 'numerical', 'integerOnly'=>true),
-			array('city', 'length', 'max'=>64),
+			array('city_name', 'length', 'max'=>64),
 			array('mfdonline', 'length', 'max'=>4),
 			array('creation_id, modified_id', 'length', 'max'=>11),
 			array('creation_id, modified_id', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('city_id, publish, province_id, city, mfdonline, checked, creation_date, creation_id, modified_date, modified_id,
+			array('city_id, publish, province_id, city_name, mfdonline, checked, creation_date, creation_id, modified_date, modified_id,
 				province_search, creation_search, modified_search', 'safe', 'on'=>'search'),
 		);
 	}
@@ -93,10 +93,10 @@ class OmmuZoneCity extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'province_relation' => array(self::BELONGS_TO, 'OmmuZoneProvince', 'province_id'),
-			'creation_relation' => array(self::BELONGS_TO, 'Users', 'creation_id'),
-			'modified_relation' => array(self::BELONGS_TO, 'Users', 'modified_id'),
-			'district_relation' => array(self::HAS_MANY, 'OmmuZoneDistricts', 'city_id'),
+			'province' => array(self::BELONGS_TO, 'OmmuZoneProvince', 'province_id'),
+			'creation' => array(self::BELONGS_TO, 'Users', 'creation_id'),
+			'modified' => array(self::BELONGS_TO, 'Users', 'modified_id'),
+			'districts' => array(self::HAS_MANY, 'OmmuZoneDistricts', 'city_id'),
 		);
 	}
 
@@ -109,7 +109,7 @@ class OmmuZoneCity extends CActiveRecord
 			'city_id' => Yii::t('attribute', 'City'),
 			'publish' => Yii::t('attribute', 'Publish'),
 			'province_id' => Yii::t('attribute', 'Province'),
-			'city' => Yii::t('attribute', 'City'),
+			'city_name' => Yii::t('attribute', 'City'),
 			'mfdonline' => Yii::t('attribute', 'Mfdonline'),
 			'checked' => Yii::t('attribute', 'Checked'),
 			'creation_date' => Yii::t('attribute', 'Creation Date'),
@@ -139,6 +139,22 @@ class OmmuZoneCity extends CActiveRecord
 		// @todo Please modify the following code to remove attributes that should not be searched.
 
 		$criteria=new CDbCriteria;
+		
+		// Custom Search
+		$criteria->with = array(
+			'province' => array(
+				'alias'=>'province',
+				'select'=>'province_name',
+			),
+			'creation' => array(
+				'alias'=>'creation',
+				'select'=>'displayname',
+			),
+			'modified' => array(
+				'alias'=>'modified',
+				'select'=>'displayname',
+			),
+		);
 
 		$criteria->compare('t.city_id',$this->city_id,true);
 		if(isset($_GET['type']) && $_GET['type'] == 'publish') {
@@ -155,7 +171,7 @@ class OmmuZoneCity extends CActiveRecord
 			$criteria->compare('t.province_id',$_GET['province']);
 		else
 			$criteria->compare('t.province_id',$this->province_id);
-		$criteria->compare('t.city',strtolower($this->city),true);
+		$criteria->compare('t.city_name',strtolower($this->city_name),true);
 		$criteria->compare('t.mfdonline',strtolower($this->mfdonline),true);
 		$criteria->compare('t.checked',$this->checked);
 		if($this->creation_date != null && !in_array($this->creation_date, array('0000-00-00 00:00:00', '0000-00-00')))
@@ -171,24 +187,9 @@ class OmmuZoneCity extends CActiveRecord
 		else
 			$criteria->compare('t.modified_id',$this->modified_id);
 		
-		// Custom Search
-		$criteria->with = array(
-			'province_relation' => array(
-				'alias'=>'province_relation',
-				'select'=>'province',
-			),
-			'creation_relation' => array(
-				'alias'=>'creation_relation',
-				'select'=>'displayname',
-			),
-			'modified_relation' => array(
-				'alias'=>'modified_relation',
-				'select'=>'displayname',
-			),
-		);
-		$criteria->compare('province_relation.province',strtolower($this->province_search), true);
-		$criteria->compare('creation_relation.displayname',strtolower($this->creation_search), true);
-		$criteria->compare('modified_relation.displayname',strtolower($this->modified_search), true);
+		$criteria->compare('province.province_name',strtolower($this->province_search), true);
+		$criteria->compare('creation.displayname',strtolower($this->creation_search), true);
+		$criteria->compare('modified.displayname',strtolower($this->modified_search), true);
 
 		if(!isset($_GET['OmmuZoneCity_sort']))
 			$criteria->order = 't.city_id DESC';
@@ -222,7 +223,7 @@ class OmmuZoneCity extends CActiveRecord
 			//$this->defaultColumns[] = 'city_id';
 			$this->defaultColumns[] = 'publish';
 			$this->defaultColumns[] = 'province_id';
-			$this->defaultColumns[] = 'city';
+			$this->defaultColumns[] = 'city_name';
 			$this->defaultColumns[] = 'mfdonline';
 			$this->defaultColumns[] = 'checked';
 			$this->defaultColumns[] = 'creation_date';
@@ -251,15 +252,15 @@ class OmmuZoneCity extends CActiveRecord
 				'header' => 'No',
 				'value' => '$this->grid->dataProvider->pagination->currentPage*$this->grid->dataProvider->pagination->pageSize + $row+1'
 			);
-			$this->defaultColumns[] = 'city';
+			$this->defaultColumns[] = 'city_name';
 			$this->defaultColumns[] = array(
 				'name' => 'province_search',
-				'value' => '$data->province_relation->province',
+				'value' => '$data->province->province_name',
 			);
 			$this->defaultColumns[] = 'mfdonline';
 			$this->defaultColumns[] = array(
 				'name' => 'creation_search',
-				'value' => '$data->creation_relation->displayname',
+				'value' => '$data->creation->displayname',
 			);
 			$this->defaultColumns[] = array(
 				'name' => 'creation_date',
@@ -267,11 +268,11 @@ class OmmuZoneCity extends CActiveRecord
 				'htmlOptions' => array(
 					'class' => 'center',
 				),
-				'filter' => Yii::app()->controller->widget('zii.widgets.jui.CJuiDatePicker', array(
+				'filter' => Yii::app()->controller->widget('application.components.system.CJuiDatePicker', array(
 					'model'=>$this,
 					'attribute'=>'creation_date',
-					'language' => 'ja',
-					'i18nScriptFile' => 'jquery.ui.datepicker-en.js',
+					'language' => 'en',
+					'i18nScriptFile' => 'jquery-ui-i18n.min.js',
 					//'mode'=>'datetime',
 					'htmlOptions' => array(
 						'id' => 'creation_date_filter',
@@ -288,24 +289,22 @@ class OmmuZoneCity extends CActiveRecord
 				), true),
 			);
 			/*
+			$this->defaultColumns[] = array(
+				'name' => 'checked',
+				'value' => 'Utility::getPublish(Yii::app()->controller->createUrl("checked",array("id"=>$data->city_id)), $data->checked, 1)',
+				'htmlOptions' => array(
+					'class' => 'center',
+				),
+				'filter'=>array(
+					1=>Yii::t('phrase', 'Yes'),
+					0=>Yii::t('phrase', 'No'),
+				),
+				'type' => 'raw',
+			);
 			if(!isset($_GET['type'])) {
 				$this->defaultColumns[] = array(
 					'name' => 'publish',
 					'value' => 'Utility::getPublish(Yii::app()->controller->createUrl("publish",array("id"=>$data->city_id)), $data->publish, 1)',
-					'htmlOptions' => array(
-						'class' => 'center',
-					),
-					'filter'=>array(
-						1=>Yii::t('phrase', 'Yes'),
-						0=>Yii::t('phrase', 'No'),
-					),
-					'type' => 'raw',
-				);
-			}
-			if(!isset($_GET['type'])) {
-				$this->defaultColumns[] = array(
-					'name' => 'checked',
-					'value' => 'Utility::getPublish(Yii::app()->controller->createUrl("checked",array("id"=>$data->city_id)), $data->checked, 1)',
 					'htmlOptions' => array(
 						'class' => 'center',
 					),
@@ -341,23 +340,18 @@ class OmmuZoneCity extends CActiveRecord
 	/**
 	 * Get city
 	 */
-	public static function getCity($province=null) {
-		if($province == null || ($province != null && ($province == '' || $province == 0))) {
-			$model = self::model()->findAll();
-		} else {
-			$model = self::model()->findAll(array(
-				//'select' => 'publish, name',
-				'condition' => 'province_id = :province',
-				'params' => array(
-					':province' => $province,
-				),
-			));
-		}
+	public static function getCity($province=null) 
+	{
+		$criteria=new CDbCriteria;
+		if($province != null && ($province != '' || $province != 0))
+			$criteria->compare('province_id',$province);
+		
+		$model = self::model()->findAll($criteria);
 
 		$items = array();
 		if($model != null) {
 			foreach($model as $key => $val) {
-				$items[$val->city_id] = $val->city;
+				$items[$val->city_id] = $val->city_name;
 			}
 			return $items;
 		} else {

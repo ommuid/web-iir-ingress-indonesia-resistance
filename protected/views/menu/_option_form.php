@@ -4,13 +4,13 @@
  * @var $this MenuController
  * @var $model OmmuMenu
  * @var $form CActiveForm
- * version: 1.1.0
+ * version: 1.2.0
  *
  * @author Putra Sudaryanto <putra@sudaryanto.id>
- * @copyright Copyright (c) 2016 Ommu Platform (ommu.co)
+ * @copyright Copyright (c) 2016 Ommu Platform (opensource.ommu.co)
  * @created date 24 March 2016, 10:20 WIB
- * @link https://github.com/oMMu/Ommu-Core
- * @contect (+62)856-299-4114
+ * @link https://github.com/ommu/Core
+ * @contact (+62)856-299-4114
  *
  */
 ?>

@@ -4,11 +4,12 @@
  * @var $this SettingController
  * @var $model BannerSetting
  * @var $form CActiveForm
+ * version: 0.0.1
  *
  * @author Putra Sudaryanto <putra@sudaryanto.id>
- * @copyright Copyright (c) 2014 Ommu Platform (ommu.co)
- * @link https://github.com/oMMu/Ommu-Banner
- * @contect (+62)856-299-4114
+ * @copyright Copyright (c) 2014 Ommu Platform (opensource.ommu.co)
+ * @link https://github.com/ommu/Banner
+ * @contact (+62)856-299-4114
  *
  */
 ?>
@@ -59,28 +60,6 @@
 		</div>
 
 		<div class="clearfix">
-			<?php echo $form->labelEx($model,'media_validation'); ?>
-			<div class="desc">
-				<?php echo $form->radioButtonList($model, 'media_validation', array(
-					1 => 'Yes, validation banner size before upload.',
-					0 => 'No, not validation banner size before upload.',
-				)); ?>
-				<?php echo $form->error($model,'media_validation'); ?>
-			</div>
-		</div>
-
-		<div class="clearfix">
-			<?php echo $form->labelEx($model,'media_resize'); ?>
-			<div class="desc">
-				<?php echo $form->radioButtonList($model, 'media_resize', array(
-					1 => 'Yes, resize banner after upload.',
-					0 => 'No, not resize banner after upload.',
-				)); ?>
-				<?php echo $form->error($model,'media_resize'); ?>
-			</div>
-		</div>
-
-		<div class="clearfix">
 			<?php echo $form->labelEx($model,'meta_keyword'); ?>
 			<div class="desc">
 				<?php echo $form->textArea($model,'meta_keyword',array('rows'=>6, 'cols'=>50, 'class'=>'span-7 smaller')); ?>
@@ -93,6 +72,43 @@
 			<div class="desc">
 				<?php echo $form->textArea($model,'meta_description',array('rows'=>6, 'cols'=>50, 'class'=>'span-7 smaller')); ?>
 				<?php echo $form->error($model,'meta_description'); ?>
+			</div>
+		</div>
+
+		<div class="clearfix">
+			<?php echo $form->labelEx($model,'banner_validation'); ?>
+			<div class="desc">
+				<?php echo $form->radioButtonList($model, 'banner_validation', array(
+					1 => 'Yes, validation banner size before upload.',
+					0 => 'No, not validation banner size before upload.',
+				)); ?>
+				<?php echo $form->error($model,'banner_validation'); ?>
+			</div>
+		</div>
+
+		<div class="clearfix">
+			<?php echo $form->labelEx($model,'banner_resize'); ?>
+			<div class="desc">
+				<?php echo $form->radioButtonList($model, 'banner_resize', array(
+					1 => 'Yes, resize banner after upload.',
+					0 => 'No, not resize banner after upload.',
+				)); ?>
+				<?php echo $form->error($model,'banner_resize'); ?>
+			</div>
+		</div>
+
+		<div class="clearfix">
+			<?php echo $form->labelEx($model,'banner_file_type'); ?>
+			<div class="desc">
+				<?php				
+				if(!$model->getErrors()) {
+					$banner_file_type = unserialize($model->banner_file_type);
+					if(!empty($banner_file_type))
+						$model->banner_file_type = Utility::formatFileType($banner_file_type, false);
+				}
+				echo $form->textField($model,'banner_file_type', array('class'=>'span-6')); ?>
+				<?php echo $form->error($model,'banner_file_type'); ?>
+				<span class="small-px">pisahkan jenis file dengan koma (,). example: "jpg, png, bmp"</span>
 			</div>
 		</div>
 

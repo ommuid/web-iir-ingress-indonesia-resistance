@@ -4,12 +4,13 @@
  * @var $this WidgetController
  * @var $model SupportWidget
  * @var $form CActiveForm
+ * version: 0.2.1
  *
  * @author Putra Sudaryanto <putra@sudaryanto.id>
- * @copyright Copyright (c) 2016 Ommu Platform (ommu.co)
+ * @copyright Copyright (c) 2016 Ommu Platform (opensource.ommu.co)
  * @created date 3 February 2016, 12:26 WIB
- * @link http://company.ommu.co
- * @contect (+62)856-299-4114
+ * @link https://github.com/ommu/Support
+ * @contact (+62)856-299-4114
  *
  */
 
