@@ -1,4 +1,16 @@
-<?php 
+<?php
+/**
+ * @var $this BannerRecentComponent
+ * @var $model BannerRecent
+ * version: 0.0.1
+ *
+ * @author Putra Sudaryanto <putra@sudaryanto.id>
+ * @copyright Copyright (c) 2014 Ommu Platform (opensource.ommu.co)
+ * @link https://github.com/ommu/mod-banner
+ * @contact (+62)856-299-4114
+ *
+ */
+
 	$cs = Yii::app()->getClientScript();
 	$cs->registerCssFile($this->module->assetsUrl.'/responsiveslides.css');
 	$cs->registerScriptFile($this->module->assetsUrl.'/plugin/responsiveslides.min.js', CClientScript::POS_END);

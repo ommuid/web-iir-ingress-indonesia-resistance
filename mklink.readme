@@ -121,3 +121,6 @@ mklink /J "D:\htdocs\_product_resistance.web.id\protected\modules\banner\models"
 mklink /J "D:\htdocs\_product_resistance.web.id\protected\modules\banner\controllers\o" "D:\htdocs\_project_ommu_module_banner\modules\banner\controllers\o"
 --
 mklink /J "D:\htdocs\_product_resistance.web.id\protected\modules\banner\views\o" "D:\htdocs\_project_ommu_module_banner\modules\banner\views\o"
+
+///daop\\\
+mklink /J "D:\htdocs\_product_resistance.web.id\protected\modules\daop" "D:\htdocs\_project_ommu_module_daop_ingress\modules\daop"

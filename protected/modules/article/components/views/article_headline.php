@@ -1,7 +1,17 @@
-<?php //begin.Inspiration ?>
-<?php if($model != null) {
-	$controller = strtolower(Yii::app()->controller->id);
-?>
+<?php
+/**
+ * @var $this ArticleHeadlineComponent
+ * @var $model ArticleHeadline
+ * version: 0.0.1
+ *
+ * @author Putra Sudaryanto <putra@sudaryanto.id>
+ * @copyright Copyright (c) 2014 Ommu Platform (opensource.ommu.co)
+ * @link https://github.com/ommu/mod-article
+ * @contact (+62)856-299-4114
+ *
+ */
+
+if($model != null) {?>
 <div class="boxed" id="headline">
 	<h2></h2>
 	<div class="list-view">
@@ -38,4 +48,3 @@
 	</div>
 </div>
 <?php }?>
-<?php //end.Inspiration ?>

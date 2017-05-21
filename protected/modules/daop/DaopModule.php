@@ -1,4 +1,15 @@
 <?php
+/**
+ * DaopModule
+ * version: 0.0.1
+ *
+ * @author Putra Sudaryanto <putra@sudaryanto.id>
+ * @copyright Copyright (c) 2017 Ommu Platform (opensource.ommu.co)
+ * @link http://company.ommu.co
+ * @contact (+62)856-299-4114
+ *
+ *----------------------------------------------------------------------------------------------------------
+ */
 
 class DaopModule extends CWebModule
 {
@@ -24,7 +35,7 @@ class DaopModule extends CWebModule
 	public function getAssetsUrl()
 	{
 		if ($this->_assetsUrl === null)
-			$this->_assetsUrl = Yii::app()->getAssetManager()->publish(Yii::getPathOfAlias('banner.assets'));
+			$this->_assetsUrl = Yii::app()->getAssetManager()->publish(Yii::getPathOfAlias('daop.assets'));
 		
 		return $this->_assetsUrl;
 	}

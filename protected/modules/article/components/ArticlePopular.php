@@ -1,6 +1,16 @@
 <?php
+/**
+ * ArticlePopular
+ * version: 0.0.1
+ *
+ * @author Putra Sudaryanto <putra@sudaryanto.id>
+ * @copyright Copyright (c) 2014 Ommu Platform (opensource.ommu.co)
+ * @link https://github.com/ommu/mod-article
+ * @contact (+62)856-299-4114
+ *
+ */
 
-class FrontArticlePopular extends CWidget
+class ArticlePopular extends CWidget
 {
 
 	public function init() {
@@ -10,11 +20,14 @@ class FrontArticlePopular extends CWidget
 		$this->renderContent();
 	}
 
-	protected function renderContent() {
+	protected function renderContent() 
+	{
 		$module = strtolower(Yii::app()->controller->module->id);
 		$controller = strtolower(Yii::app()->controller->id);
 		$action = strtolower(Yii::app()->controller->action->id);
 		$currentAction = strtolower(Yii::app()->controller->id.'/'.Yii::app()->controller->action->id);
+		$currentModule = strtolower(Yii::app()->controller->module->id.'/'.Yii::app()->controller->id);
+		$currentModuleAction = strtolower(Yii::app()->controller->module->id.'/'.Yii::app()->controller->id.'/'.Yii::app()->controller->action->id);
 		
 		//import model
 		Yii::import('application.modules.article.models.Articles');
@@ -35,8 +48,14 @@ class FrontArticlePopular extends CWidget
 			'limit' => 5,
 		));
 
-		$this->render('front_article_popular',array(
+		$this->render('article_popular',array(
 			'model' => $model,
+			'module'=>$module,
+			'controller'=>$controller,
+			'action'=>$action,
+			'currentAction'=>$currentAction,
+			'currentModule'=>$currentModule,
+			'currentModuleAction'=>$currentModuleAction,
 		));	
 	}
 }

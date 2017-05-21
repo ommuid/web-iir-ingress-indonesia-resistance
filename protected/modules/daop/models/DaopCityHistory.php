@@ -1,8 +1,10 @@
 <?php
 /**
  * DaopCityHistory
- * @author Putra Sudaryanto <putra.sudaryanto@gmail.com>
- * @copyright Copyright (c) 2014 Ommu Platform (ommu.co)
+ * version: 0.0.1
+ *
+ * @author Putra Sudaryanto <putra@sudaryanto.id>
+ * @copyright Copyright (c) 2014 Ommu Platform (opensource.ommu.co)
  * @link http://company.ommu.co
  * @contact (+62)856-299-4114
  *

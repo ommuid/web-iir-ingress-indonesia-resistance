@@ -1,11 +1,14 @@
 <?php
 /**
  * Daop Provinces (daop-province)
- * @var $this ProvinceController * @var $data DaopProvince *
- * @author Putra Sudaryanto <putra.sudaryanto@gmail.com>
- * @copyright Copyright (c) 2014 Ommu Platform (ommu.co)
+ * @var $this ProvinceController
+ * @var $data DaopProvince
+ * version: 0.0.1
+ *
+ * @author Putra Sudaryanto <putra@sudaryanto.id>
+ * @copyright Copyright (c) 2014 Ommu Platform (opensource.ommu.co)
  * @link http://company.ommu.co
- * @contect (+62)856-299-4114
+ * @contact (+62)856-299-4114
  *
  */
  

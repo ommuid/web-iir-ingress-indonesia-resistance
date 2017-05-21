@@ -1,7 +1,17 @@
-<?php //begin.Hot Content ?>
-<?php if($model != null) {
-	$controller = strtolower(Yii::app()->controller->id);
-?>
+<?php
+/**
+ * @var $this ArticlePopularComponent
+ * @var $model ArticlePopular
+ * version: 0.0.1
+ *
+ * @author Putra Sudaryanto <putra@sudaryanto.id>
+ * @copyright Copyright (c) 2014 Ommu Platform (opensource.ommu.co)
+ * @link https://github.com/ommu/mod-article
+ * @contact (+62)856-299-4114
+ *
+ */
+
+if($model != null) {?>
 <div class="boxed" id="hottest">
 	<h2>Terpanas</h2>
 	<div class="box">
@@ -14,4 +24,3 @@
 	</div>
 </div>
 <?php }?>
-<?php //end.Hot Content ?>

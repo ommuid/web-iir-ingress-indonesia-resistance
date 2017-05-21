@@ -4,7 +4,6 @@
  * @var $this CityController
  * @var $model DaopCity
  * @var $form CActiveForm
- * Copyright (c) 2013, Ommu Platform (ommu.co). All rights reserved.
  * version: 0.0.1
  * Reference start
  *
@@ -21,15 +20,16 @@
  *	LoadModel
  *	performAjaxValidation
  *
- * @author Putra Sudaryanto <putra.sudaryanto@gmail.com>
- * @copyright Copyright (c) 2015 Ommu Platform (ommu.co)
+ * @author Putra Sudaryanto <putra@sudaryanto.id>
+ * @copyright Copyright (c) 2015 Ommu Platform (opensource.ommu.co)
  * @link http://company.ommu.co
- * @contect (+62)856-299-4114
+ * @contact (+62)856-299-4114
  *
  *----------------------------------------------------------------------------------------------------------
  */
 
-class CityController extends Controller
+class r
+ * @var  extends Controller
 {
 	/**
 	 * @var string the default layout for the views. Defaults to '//layouts/column2', meaning
